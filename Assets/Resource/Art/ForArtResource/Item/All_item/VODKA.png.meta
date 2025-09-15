@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      VODKA_0: 8836386755618061637
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
