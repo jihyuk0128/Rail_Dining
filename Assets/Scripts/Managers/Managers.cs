@@ -17,7 +17,7 @@ public class Managers : MonoBehaviour
 
     }
 
-    static void Init()
+    static void Init() 
     {
         if (s_instance == null)
         {
@@ -33,6 +33,8 @@ public class Managers : MonoBehaviour
         }
     }
 
+
+ 
     public static void Clear()
     {
 
