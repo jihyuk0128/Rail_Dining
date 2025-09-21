@@ -11,12 +11,11 @@ public class PlayerInteractionCollider : MonoBehaviour
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
-        interactionCollider = this.transform;
+        interactionCollider = transform;
     }
 
     void Update()
     {
-        // 예: InputSystem 또는 기존 Input 사용
         inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
         if (inputDirection != Vector2.zero)

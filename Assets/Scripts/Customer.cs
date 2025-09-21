@@ -14,16 +14,21 @@ public enum CustomerState
 
 public class Customer : MonoBehaviour, IInteractable
 {
+    [Header("이동속도설정")]
+    public float moveSpeed = 2f; // 이동 속도
+    [Header("상태 체크용")]
     public CustomerState state;
     public Seat targetSeat;
     public string orderMenu;     // 주문 메뉴 
-    public float waitTime = 30f; // 음료 대기 시간
-    public float moveSpeed = 2f; // 이동 속도
+    // public float waitTime = 30f; // 음료 대기 시간 삭제
 
     private Coroutine waitCoroutine;
+    public Vector2 CurrentDirection { get; private set; } // 현재 이동 방향
+    private Rigidbody2D rb;
 
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         StartCoroutine(CustomerRoutine());
     }
 
@@ -31,11 +36,10 @@ public class Customer : MonoBehaviour, IInteractable
     {
         // 1. 등장
         state = CustomerState.Entering;
-
         Vector3 entryTarget = GameObject.Find("StartPoint").transform.position;
         yield return MoveToRoutine(entryTarget);
 
-        // 2. SearchingSeat
+        // 2. 좌석찾는 시간
         state = CustomerState.SearchingSeat;
         float searchTime = Random.Range(1f, 2f);
         yield return new WaitForSeconds(searchTime);
@@ -45,8 +49,8 @@ public class Customer : MonoBehaviour, IInteractable
         if (targetSeat != null)
         {
             state = CustomerState.MovingToSeat;
-            yield return MoveToRoutine(targetSeat.transform.position);
-            SitDown();
+            targetSeat.IsSeating = true;
+            yield return MoveToSeatWithRoute(targetSeat);
         }
         else
         {
@@ -57,8 +61,9 @@ public class Customer : MonoBehaviour, IInteractable
     private void SitDown()
     {
         state = CustomerState.WaitingForOrder;
-        targetSeat.IsSeating = true;
-        transform.position = targetSeat.GetSeatPosition();
+        Vector3 curVec = targetSeat.GetSeatPosition();
+        curVec.z = transform.position.z;
+        transform.position = curVec;
         Debug.Log($"손님이 {targetSeat.SeatId} 번 좌석에 앉았습니다.");
     }
 
@@ -69,11 +74,12 @@ public class Customer : MonoBehaviour, IInteractable
             state = CustomerState.WaitingForDrink;
             orderMenu = "임시값(메뉴아이디 들어갈 예정)";
             Debug.Log($"손님이 {orderMenu} 를 주문했습니다!");
-            waitCoroutine = StartCoroutine(WaitForDrink());
+            //waitCoroutine = StartCoroutine(WaitForDrink()); 주문 기다림 삭제
         }
     }
 
-    private IEnumerator WaitForDrink()
+    /*
+     private IEnumerator WaitForDrink()
     {
         yield return new WaitForSeconds(waitTime);
         if (state == CustomerState.WaitingForDrink)
@@ -82,6 +88,7 @@ public class Customer : MonoBehaviour, IInteractable
             yield return StartCoroutine(LeaveRoutine());
         }
     }
+    */
 
     public void ServeDrink(string menu)
     {
@@ -95,8 +102,20 @@ public class Customer : MonoBehaviour, IInteractable
 
     private IEnumerator LeaveRoutine()
     {
+        float leaveTime = Random.Range(2f, 3f);
+        yield return new WaitForSeconds(leaveTime);
+
         state = CustomerState.Leaving;
         if (targetSeat != null) targetSeat.IsSeating = false;
+
+        // 좌석의 퇴장 루트를 따라서 이동
+        if (targetSeat != null && targetSeat.exitRoutePoints != null)
+        {
+            foreach (Transform point in targetSeat.exitRoutePoints)
+            {
+                yield return MoveToRoutine(point.position);
+            }
+        }
 
         Vector3 exitTarget = GameObject.Find("ExitPoint").transform.position;
         yield return MoveToRoutine(exitTarget);
@@ -104,12 +123,32 @@ public class Customer : MonoBehaviour, IInteractable
         Destroy(gameObject);
     }
 
+    // 웨이포인트 따라서 좌석으로 이동
+    private IEnumerator MoveToSeatWithRoute(Seat seat)
+    {
+        // 경유지가 설정되어 있다면 순서대로 이동
+        if (seat.entryRoutePoints != null && seat.entryRoutePoints.Length > 0)
+        {
+            foreach (Transform point in seat.entryRoutePoints)
+            {
+                yield return MoveToRoutine(point.position);
+            }
+        }
+
+        // 마지막으로 좌석 위치로 이동
+        yield return MoveToRoutine(seat.GetSeatPosition());
+        SitDown();
+    }
+
+    // 이동 루틴
     private IEnumerator MoveToRoutine(Vector3 pos)
     {
+        pos.z = transform.position.z; // z 고정
         while (Vector3.Distance(transform.position, pos) > 0.1f)
         {
-            transform.position = Vector3.MoveTowards(transform.position, pos, moveSpeed * Time.deltaTime);
-            yield return null;
+            Vector2 newPos = Vector2.MoveTowards(rb.position, pos, moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(newPos);
+            yield return new WaitForFixedUpdate();
         }
     }
 

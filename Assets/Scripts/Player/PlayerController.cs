@@ -3,17 +3,22 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    public float moveSpeed = 5f;
+    [Header("이동속도설정")]
+    public float moveSpeed = 5f; // 기본 속도
+    public float runSpeed = 8f; // 달리기 속도
+
+    [Header("Spine Controller")]
+    public PlayerSpineController spineController; // Spine 컨트롤러 참조
 
     private Vector2 moveInput;
     private Rigidbody2D rb;
+    private bool IsRunning;        // 달리기 여부 체크
+    public bool IsFall { get; set; } = false; // 넘어짐 체크 
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
-
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -25,11 +30,38 @@ public class PlayerController : MonoBehaviour
         {
             moveInput = Vector2.zero;
         }
+
+        // 입력이 들어올 때마다 Spine 업데이트
+        if (spineController != null)
+        {
+            spineController.UpdateSpine(moveInput, IsRunning);
+        }
+    }
+
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            IsRunning = true;
+        }
+        else if (context.canceled)
+        {
+            IsRunning = false;
+        }
+        // 입력이 들어올 때마다 Spine 업데이트
+        if (spineController != null)
+        {
+            spineController.UpdateSpine(moveInput, IsRunning);
+        }
     }
 
     private void FixedUpdate()
     {
-        Vector2 movement = moveInput.normalized * moveSpeed;
-        rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+        if (!IsFall)
+        {
+            float currentSpeed = IsRunning ? runSpeed : moveSpeed;
+            Vector2 movement = moveInput.normalized * currentSpeed;
+            rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+        }
     }
 }
