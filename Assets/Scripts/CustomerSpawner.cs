@@ -35,7 +35,7 @@ public class CustomerSpawner : MonoBehaviour
 
     private void SpawnCustomer()
     {
-        GameObject newCustomer = Instantiate(customerPrefab, spawnPoint.position, Quaternion.identity);
+        GameObject newCustomer = Instantiate(customerPrefab, spawnPoint.position, Quaternion.identity, spawnPoint);
         newCustomer.name = $"Customer_{spawned + 1}";
         // 필요하면 Customer 스크립트 초기화 코드 추가 가능
     }
