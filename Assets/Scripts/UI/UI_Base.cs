@@ -11,6 +11,7 @@ public class UI_Base : MonoBehaviour
     protected Dictionary<Type, UnityEngine.Object[]> _objects = new Dictionary<Type, UnityEngine.Object[]>();
     //public abstract void Init();
 
+    public virtual void Init() { }
     protected void Bind<T>(Type type) where T : UnityEngine.Object
     {
         string[] names = Enum.GetNames(type);
@@ -24,8 +25,9 @@ public class UI_Base : MonoBehaviour
             else
                 objects[i] = Utils.FindChild<T>(gameObject, names[i], true);
 
+            // 로그찍기
             if (objects[i] == null)
-                Debug.Log($"Failed to bind({names[i]})");
+                Debug.LogWarning($"[Bind] {names[i]} 찾기 실패 (null)");
         }
     }
 
@@ -57,6 +59,14 @@ public class UI_Base : MonoBehaviour
             case Define.UIEvent.Drag:
                 evt.OnDragHandler -= action;
                 evt.OnDragHandler += action;
+                break;
+            case Define.UIEvent.BeginDrag:
+                evt.OnBeginDragHandler -= action;
+                evt.OnBeginDragHandler += action;
+                break;
+            case Define.UIEvent.EndDrag:
+                evt.OnEndDragHandler -= action;
+                evt.OnEndDragHandler += action;
                 break;
         }
     }
