@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,7 +14,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveInput;
     private Rigidbody2D rb;
     private bool IsRunning;        // 달리기 여부 체크
-    public bool IsFall { get; set; } = false; // 넘어짐 체크 
+    public bool IsFall { get; private set; } = false; // 넘어짐 체크 
+    public bool isEventActive { get; private set; } = false;
 
     private void Awake()
     {
@@ -22,6 +24,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (IsFall || isEventActive) return;
+
         if (context.performed)
         {
             moveInput = context.ReadValue<Vector2>();
@@ -40,6 +44,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnSprint(InputAction.CallbackContext context)
     {
+        if (IsFall || isEventActive) return;
+
         if (context.performed)
         {
             IsRunning = true;
@@ -57,11 +63,50 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (IsFall || isEventActive) return;
+
+        float currentSpeed = IsRunning ? runSpeed : moveSpeed;
+        Vector2 movement = moveInput.normalized * currentSpeed;
+        rb.MovePosition(rb.position + movement * Time.fixedDeltaTime); 
+    }
+
+    public void SetFall(float duration)
+    {
         if (!IsFall)
         {
-            float currentSpeed = IsRunning ? runSpeed : moveSpeed;
-            Vector2 movement = moveInput.normalized * currentSpeed;
-            rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+            StartCoroutine(FallRoutine(duration));
         }
     }
+
+    public void SetEvent(bool isEvent)
+    {
+        isEventActive = isEvent;
+        if (spineController != null)
+        {
+            moveInput = Vector2.zero;
+            IsRunning = false;
+            spineController.UpdateSpine(moveInput, IsRunning);
+        }
+    }
+
+    private IEnumerator FallRoutine(float duration)
+    {
+        IsFall = true;
+        moveInput = Vector2.zero; // 입력 초기화
+
+        if (spineController != null)
+        {
+            spineController.PlayFallAnimation(); // 넘어짐 애니메이션 재생 
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        IsFall = false;
+
+        if (spineController != null)
+        {
+            spineController.UpdateSpine(Vector2.zero, false); // 애니메이션 idle로 복귀
+        }
+    }
+
 }

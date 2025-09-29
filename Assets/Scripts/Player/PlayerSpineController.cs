@@ -13,7 +13,7 @@ public class PlayerSpineController : MonoBehaviour
     [Header("스파인 위치 설정")]
     public Vector3 spineOffset = Vector3.zero; // 발밑 기준 보정
 
-    private SkeletonAnimation activeSpine;
+    private SkeletonAnimation activeSpine; // 현재 활성화 Spine
     private bool facingRight = true;
 
     private void Awake()
@@ -89,5 +89,10 @@ public class PlayerSpineController : MonoBehaviour
         Vector3 scale = spinePivot.localScale;
         scale.x = faceRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
         spinePivot.localScale = scale;
+    }
+
+    public void PlayFallAnimation()
+    {
+        //activeSpine.AnimationState.SetAnimation();    넘어진 애니메이션 재생  
     }
 }

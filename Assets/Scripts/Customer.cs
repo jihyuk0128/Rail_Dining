@@ -20,7 +20,7 @@ public class Customer : MonoBehaviour, IInteractable
     public CustomerState state;
     public Seat targetSeat;
     public string orderMenu;     // 주문 메뉴 
-    // public float waitTime = 30f; // 음료 대기 시간 삭제
+    public float waitTime = 30f; // 음료 대기 시간 
 
     private Coroutine waitCoroutine;
     public Vector2 CurrentDirection { get; private set; } // 현재 이동 방향
@@ -64,7 +64,7 @@ public class Customer : MonoBehaviour, IInteractable
         Vector3 curVec = targetSeat.GetSeatPosition();
         curVec.z = transform.position.z;
         transform.position = curVec;
-        Debug.Log($"손님이 {targetSeat.SeatId} 번 좌석에 앉았습니다.");
+        //Debug.Log($"손님이 {targetSeat.SeatId} 번 좌석에 앉았습니다.");
     }
 
     public void TakeOrder()
@@ -74,11 +74,11 @@ public class Customer : MonoBehaviour, IInteractable
             state = CustomerState.WaitingForDrink;
             orderMenu = "임시값(메뉴아이디 들어갈 예정)";
             Debug.Log($"손님이 {orderMenu} 를 주문했습니다!");
-            //waitCoroutine = StartCoroutine(WaitForDrink()); 주문 기다림 삭제
+            waitCoroutine = StartCoroutine(WaitForDrink()); 
         }
     }
 
-    /*
+    
      private IEnumerator WaitForDrink()
     {
         yield return new WaitForSeconds(waitTime);
@@ -88,7 +88,7 @@ public class Customer : MonoBehaviour, IInteractable
             yield return StartCoroutine(LeaveRoutine());
         }
     }
-    */
+    
 
     public void ServeDrink(string menu)
     {

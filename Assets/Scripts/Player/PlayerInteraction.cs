@@ -30,7 +30,7 @@ public class PlayerInteraction : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("상호작용 콜라이더 충돌");
+        //Debug.Log("상호작용 콜라이더 충돌");
         var interactable = other.GetComponent<IInteractable>();
         if (interactable != null && !interactables.Contains(interactable))
             interactables.Add(interactable);
@@ -38,7 +38,7 @@ public class PlayerInteraction : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other)
     {
-        Debug.Log("상호작용 콜라이더 충돌 끝");
+        //Debug.Log("상호작용 콜라이더 충돌 끝");
         var interactable = other.GetComponent<IInteractable>();
         if (interactable != null)
             interactables.Remove(interactable);
