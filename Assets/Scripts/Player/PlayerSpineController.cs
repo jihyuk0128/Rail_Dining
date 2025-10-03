@@ -1,6 +1,14 @@
 using UnityEngine;
 using Spine.Unity;
 
+enum AnimState
+{
+    Idle,
+    Walking,
+    Running,
+    Falling
+}
+
 public class PlayerSpineController : MonoBehaviour
 {
     [Header("Spine Objects")]
@@ -16,68 +24,54 @@ public class PlayerSpineController : MonoBehaviour
     private SkeletonAnimation activeSpine; // 현재 활성화 Spine
     private bool facingRight = true;
 
+    private AnimState currentState = AnimState.Idle; // 현재 상태
+
     private void Awake()
     {
         activeSpine = frontSpine;
         activeSpine.gameObject.SetActive(true);
+        ChangeAnimation(AnimState.Idle);
     }
 
     public void UpdateSpine(Vector2 inputVector, bool isRunning)
     {
+        // --- Idle 처리 ---
         if (inputVector == Vector2.zero)
         {
-            // 입력 없으면 마지막 Spine 활성화, 애니메이션 정지
-            if (activeSpine != null)
-            {
-                // Spine은 활성화 유지
-                activeSpine.timeScale = 0f; // 애니메이션 일시정지
-            }
+            ChangeAnimation(AnimState.Idle);
             return;
         }
 
-        // 이동 방향 판단 (앞/뒤)
-        if (inputVector.y > 0) // 위쪽 이동 → 뒤모습 Spine
+        // --- 앞/뒤 Spine 전환 ---
+        if (inputVector.y > 0)
         {
-            SetActiveSpine(backSpine, isRunning);
+            SetActiveSpine(backSpine);
         }
-        else // 아래쪽 이동 → 앞모습 Spine
+        else
         {
-            SetActiveSpine(frontSpine, isRunning);
+            SetActiveSpine(frontSpine);
         }
 
-        // 좌우 Flip 처리 (Pivot만 Flip)
+        // --- 달리기/걷기 상태 전환 ---
+        if (isRunning)
+            ChangeAnimation(AnimState.Running);
+        else
+            ChangeAnimation(AnimState.Walking);
+
+        // --- 좌우 Flip ---
         if (inputVector.x > 0) FlipPivot(true);
         else if (inputVector.x < 0) FlipPivot(false);
     }
 
-    void SetActiveSpine(SkeletonAnimation spine, bool isRunning)
+    private void SetActiveSpine(SkeletonAnimation spine)
     {
-        if (activeSpine != spine)
-        {
-            // 이전 Spine 비활성화
-            if (activeSpine != null) activeSpine.gameObject.SetActive(false);
+        if (activeSpine == spine) return;
 
-            activeSpine = spine;
-            activeSpine.gameObject.SetActive(true);
+        if (activeSpine != null) activeSpine.gameObject.SetActive(false);
 
-            // SpineObject 발밑 기준 위치 보정
-            activeSpine.transform.localPosition = spineOffset;
-
-            // 새로 Spine이 켜졌으니 애니메이션 재생
-            activeSpine.AnimationState.SetAnimation(0, "animation", true);
-        }
-        else
-        {
-            // 같은 Spine인데 현재 트랙에 애니메이션이 없는 경우 → 재생
-            var currentAnim = activeSpine.AnimationState.GetCurrent(0);
-            if (currentAnim == null)
-            {
-                activeSpine.AnimationState.SetAnimation(0, "animation", true);
-            }
-        }
-
-        // 속도 조절 (달리기/걷기)
-        activeSpine.timeScale = isRunning ? 3f : 1f;
+        activeSpine = spine;
+        activeSpine.gameObject.SetActive(true);
+        activeSpine.transform.localPosition = spineOffset;
     }
 
     // 좌우반전
@@ -91,8 +85,51 @@ public class PlayerSpineController : MonoBehaviour
         spinePivot.localScale = scale;
     }
 
+    // 상태 기반 애니메이션 변경
+    private void ChangeAnimation(AnimState newState)
+    {
+        // 같은 상태라도 앞 뒤 변경시에 애니메이션이 없으면 재생
+        if (currentState == newState)
+        {
+            var currentAnim = activeSpine.AnimationState.GetCurrent(0);
+            if (currentAnim == null || currentAnim.Animation.Name != StateToAnimName(newState))
+            {
+                string animNameRetry = StateToAnimName(newState);
+                activeSpine.AnimationState.SetAnimation(0, animNameRetry, true);
+            }
+            return;
+        }
+
+        currentState = newState;
+        string animName = StateToAnimName(newState);
+
+        if (currentState == AnimState.Falling)
+        {
+            SetActiveSpine(frontSpine);
+        }
+
+        activeSpine.AnimationState.SetAnimation(0, animName, true);
+
+        // 러닝일 경우 속도 증가
+        activeSpine.timeScale = (newState == AnimState.Running) ? 3f : 1f;
+    }
+
+    // 상태와 Spine 애니메이션 이름 매핑
+    private string StateToAnimName(AnimState state)
+    {
+        switch (state)
+        {
+            case AnimState.Idle: return "idle";
+            case AnimState.Walking: return "walking";
+            case AnimState.Running: return "walking"; // 러닝도 걷기 애니메이션 기반
+            case AnimState.Falling: return "falling_down";
+            default: return "idle";
+        }
+    }
+
+    // 넘어짐 상태 외부 호출용
     public void PlayFallAnimation()
     {
-        //activeSpine.AnimationState.SetAnimation();    넘어진 애니메이션 재생  
+        ChangeAnimation(AnimState.Falling);
     }
 }

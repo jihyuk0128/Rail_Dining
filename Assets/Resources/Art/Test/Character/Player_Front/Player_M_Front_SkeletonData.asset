@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1b3b4b945939a54ea0b23d3396115fb, type: 3}
-  m_Name: Player_WalkingFront_M_SkeletonData
+  m_Name: Player_M_Front_SkeletonData
   m_EditorClassIdentifier: 
   atlasAssets:
-  - {fileID: 11400000, guid: bda0e7589f1d9404fb63c22a5409a9fe, type: 2}
+  - {fileID: 11400000, guid: 7f991124964fa1b4ca484aa9cff7d81e, type: 2}
   scale: 0.01
-  skeletonJSON: {fileID: 4900000, guid: 42dd448cac87cf3498032157a607010c, type: 3}
+  skeletonJSON: {fileID: 4900000, guid: 66b81290fe92d8a4981cc624458de83c, type: 3}
   isUpgradingBlendModeMaterials: 0
   blendModeMaterials:
     requiresBlendModeMaterials: 0

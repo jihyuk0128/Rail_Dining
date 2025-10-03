@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
     public void SetEvent(bool isEvent)
     {
         isEventActive = isEvent;
-        if (spineController != null)
+        if (spineController != null && isEventActive)
         {
             moveInput = Vector2.zero;
             IsRunning = false;

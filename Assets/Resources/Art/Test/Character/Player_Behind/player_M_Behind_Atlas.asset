@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a6b194f808b1af6499c93410e504af42, type: 3}
-  m_Name: Player_WalkingBehind_M_Atlas
+  m_Name: player_M_Behind_Atlas
   m_EditorClassIdentifier: 
   textureLoadingMode: 0
   onDemandTextureLoader: {fileID: 0}
-  atlasFile: {fileID: 4900000, guid: 9c641c10f4d9c974db90d9513a567f39, type: 3}
+  atlasFile: {fileID: 4900000, guid: 204207da9f7d1d244a64c161fb9b059b, type: 3}
   materials:
-  - {fileID: 2100000, guid: d2a17d49ae528904485210b7b4cf71c8, type: 2}
+  - {fileID: 2100000, guid: f281434c705b94343a1b8977b0d2ff0d, type: 2}

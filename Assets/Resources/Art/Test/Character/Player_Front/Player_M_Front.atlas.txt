@@ -1,4 +1,4 @@
-Player_WalkingFront_M.png
+Player_M_Front.png
 size:64,64
 filter:Linear,Linear
 pma:true
