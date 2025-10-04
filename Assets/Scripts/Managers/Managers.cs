@@ -1,21 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Managers : MonoBehaviour
 {
-    static Managers s_instance; // 유일성이 보장된다
-    static Managers Instance { get { Init(); return s_instance; } } // 유일한 매니저를 갖고온다
+    static Managers s_instance;
+    static Managers Instance { get { Init(); return s_instance; } }
 
-    void Start()
-    {
-        Init();
-    }
+    ResourceManager _resource = new ResourceManager();
+    UIManager _ui = new UIManager();
+    DataManager _data = new DataManager();
+    InventoryManager _inventory = new InventoryManager();   // 인벤토리 8칸
 
-    void Update()
-    {
+    public static ResourceManager Resource { get { return Instance._resource; } }
+    public static UIManager UI { get { return Instance._ui; } }
+    public static DataManager Data { get { return Instance._data; } }
+    public static InventoryManager Inventory { get { return Instance._inventory; } }
 
-    }
+    void Start() { Init(); }
+    void Update() { }
 
     static void Init()
     {
@@ -30,11 +31,10 @@ public class Managers : MonoBehaviour
 
             DontDestroyOnLoad(go);
             s_instance = go.GetComponent<Managers>();
+
+            s_instance._data.Init();
         }
     }
 
-    public static void Clear()
-    {
-
-    }
+    public static void Clear() { }
 }

@@ -1,0 +1,10 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Egg",
+      "maxStack": 20,
+      "iconPath": "Art/Items/All_Items/EGG"
+    }
+  ]
+}
