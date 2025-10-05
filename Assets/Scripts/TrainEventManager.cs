@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
 public class TrainEventManager : MonoBehaviour
@@ -15,6 +16,8 @@ public class TrainEventManager : MonoBehaviour
 
     private bool isEventActive = false;
 
+    private UI_ShakeTrainEvent shakeUI = null;
+
     private void Start()
     {
         StartCoroutine(EventRoutine());
@@ -22,8 +25,10 @@ public class TrainEventManager : MonoBehaviour
 
     private IEnumerator EventRoutine()
     {
+        // UI 생성
+        shakeUI = Managers.UI.ShowSceneUI<UI_ShakeTrainEvent>();
         while (true)
-        {
+        { 
             yield return new WaitForSeconds(eventInterval);
 
             if(trainShaker != null)
@@ -66,19 +71,50 @@ public class TrainEventManager : MonoBehaviour
 
         // 여기서 UI로 key1/key2를 보여주기
         Debug.Log(key1+", "+key2);
+        shakeUI.ShowUI();
+        if (shakeUI != null)
+        {
+            shakeUI.OnCountdownFinished = () =>
+            {
+                StartCoroutine(WaitForKeySequence(key1, key2));
+            };
+            shakeUI.ShowKeyEvent(key1, key2);
+        }
 
+        yield return null;
+    }
+
+    // WASD 이벤트 
+    private IEnumerator WaitForKeySequence(KeyCode key1, KeyCode key2)
+    {
+        Debug.Log($"첫 번째 키 입력 대기: {key1}");
         bool result1 = false;
-        yield return StartCoroutine(WaitForKeyPress(key1, keyTimeLimit, (ok) => result1 = ok));
-        if (!result1) { EventFailed(); isEventActive = false; yield break; }
+        yield return WaitForKeyPress(key1, keyTimeLimit, ok => result1 = ok);
 
+        if (!result1)
+        {
+            EventFailed();
+            isEventActive = false;
+            shakeUI.HideUI();
+            yield break;
+        }
+
+        Debug.Log($"두 번째 키 입력 대기: {key2}");
         bool result2 = false;
-        yield return StartCoroutine(WaitForKeyPress(key2, keyTimeLimit, (ok) => result2 = ok));
-        if (!result2) { EventFailed(); isEventActive = false; yield break; }
+        yield return WaitForKeyPress(key2, keyTimeLimit, ok => result2 = ok);
+
+        if (!result2)
+        {
+            EventFailed();
+            isEventActive = false;
+            shakeUI.HideUI();
+            yield break;
+        }
 
         Debug.Log("[Event] WASD challenge SUCCESS");
-        // 성공 시 추가 효과 있으면 처리
         isEventActive = false;
         player.SetEvent(false);
+        shakeUI.HideUI();
     }
 
     // Space 이벤트 
@@ -88,15 +124,37 @@ public class TrainEventManager : MonoBehaviour
         Debug.Log("[Event] Spacebar challenge START");
 
         // 스페이스바 UI 들어갈 곳
+        shakeUI.ShowUI();
+        if (shakeUI != null)
+        {
+            shakeUI.OnCountdownFinished = () =>
+            {
+                StartCoroutine(WaitForKeyPressSequence(KeyCode.Space));
+            };
+            shakeUI.ShowSpaceEvent();
+        }
 
+        yield return null;
+    }
+
+    private IEnumerator WaitForKeyPressSequence(KeyCode key)
+    {
+        Debug.Log($"스페이스바 키 입력 대기");
         bool result = false;
-        yield return StartCoroutine(WaitForKeyPress(KeyCode.Space, keyTimeLimit, (ok) => result = ok));
-        if (!result) { EventFailed(); isEventActive = false; yield break; }
+        yield return WaitForKeyPress(key, keyTimeLimit, ok => result = ok);
+
+        if (!result)
+        {
+            EventFailed();
+            isEventActive = false;
+            shakeUI.HideUI();
+            yield break;
+        }
 
         Debug.Log("[Event] Spacebar challenge SUCCESS");
-        // 성공 처리
         isEventActive = false;
         player.SetEvent(false);
+        shakeUI.HideUI();
     }
 
     //키 입력 대기 (콜백으로 성공/실패 통보) 

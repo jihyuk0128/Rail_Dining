@@ -19,7 +19,7 @@ public class DataManager
         ItemDict = LoadJson<ItemDataLoader, int, ItemData>("ItemData").MakeDict();
 
         // 레시피 데이터 로드
-        RecipeDict = LoadJson<RecipeDataLoader, int, RecipeData>("drink_recipes").MakeDict();
+        RecipeDict = LoadJson<RecipeDataLoader, int, RecipeData>("RecipeData").MakeDict();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>
