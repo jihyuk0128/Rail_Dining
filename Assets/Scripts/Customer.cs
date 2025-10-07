@@ -95,6 +95,7 @@ public class Customer : MonoBehaviour, IInteractable
         if (state == CustomerState.WaitingForDrink && menu == orderMenu)
         {
             Debug.Log("손님이 음료를 받고 돈을 지불합니다.");
+            //MoneyManager.Instance.AddMoney(price);
             if (waitCoroutine != null) StopCoroutine(waitCoroutine);
             StartCoroutine(LeaveRoutine());
         }
