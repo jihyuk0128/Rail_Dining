@@ -1,5 +1,3 @@
-using NUnit.Framework.Interfaces;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,11 +13,10 @@ public class DataManager
 
     public void Init()
     {
-        // 아이템 데이터 로드
         ItemDict = LoadJson<ItemDataLoader, int, ItemData>("ItemData").MakeDict();
+        RecipeDict = LoadJson<RecipeDataLoader, int, RecipeData>("RecipeData").MakeDict();
 
-        // 레시피 데이터 로드
-        RecipeDict = LoadJson<RecipeDataLoader, int, RecipeData>("drink_recipes").MakeDict();
+        Debug.Log($"[DataManager] Loaded Items: {ItemDict.Count}, Recipes: {RecipeDict.Count}");
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>
