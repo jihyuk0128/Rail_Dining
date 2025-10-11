@@ -1,0 +1,19 @@
+{
+  "dialogues": [
+    {
+      "id": 0,
+      "CharImg": "ex",
+      "CharDialogue": "대사 첫번째"
+    },
+    {
+      "id": 1,
+      "CharImg": "ex",
+      "CharDialogue": "대사 두번째"
+    },
+    {
+      "id": 2,
+      "CharImg": "ex",
+      "CharDialogue": "대사 세번째"
+    }
+  ]
+}

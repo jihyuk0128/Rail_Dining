@@ -10,13 +10,15 @@ public class DataManager
 {
     public Dictionary<int, ItemData> ItemDict { get; private set; }
     public Dictionary<int, RecipeData> RecipeDict { get; private set; }
+    public Dictionary<int, DialogueData> DialogueDict { get; private set; }
 
     public void Init()
     {
         ItemDict = LoadJson<ItemDataLoader, int, ItemData>("ItemData").MakeDict();
         RecipeDict = LoadJson<RecipeDataLoader, int, RecipeData>("RecipeData").MakeDict();
+        DialogueDict = LoadJson<DialogueDataLoader, int, DialogueData>("TutorialDialogueData").MakeDict();
 
-        Debug.Log($"[DataManager] Loaded Items: {ItemDict.Count}, Recipes: {RecipeDict.Count}");
+        Debug.Log($"[DataManager] Loaded Items: {ItemDict.Count}, Recipes: {RecipeDict.Count}, DialogueDict: {DialogueDict.Count}");
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>
