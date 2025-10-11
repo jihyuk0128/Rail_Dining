@@ -68,6 +68,6 @@ public class UI_Button : UI_Popup
 
         _score++;
         GetTextMeshProUGUI((int)TextMeshProUGUIS.ScoreText).text = $"score : {_score}";
-       
+        Managers.Network.Connect();
     }
 }

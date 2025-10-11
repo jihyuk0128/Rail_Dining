@@ -18,6 +18,8 @@ public class testsc : MonoBehaviour
         Managers.Inventory.AddItemToInventory(1, 5);  // Egg 5°³
         Managers.Inventory.AddItemToInventory(1, 20);  // Egg 5°³
 
+        Managers.UI.ShowPopupUI<UI_Button>();
+
         
     }
 
