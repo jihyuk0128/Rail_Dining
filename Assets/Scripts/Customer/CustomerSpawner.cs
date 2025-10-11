@@ -4,7 +4,7 @@ using UnityEngine;
 public class CustomerSpawner : MonoBehaviour
 {
     [Header("손님 생성 설정")]
-    public GameObject customerPrefab;   // 생성할 손님 Prefab
+    public GameObject[] customerPrefab;   // 생성할 손님 Prefab
     public Transform spawnPoint;        // 손님이 등장할 위치
     public int spawnCount = 5;          // 생성할 손님 총 수
     public float spawnInterval = 2f;    // 손님 생성 간격 (초)
@@ -35,7 +35,11 @@ public class CustomerSpawner : MonoBehaviour
 
     private void SpawnCustomer()
     {
-        GameObject newCustomer = Instantiate(customerPrefab, spawnPoint.position, Quaternion.identity, spawnPoint);
+        // 임시 남여 랜덤 스폰
+        int i = 0;
+        if (Random.value < 0.5f) i = 1;
+        else i = 0;
+            GameObject newCustomer = Instantiate(customerPrefab[i], spawnPoint.position, Quaternion.identity, spawnPoint);
         newCustomer.name = $"Customer_{spawned + 1}";
         // 필요하면 Customer 스크립트 초기화 코드 추가 가능
     }

@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Playables;
 
 public enum CustomerState
 {
@@ -20,15 +19,28 @@ public class Customer : MonoBehaviour, IInteractable
     public CustomerState state;
     public Seat targetSeat;
     public string orderMenu;     // 주문 메뉴 
+    //public ItemData orderMenu;
     public float waitTime = 30f; // 음료 대기 시간 
 
     private Coroutine waitCoroutine;
     public Vector2 CurrentDirection { get; private set; } // 현재 이동 방향
     private Rigidbody2D rb;
+    // 의자에 따라서 정렬용
+    private YSort FrontYSort;
+    private YSort BehindYSort;
+    // 스파인 애니메이션
+    private CustomerSpineController spineController;
+    // 손님 주문 아이템 UI
+    private CustomerOrderUI orderUI;
 
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        FrontYSort = transform.Find("SpinePivot/CustomerFront")?.GetComponent<YSort>();
+        BehindYSort = transform.Find("SpinePivot/CustomerBehind")?.GetComponent<YSort>();
+        spineController = GetComponent<CustomerSpineController>();
+        orderUI = GetComponentInChildren<CustomerOrderUI>();
+
         StartCoroutine(CustomerRoutine());
     }
 
@@ -64,7 +76,12 @@ public class Customer : MonoBehaviour, IInteractable
         Vector3 curVec = targetSeat.GetSeatPosition();
         curVec.z = transform.position.z;
         transform.position = curVec;
-        //Debug.Log($"손님이 {targetSeat.SeatId} 번 좌석에 앉았습니다.");
+
+        // ui + 애니메이션
+        orderUI.ShowWaiting();
+        spineController.isSiting = true;
+        spineController.seatDirection = targetSeat.seatDirection;
+        spineController.UpdateSpine(Vector2.zero);
     }
 
     public void TakeOrder()
@@ -74,6 +91,7 @@ public class Customer : MonoBehaviour, IInteractable
             state = CustomerState.WaitingForDrink;
             orderMenu = "임시값(메뉴아이디 들어갈 예정)";
             Debug.Log($"손님이 {orderMenu} 를 주문했습니다!");
+            orderUI.ShowOrder(null , 0, 1);
             waitCoroutine = StartCoroutine(WaitForDrink()); 
         }
     }
@@ -103,11 +121,15 @@ public class Customer : MonoBehaviour, IInteractable
 
     private IEnumerator LeaveRoutine()
     {
+        state = CustomerState.Leaving;
+        orderUI.HideOrder();
         float leaveTime = Random.Range(2f, 3f);
         yield return new WaitForSeconds(leaveTime);
 
-        state = CustomerState.Leaving;
         if (targetSeat != null) targetSeat.IsSeating = false;
+
+        FrontYSort.isSeat = false;
+        BehindYSort.isSeat = false;
 
         // 좌석의 퇴장 루트를 따라서 이동
         if (targetSeat != null && targetSeat.exitRoutePoints != null)
@@ -136,6 +158,13 @@ public class Customer : MonoBehaviour, IInteractable
             }
         }
 
+        // SeatYSort 가져오기 (Seat이 직접 or 부모 소파)
+        SeatYSort seatYSort = targetSeat.seatYSort;
+        FrontYSort.isSeat = true;
+        FrontYSort.seatYSort = seatYSort;
+        BehindYSort.isSeat = true;
+        BehindYSort.seatYSort = seatYSort;
+
         // 마지막으로 좌석 위치로 이동
         yield return MoveToRoutine(seat.GetSeatPosition());
         SitDown();
@@ -145,6 +174,8 @@ public class Customer : MonoBehaviour, IInteractable
     private IEnumerator MoveToRoutine(Vector3 pos)
     {
         pos.z = transform.position.z; // z 고정
+        Vector2 dir = (pos - transform.position).normalized;
+        spineController.UpdateSpine(dir);
         while (Vector3.Distance(transform.position, pos) > 0.1f)
         {
             Vector2 newPos = Vector2.MoveTowards(rb.position, pos, moveSpeed * Time.fixedDeltaTime);

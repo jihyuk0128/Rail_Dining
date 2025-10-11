@@ -103,3 +103,5 @@ MonoBehaviour:
   seatId: 0
   entryRoutePoints: []
   exitRoutePoints: []
+  seatDirection: 0
+  seatYSort: {fileID: 0}

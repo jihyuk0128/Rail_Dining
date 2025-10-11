@@ -1,7 +1,7 @@
 using UnityEngine;
 using Spine.Unity;
 
-enum AnimState
+enum PlayerAnimState
 {
     Idle,
     Walking,
@@ -24,13 +24,13 @@ public class PlayerSpineController : MonoBehaviour
     private SkeletonAnimation activeSpine; // 현재 활성화 Spine
     private bool facingRight = true;
 
-    private AnimState currentState = AnimState.Idle; // 현재 상태
+    private PlayerAnimState currentState = PlayerAnimState.Idle; // 현재 상태
 
     private void Awake()
     {
         activeSpine = frontSpine;
         activeSpine.gameObject.SetActive(true);
-        ChangeAnimation(AnimState.Idle);
+        ChangeAnimation(PlayerAnimState.Idle);
     }
 
     public void UpdateSpine(Vector2 inputVector, bool isRunning)
@@ -38,7 +38,7 @@ public class PlayerSpineController : MonoBehaviour
         // --- Idle 처리 ---
         if (inputVector == Vector2.zero)
         {
-            ChangeAnimation(AnimState.Idle);
+            ChangeAnimation(PlayerAnimState.Idle);
             return;
         }
 
@@ -54,9 +54,9 @@ public class PlayerSpineController : MonoBehaviour
 
         // --- 달리기/걷기 상태 전환 ---
         if (isRunning)
-            ChangeAnimation(AnimState.Running);
+            ChangeAnimation(PlayerAnimState.Running);
         else
-            ChangeAnimation(AnimState.Walking);
+            ChangeAnimation(PlayerAnimState.Walking);
 
         // --- 좌우 Flip ---
         if (inputVector.x > 0) FlipPivot(true);
@@ -86,7 +86,7 @@ public class PlayerSpineController : MonoBehaviour
     }
 
     // 상태 기반 애니메이션 변경
-    private void ChangeAnimation(AnimState newState)
+    private void ChangeAnimation(PlayerAnimState newState)
     {
         // 같은 상태라도 앞 뒤 변경시에 애니메이션이 없으면 재생
         if (currentState == newState)
@@ -103,7 +103,7 @@ public class PlayerSpineController : MonoBehaviour
         currentState = newState;
         string animName = StateToAnimName(newState);
 
-        if (currentState == AnimState.Falling)
+        if (currentState == PlayerAnimState.Falling)
         {
             SetActiveSpine(frontSpine);
         }
@@ -111,18 +111,18 @@ public class PlayerSpineController : MonoBehaviour
         activeSpine.AnimationState.SetAnimation(0, animName, true);
 
         // 러닝일 경우 속도 증가
-        activeSpine.timeScale = (newState == AnimState.Running) ? 3f : 1f;
+        activeSpine.timeScale = (newState == PlayerAnimState.Running) ? 3f : 1f;
     }
 
     // 상태와 Spine 애니메이션 이름 매핑
-    private string StateToAnimName(AnimState state)
+    private string StateToAnimName(PlayerAnimState state)
     {
         switch (state)
         {
-            case AnimState.Idle: return "idle";
-            case AnimState.Walking: return "walking";
-            case AnimState.Running: return "walking"; // 러닝도 걷기 애니메이션 기반
-            case AnimState.Falling: return "falling_down";
+            case PlayerAnimState.Idle: return "idle";
+            case PlayerAnimState.Walking: return "walking";
+            case PlayerAnimState.Running: return "walking"; // 러닝도 걷기 애니메이션 기반
+            case PlayerAnimState.Falling: return "falling_down";
             default: return "idle";
         }
     }
@@ -130,6 +130,6 @@ public class PlayerSpineController : MonoBehaviour
     // 넘어짐 상태 외부 호출용
     public void PlayFallAnimation()
     {
-        ChangeAnimation(AnimState.Falling);
+        ChangeAnimation(PlayerAnimState.Falling);
     }
 }
