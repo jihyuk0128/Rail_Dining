@@ -9,11 +9,14 @@ public class Managers : MonoBehaviour
     UIManager _ui = new();
     DataManager _data = new();
     InventoryManager _inventory = new();
+    NetworkManager _network = NetworkManager.Instance;
 
     public static ResourceManager Resource => Instance._resource;
     public static UIManager UI => Instance._ui;
     public static DataManager Data => Instance._data;
     public static InventoryManager Inventory => Instance._inventory;
+    public static NetworkManager Network => Instance._network;
+
 
     void Start() { Init(); }
     void Update() { }
