@@ -4,13 +4,15 @@
       "recipeId": 1,
       "ingredients": [ 1, 1, 1, 1 ],
       "resultId": 1,
-      "resultAmount": 1
+      "resultAmount": 1,
+      "gridSize": 4
     },
     {
       "recipeId": 2,
       "ingredients": [ 2, 2, 3, 3 ],
       "resultId": 11,
-      "resultAmount": 1
+      "resultAmount": 1,
+      "gridSize": 4
     }
   ]
 }

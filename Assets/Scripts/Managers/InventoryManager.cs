@@ -2,37 +2,56 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public enum SlotType { Inventory, Crafting, Result }
+public enum MoveMode { One,Half,All}
 
 public class InventoryManager
 {
-    public List<ItemData> InventoryItems { get; private set; } = new List<ItemData>();
-    public List<ItemData> CraftingItems { get; private set; } = new List<ItemData>();
-    public List<int> InventoryAmounts { get; private set; } = new List<int>();
-    public List<int> CraftingAmounts { get; private set; } = new List<int>();
-    public ItemData ResultItem { get; private set; }
-    public int ResultAmount { get; private set; }
+    public List<ItemSlot> InventorySlots { get; private set; } = new();
+    public List<ItemSlot> CraftingSlots { get; private set; } = new();
+    public ItemSlot ResultSlot { get; private set; } = new();
 
     public UI_Inventory InventoryUI { get; private set; }
     public UI_CraftingBox CraftingBoxUI { get; private set; }
+    public UI_FoodBox FoodBoxUI { get; private set; }
+    public UI_Slot DragSourceSlot { get; set; }
 
     public void Init(int inventoryCount, int craftingCount)
     {
-        InventoryItems.Clear();
-        CraftingItems.Clear();
-        InventoryAmounts.Clear();
-        CraftingAmounts.Clear();
+        Debug.Log($"[Inventory] Init 실행됨 (인벤={inventoryCount}, 크래프팅={craftingCount})");
 
-        for (int i = 0; i < inventoryCount; i++) { InventoryItems.Add(null); InventoryAmounts.Add(0); }
-        for (int i = 0; i < craftingCount; i++) { CraftingItems.Add(null); CraftingAmounts.Add(0); }
+        InventorySlots.Clear();
+        CraftingSlots.Clear();
 
-        ResultItem = null;
-        ResultAmount = 0;
+        for (int i = 0; i < inventoryCount; i++)
+        {
+            InventorySlots.Add(new ItemSlot());
+            Debug.Log($"[Inventory] 인벤 {i} 생성됨");
+        }
 
-        RefreshAllUI();
+        for (int i = 0; i < craftingCount; i++)
+        {
+            CraftingSlots.Add(new ItemSlot());
+            Debug.Log($"[Inventory] 작업대 {i} 생성됨");
+        }
+
+        ResultSlot = new ItemSlot();
     }
 
     public void RegisterInventoryUI(UI_Inventory ui) => InventoryUI = ui;
     public void RegisterCraftingBoxUI(UI_CraftingBox ui) => CraftingBoxUI = ui;
+    public void RegisterFoodBoxUI(UI_FoodBox ui) => FoodBoxUI = ui;
+    public void UnregisterCraftingBoxUI()
+    {
+        CraftingBoxUI = null;
+        CraftingSlots.Clear();
+    }
+    public void UnregisterFoodBoxUI()
+    {
+        FoodBoxUI = null;
+        CraftingSlots.Clear();
+    }
+
+
 
     public void AddItemToInventory(int id, int amount = 1)
     {
@@ -42,68 +61,61 @@ public class InventoryManager
             return;
         }
 
-        for (int i = 0; i < InventoryItems.Count; i++)
+        for (int i = 0; i < InventorySlots.Count; i++)
         {
-            if (InventoryItems[i] == null)
+            if (InventorySlots[i].Item == null)
             {
-                InventoryItems[i] = Managers.Data.ItemDict[id];
-                InventoryAmounts[i] = amount;
+                InventorySlots[i].Item = Managers.Data.ItemDict[id];
+                InventorySlots[i].Amount = amount;
+                Debug.Log($"[인벤] {InventorySlots[i].Item.name} x{amount} 추가됨");
                 RefreshAllUI();
                 return;
             }
         }
     }
 
-    public void MoveItem(SlotType fromType, int fromIndex, SlotType toType, int toIndex)
+    public void MoveItem(SlotType fromType, int fromIndex, SlotType toType, int toIndex, bool moveAll = false)
     {
-        var fromList = GetItemList(fromType);
-        var toList = GetItemList(toType);
-        var fromAmt = GetAmountList(fromType);
-        var toAmt = GetAmountList(toType);
-
-
+        var fromList = GetSlotList(fromType);
+        var toList = GetSlotList(toType);
         if (fromList == null || toList == null) return;
+
         if (fromIndex < 0 || fromIndex >= fromList.Count) return;
         if (toIndex < 0 || toIndex >= toList.Count) return;
 
-        if (fromList[fromIndex] == null || fromAmt[fromIndex] <= 0) return;
+        var from = fromList[fromIndex];
+        var to = toList[toIndex];
+        if (from.Item == null || from.Amount <= 0) return;
 
-        // 대상 슬롯이 비어있으면 아이템 초기화
-        if (toList[toIndex] == null)
+        int moveAmount = moveAll ? from.Amount : 1;
+
+        if (to.Item == null)
         {
-            toList[toIndex] = fromList[fromIndex];
-            toAmt[toIndex] = 0;
+            to.Item = from.Item;
+            to.Amount = 0;
         }
 
-        // 아이템이 같으면 한 개씩만 옮기기
-        if (toList[toIndex] == fromList[fromIndex])
+        if (to.Item.id == from.Item.id)
         {
-            fromAmt[fromIndex] -= 1;
-            toAmt[toIndex] += 1;
+            int space = ItemSlot.MAX_STACK - to.Amount;
+            int transfer = Mathf.Min(space, moveAmount);
 
-            if (fromAmt[fromIndex] <= 0)
-                fromList[fromIndex] = null;
+            to.Amount += transfer;
+            from.Amount -= transfer;
+
+            if (from.Amount <= 0)
+                from.Clear();
         }
 
         RefreshAllUI();
     }
 
-    List<ItemData> GetItemList(SlotType type)
+    List<ItemSlot> GetSlotList(SlotType type)
     {
         return type switch
         {
-            SlotType.Inventory => InventoryItems,
-            SlotType.Crafting => CraftingItems,
-            _ => null
-        };
-    }
-
-    List<int> GetAmountList(SlotType type)
-    {
-        return type switch
-        {
-            SlotType.Inventory => InventoryAmounts,
-            SlotType.Crafting => CraftingAmounts,
+            SlotType.Inventory => InventorySlots,
+            SlotType.Crafting => CraftingSlots,
             _ => null
         };
     }
@@ -112,90 +124,52 @@ public class InventoryManager
     {
         InventoryUI?.RefreshUI();
         CraftingBoxUI?.RefreshUI();
+        FoodBoxUI?.RefreshUI();
     }
 
     public void Craft()
     {
-        // 작업대에 있는 아이템 ID 리스트 추출
-        List<int> currentIngredients = new List<int>();
-        for (int i = 0; i < CraftingItems.Count; i++)
+        var current = new List<int>();
+
+        foreach (var slot in CraftingSlots)
         {
-            if (CraftingItems[i] == null)
-            {
-                Debug.Log("작업대에 빈칸 있음!");
-                return;
-            }
-            currentIngredients.Add(CraftingItems[i].id);
+            if (slot.Item == null) return;
+            current.Add(slot.Item.id);
         }
 
-        // 레시피 검사
-        RecipeData matchedRecipe = null;
+        RecipeData match = null;
         foreach (var recipe in Managers.Data.RecipeDict.Values)
         {
-            if (CheckRecipeMatch(recipe, currentIngredients))
+            if (CheckRecipe(recipe, current))
             {
-                matchedRecipe = recipe;
+                match = recipe;
                 break;
             }
         }
 
-        if (matchedRecipe == null)
+        if (match == null)
         {
             Debug.Log("레시피 불일치!");
             return;
         }
 
-        // 결과 아이템 생성
-        ResultItem = Managers.Data.ItemDict[matchedRecipe.resultId];
-        ResultAmount = matchedRecipe.resultAmount;
+        ResultSlot.Item = Managers.Data.ItemDict[match.resultId];
+        ResultSlot.Amount = match.resultAmount;
 
-        // 재료 소모
-        for (int i = 0; i < CraftingItems.Count; i++)
-        {
-            CraftingItems[i] = null;
-            CraftingAmounts[i] = 0;
-        }
+        foreach (var slot in CraftingSlots)
+            slot.Clear();
 
-        Debug.Log($"제작 성공: {ResultItem.name} x{ResultAmount}");
+        Debug.Log($"[제작 성공] {ResultSlot.Item.name} x{ResultSlot.Amount}");
         RefreshAllUI();
     }
 
-    private bool CheckRecipeMatch(RecipeData recipe, List<int> currentIngredients)
+    private bool CheckRecipe(RecipeData recipe, List<int> current)
     {
-        if (recipe.ingredients.Count != currentIngredients.Count)
-            return false;
-
-        // 같은 재료 개수 비교
-        Dictionary<int, int> recipeCount = new Dictionary<int, int>();
-        Dictionary<int, int> currentCount = new Dictionary<int, int>();
-
-        foreach (var id in recipe.ingredients)
+        if (recipe.ingredients.Count != current.Count) return false;
+        for (int i = 0; i < recipe.ingredients.Count; i++)
         {
-            if (!recipeCount.ContainsKey(id)) recipeCount[id] = 0;
-            recipeCount[id]++;
+            if (recipe.ingredients[i] != current[i]) return false;
         }
-
-        foreach (var id in currentIngredients)
-        {
-            if (!currentCount.ContainsKey(id)) currentCount[id] = 0;
-            currentCount[id]++;
-        }
-
-        if (recipeCount.Count != currentCount.Count) return false;
-
-        foreach (var kvp in recipeCount)
-        {
-            if (!currentCount.ContainsKey(kvp.Key) || currentCount[kvp.Key] != kvp.Value)
-                return false;
-        }
-
         return true;
     }
-
-    public void UnregisterCraftingBoxUI()
-    {
-        CraftingBoxUI = null;
-    }
 }
-
-

@@ -1,12 +1,14 @@
-using UnityEngine;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_CraftingBox : UI_Popup
+public class UI_FoodBox : UI_Popup
 {
     enum Buttons { CloseButton, CraftButton }
-    enum GameObjects { InventoryGrid, CraftingGrid, ResultSlot }
+    enum GameObjects { InventoryGrid, CraftingSlot_1, CraftingSlot_2, CraftingSlot_3, ResultSlot }
 
     List<UI_Slot> _inventorySlots = new();
     List<UI_Slot> _craftingSlots = new();
@@ -22,13 +24,15 @@ public class UI_CraftingBox : UI_Popup
         Bind<Button>(typeof(Buttons));
         Bind<GameObject>(typeof(GameObjects));
 
-        Managers.Inventory.RegisterCraftingBoxUI(this);
+        Managers.Inventory.RegisterFoodBoxUI(this);
 
         GetButton((int)Buttons.CloseButton).gameObject.BindEvent(OnClose);
-        GetButton((int)Buttons.CraftButton).gameObject.BindEvent((PointerEventData data) => { Managers.Inventory.Craft(); });
+        GetButton((int)Buttons.CraftButton).gameObject.BindEvent(OnCraft);
 
-        CreateSlots(GetObject((int)GameObjects.InventoryGrid), 8, SlotType.Inventory, _inventorySlots);
-        CreateSlots(GetObject((int)GameObjects.CraftingGrid), 4, SlotType.Crafting, _craftingSlots);
+        CreateSlots(GetObject((int)GameObjects.InventoryGrid),8, SlotType.Inventory, _inventorySlots);
+        CreateSlot(GetObject((int)GameObjects.CraftingSlot_1),0, SlotType.Crafting, _craftingSlots);
+        CreateSlot(GetObject((int)GameObjects.CraftingSlot_2),1, SlotType.Crafting, _craftingSlots);
+        CreateSlot(GetObject((int)GameObjects.CraftingSlot_3),2, SlotType.Crafting, _craftingSlots);
 
         var resultParent = GetObject((int)GameObjects.ResultSlot).transform;
         var go = Managers.Resource.Instantiate("UI/Slot", resultParent);
@@ -36,21 +40,32 @@ public class UI_CraftingBox : UI_Popup
         _resultSlot.SlotType = SlotType.Result;
         _resultSlot.Index = 0;
         _resultSlot.Init();
-
         RefreshUI();
+    }
+
+    private void OnCraft(PointerEventData data)
+    {
+        Managers.Inventory.Craft();
     }
 
     void CreateSlots(GameObject parent, int count, SlotType type, List<UI_Slot> list)
     {
-        for (int i = 0; i < count; i++)
-        {
-            GameObject go = Managers.Resource.Instantiate("UI/Slot", parent.transform);
-            var slot = go.GetComponent<UI_Slot>();
-            slot.SlotType = type;
-            slot.Index = i;
-            slot.Init();
-            list.Add(slot);
-        }
+        for (int i = 0; i < count; i++) list.Add(CreateSlot(parent, i, type));
+    }
+
+    UI_Slot CreateSlot(GameObject parent, int index, SlotType type)
+    {
+        GameObject go = Managers.Resource.Instantiate("UI/Slot", parent.transform);
+        var slot = go.GetComponent<UI_Slot>();
+        slot.SlotType = type;
+        slot.Index = index;
+        slot.Init();
+        return slot;
+    }
+
+    void CreateSlot(GameObject parent, int index, SlotType type, List<UI_Slot> list)
+    {
+        list.Add(CreateSlot(parent, index, type));
     }
 
     public void RefreshUI()
@@ -67,8 +82,7 @@ public class UI_CraftingBox : UI_Popup
     void OnClose(PointerEventData data)
     {
         Managers.Inventory.CraftingSlots.Clear();
-        Managers.Inventory.UnregisterCraftingBoxUI();
+        Managers.Inventory.UnregisterFoodBoxUI();
         Managers.UI.ClosePopupUI();
     }
-
 }
