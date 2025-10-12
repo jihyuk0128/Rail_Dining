@@ -29,6 +29,7 @@ public class UI_TutorialDialog : UI_Popup
 
     public override void Init()
     {
+        base.Init();
         Bind<Image>(typeof(Images));
         Bind<TextMeshProUGUI>(typeof(Texts));
 

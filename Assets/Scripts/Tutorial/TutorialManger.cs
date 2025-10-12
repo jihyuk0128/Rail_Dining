@@ -31,6 +31,7 @@ public class TutorialManager : MonoBehaviour
 
         // 종료 대화창 시작
         player?.SetEvent(true);
+        isDialogFinished = true;
         dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
         dialog.PlayDialogueRange(0, 1);
 
