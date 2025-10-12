@@ -10,7 +10,7 @@ public class CustomerSpawner : MonoBehaviour
     public float spawnInterval = 2f;    // 손님 생성 간격 (초)
 
     public int spawnedCount { get; private set; } = 0;
-public int SuccessCount { get; private set; } = 0;
+    public int SuccessCount { get; private set; } = 0;
 
     private bool isSpwaning = false;
 
@@ -28,9 +28,10 @@ public int SuccessCount { get; private set; } = 0;
 
     private IEnumerator SpawnCustomersRoutine()
     {
-        while (spawnedCount < spawnCount && isSpwaning)
+        while (spawnedCount < spawnCount)
         {
-            SpawnCustomer();
+            if(isSpwaning)
+                SpawnCustomer();
             yield return new WaitForSeconds(spawnInterval);
         }
     }

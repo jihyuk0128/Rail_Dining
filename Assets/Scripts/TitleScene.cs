@@ -11,17 +11,24 @@ public class TitleScene : MonoBehaviour
     [SerializeField] private GameObject NewGamePanel;
     [SerializeField] private GameObject ContinuePanel;
     [SerializeField] private GameObject InvitePanel;
+    [SerializeField] private GameObject loginPanel;
 
     [Header("Audio")]
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
 
+    [Header("Input")]
     public TMP_InputField inviteInputField;
+    public TMP_InputField LoginInputField;
+
+    public string playerName = null;
+    private bool isNewGame = true;
 
     private void Start()
     {
         // 입력창 이벤트 등록
         inviteInputField.onSubmit.AddListener(OnCodeSubmitted);
+        LoginInputField.onSubmit.AddListener(OnLoginSubmitted);
 
         // 사운드 슬라이더 이벤트 등록
         if (bgmSlider != null)
@@ -46,8 +53,16 @@ public class TitleScene : MonoBehaviour
     }
 
     // UI 버튼 이벤트들
-    public void OnStartGame() => NewGamePanel.SetActive(true);
-    public void OnContinue() => ContinuePanel.SetActive(true);
+    public void OnStartGame()
+    {
+        loginPanel.SetActive(true);
+        isNewGame = true;
+    }
+    public void OnContinue()
+    {
+        loginPanel.SetActive(true);
+        isNewGame = false;
+    }
     public void OnOpenSettings() => settingsPanel.SetActive(true);
 
     public void OnHost() => SceneManager.LoadScene("NetworkScene");
@@ -79,6 +94,7 @@ public class TitleScene : MonoBehaviour
         ContinuePanel.SetActive(false);
         settingsPanel.SetActive(false);
         InvitePanel.SetActive(false);
+        loginPanel.SetActive(false);
     }
 
     // 초대코드 입력 처리
@@ -102,6 +118,17 @@ public class TitleScene : MonoBehaviour
         }
     }
 
+    // 로그인 이름 입력받으면 호출되는 함수
+    private void OnLoginSubmitted(string code)
+    {
+        playerName = code;
+        LoginInputField.text = "";
+        loginPanel.SetActive(false);
+        if(isNewGame)
+            NewGamePanel.SetActive(true);
+        else
+            ContinuePanel.SetActive(true);
+    }
 
     private void OnBGMVolumeChanged(float value)
     {

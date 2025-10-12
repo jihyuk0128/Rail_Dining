@@ -2,17 +2,17 @@
   "dialogues": [
     {
       "id": 0,
-      "CharImg": "ex",
+      "CharImg": "Senior_Character_Portrait_standard",
       "CharDialogue": "대사 첫번째"
     },
     {
       "id": 1,
-      "CharImg": "ex",
+      "CharImg": "Senior_Character_Portrait_standard",
       "CharDialogue": "대사 두번째"
     },
     {
       "id": 2,
-      "CharImg": "ex",
+      "CharImg": "Senior_Character_Portrait_Laugh",
       "CharDialogue": "대사 세번째"
     }
   ]

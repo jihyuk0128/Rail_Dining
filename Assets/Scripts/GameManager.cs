@@ -56,8 +56,8 @@ public class GameManager : MonoBehaviour
         isPlaying = true;
 
         // 사운드
-        SoundManager.Instance?.PlaySFX("WorkStart_SFX");
         SoundManager.Instance?.PlayBGM("BackGround_BGM");
+        SoundManager.Instance?.PlaySFX("WorkStart_SFX");
 
         // 머니 초기화
         moneyManager?.ResetMoney();

@@ -23,9 +23,6 @@ public class UI_Settings : UI_Popup
     private GameObject settingPanel;
     private GameObject soundSettingPanel;
 
-    [Header("Audio Mixer")]
-    public AudioMixer audioMixer; // BGM, SFX 믹서 연결
-
     private void Awake()
     {
         Init();
@@ -58,11 +55,8 @@ public class UI_Settings : UI_Popup
         GetSlider((int)Sliders.SFXSlider).onValueChanged.AddListener(OnSFXVolumeChanged);
 
         // 초기 슬라이더값 로드
-        float bgmVolume, sfxVolume;
-        audioMixer.GetFloat("BGM", out bgmVolume);
-        audioMixer.GetFloat("SFX", out sfxVolume);
-        GetSlider((int)Sliders.BGMSlider).value = Mathf.Pow(10, bgmVolume / 20);
-        GetSlider((int)Sliders.SFXSlider).value = Mathf.Pow(10, sfxVolume / 20);
+        GetSlider((int)Sliders.BGMSlider).value = SoundManager.Instance.GetBGMVolume();
+        GetSlider((int)Sliders.SFXSlider).value = SoundManager.Instance.GetSFXVolume();
     }
 
     // ===== 버튼 이벤트 =====
