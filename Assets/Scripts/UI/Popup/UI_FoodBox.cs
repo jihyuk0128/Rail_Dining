@@ -46,6 +46,7 @@ public class UI_FoodBox : UI_Popup
     private void OnCraft(PointerEventData data)
     {
         Managers.Inventory.Craft();
+        SoundManager.Instance.PlaySFX("CookingFood_SFX");
     }
 
     void CreateSlots(GameObject parent, int count, SlotType type, List<UI_Slot> list)

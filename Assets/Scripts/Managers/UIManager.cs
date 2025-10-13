@@ -125,6 +125,11 @@ public class UIManager
             _dragIconImage = null;
         }
     }
+
+    public bool IsPopupOpen()
+    {
+        return _popupStack.Count > 0; // 팝업 UI가 하나라도 열려 있다면 true
+    }
 }
 
 

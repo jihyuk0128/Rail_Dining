@@ -158,7 +158,7 @@ public class InventoryManager
 
         foreach (var slot in CraftingSlots)
             slot.Clear();
-
+        SoundManager.Instance.PlaySFX("MakingCocktails_SFX");
         Debug.Log($"[제작 성공] {ResultSlot.Item.name} x{ResultSlot.Amount}");
         RefreshAllUI();
     }

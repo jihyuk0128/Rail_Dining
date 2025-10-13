@@ -63,6 +63,12 @@ public class PlayerInteraction : MonoBehaviour
                 if (ui != null)
                     ui.SetInteractionVisible(true);
             }
+            else if (currentTarget is TutorialNPC Npc)
+            {
+                var ui = Npc.GetComponentInChildren<CustomerOrderUI>();
+                if (ui != null)
+                    ui.SetInteractionVisible(true);
+            }
             else
             {
                 // 일반 오브젝트의 InteractionUI 표시
@@ -80,6 +86,12 @@ public class PlayerInteraction : MonoBehaviour
             if (currentTarget is Customer prevCustomer)
             {
                 var ui = prevCustomer.GetComponentInChildren<CustomerOrderUI>();
+                if (ui != null)
+                    ui.SetInteractionVisible(false);
+            }
+            else if (currentTarget is TutorialNPC prevNpc)
+            {
+                var ui = prevNpc.GetComponentInChildren<CustomerOrderUI>();
                 if (ui != null)
                     ui.SetInteractionVisible(false);
             }

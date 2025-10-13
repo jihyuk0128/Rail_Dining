@@ -36,7 +36,7 @@ public class TrainEventManager : MonoBehaviour
                 trainShaker.TrainShake();
             }
             // 50% 확률로 이벤트 발생
-            if (Random.value < 0.5f)
+            if (Random.value < 0.5f && !Managers.UI.IsPopupOpen())
             {
                 // 중첩 방지
                 if (!isEventActive)

@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 
     [Header("게임 설정")]
     [Tooltip("영업 플레이 시간 (초 단위)")]
+    public float ReadyTime = 30f;
     public float playTime = 60f; // 에디터에서 자유롭게 수정 가능
 
     [Header("매니저 참조")]
@@ -55,8 +56,18 @@ public class GameManager : MonoBehaviour
         Debug.Log($"=== Day {currentDay} Start ===");
         isPlaying = true;
 
-        // 사운드
+        // bgm 시작과 같이
         SoundManager.Instance?.PlayBGM("BackGround_BGM");
+
+        // 영업 준비 시간
+        float timer = ReadyTime;
+        while (timer > 0f)
+        {
+            timer -= Time.deltaTime;
+            yield return null;
+        }
+
+        // 시작 사운드 사운드
         SoundManager.Instance?.PlaySFX("WorkStart_SFX");
 
         // 머니 초기화
@@ -106,6 +117,25 @@ public class GameManager : MonoBehaviour
         //currentDay++;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         resultClosed = true;
+    }
+
+    public void RestartGame()
+    {
+        Debug.Log("게임 재시작!");
+
+        StopAllCoroutines();      // 기존 루프 중단
+        resultClosed = false;
+        isPlaying = false;
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        StartCoroutine(RestartRoutine());
+    }
+
+    private IEnumerator RestartRoutine()
+    {
+        // 씬이 완전히 로드된 후 다시 루프 시작
+        yield return new WaitForSeconds(0.1f);
+        StartCoroutine(GameLoop());
     }
 
     public bool IsPlaying() => isPlaying;

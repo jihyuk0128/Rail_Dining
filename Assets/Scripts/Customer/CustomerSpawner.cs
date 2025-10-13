@@ -59,7 +59,11 @@ public class CustomerSpawner : MonoBehaviour
         SuccessCount++;
         Debug.Log(SuccessCount);
     }
-
+    public void ReStart()
+    {
+        spawnedCount = 0;
+        SuccessCount = 0;
+    }
     public void StartSpawning() => isSpwaning = true;
     public void StopSpawning() => isSpwaning = false;
 }

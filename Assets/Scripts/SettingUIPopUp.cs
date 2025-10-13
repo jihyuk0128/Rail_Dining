@@ -10,6 +10,9 @@ public class SettingUIPopUp : MonoBehaviour
         Managers.Inventory.Init(8, 4);  //  먼저!
         // 기본 UI 띄우기
         Managers.UI.ShowSceneUI<UI_BasicScene>();   // 항상 켜지는 인벤토리
+
+        Managers.Inventory.AddItemToInventory(1, 5);  // Egg 5개
+        Managers.Inventory.AddItemToInventory(1, 20);  // Egg 5개
     }
 
     private void Update()

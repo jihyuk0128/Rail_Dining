@@ -69,7 +69,7 @@ public class UI_Settings : UI_Popup
     private void OnRestart()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        GameManager.Instance.RestartGame();
     }
 
     private void OnMain()

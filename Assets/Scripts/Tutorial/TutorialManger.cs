@@ -19,7 +19,7 @@ public class TutorialManager : MonoBehaviour
     {
         // 튜토리얼 대화창 시작
         UI_TutorialDialog dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
-        dialog.PlayDialogueRange(0,2);
+        dialog.PlayDialogueRange(0,7);
 
         // 대화가 끝날 때까지 대기
         yield return new WaitUntil(() => isDialogFinished);
@@ -33,7 +33,7 @@ public class TutorialManager : MonoBehaviour
         player?.SetEvent(true);
         isDialogFinished = true;
         dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
-        dialog.PlayDialogueRange(0, 1);
+        dialog.PlayDialogueRange(8, 10);
 
         // 대화가 끝날 때까지 대기
         yield return new WaitUntil(() => isDialogFinished);

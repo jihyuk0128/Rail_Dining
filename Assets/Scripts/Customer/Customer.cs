@@ -18,8 +18,7 @@ public class Customer : MonoBehaviour, IInteractable
     [Header("상태 체크용")]
     public CustomerState state;
     public Seat targetSeat;
-    public string orderMenu;     // 주문 메뉴 
-    //public ItemData orderMenu;
+    public ItemData orderMenu;     // 주문 메뉴 
     public float waitTime = 30f; // 음료 대기 시간 
 
     private Coroutine waitCoroutine;
@@ -89,9 +88,10 @@ public class Customer : MonoBehaviour, IInteractable
         if (state == CustomerState.WaitingForOrder)
         {
             state = CustomerState.WaitingForDrink;
-            orderMenu = "임시값(메뉴아이디 들어갈 예정)";
-            Debug.Log($"손님이 {orderMenu} 를 주문했습니다!");
-            orderUI.ShowOrder(null , 0, 1);
+            int ItemID = 1;
+            orderMenu = Managers.Data.ItemDict[ItemID];
+            Debug.Log($"손님이 {orderMenu.name} 를 주문했습니다!");
+            orderUI.ShowOrder(orderMenu, 0, 1);
             waitCoroutine = StartCoroutine(WaitForDrink()); 
         }
     }
@@ -108,12 +108,15 @@ public class Customer : MonoBehaviour, IInteractable
     }
     
 
-    public void ServeDrink(string menu)
+    public void ServeDrink(ItemData menu)
     {
-        if (state == CustomerState.WaitingForDrink && menu == orderMenu)
+        if (state == CustomerState.WaitingForDrink && menu.id == orderMenu.id)
         {
+
             Debug.Log("손님이 음료를 받고 돈을 지불합니다.");
             //MoneyManager.Instance.AddMoney(price);
+            //인벤토리에서 현재 가리키고 있는 아이템을 지우기?
+            
             CustomerSpawner spawner = transform.parent?.GetComponent<CustomerSpawner>();
             if (spawner != null)
             {
@@ -200,7 +203,7 @@ public class Customer : MonoBehaviour, IInteractable
         else if(state == CustomerState.WaitingForDrink)
         {
             string menu = player.GetComponent<PlayerState>().CocktailName;           
-            ServeDrink("임시값(메뉴아이디 들어갈 예정)"); // ServeDrink(menu);
+            ServeDrink(orderMenu); // ServeDrink(menu); player.currentItem 이런거? 플레이어가 현재 가리키는 아이템 데이터 넘기기
         }
     }
 
