@@ -13,6 +13,7 @@ public class Define
     public const int UDP_PORT = 8888;
     public const int TCP_PORT = 7777;
     public const int MAX_ROOM_PLAYER = 2;
+    public const int UDP_GAME_PORT = 7778;
 
     // ================================
     //  클라이언트 → 서버
@@ -52,4 +53,15 @@ public class Define
         PLAYER_LEFT,
         GAME_START,
     }
+    // ================================
+    //  UDP 이동 관련 패킷
+    // ================================
+    public enum UdpPacket
+    {
+        PLAYER_MOVE = 500,
+        PLAYER_MOVE_BROADCAST = 501,
+        PLAYER_STATE = 510,
+        PLAYER_STATE_BROADCAST = 511,
+    }
+
 }

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NetworkManager
@@ -15,6 +16,17 @@ public class NetworkManager
     public ClientPlayer player { get; private set; }
     public RoomData roomData { get; private set; }
 
+    // udp 
+    private UdpGameServer _udpGame;
+    public UdpGameServer UdpGame => _udpGame;
+
+    public Vector3? pendingSpawnPos = null;
+
+    public void InitUdp(string ip)
+    {
+        _udpGame = new UdpGameServer();
+        _udpGame.Start(ip, Define.UDP_GAME_PORT);
+    }
 
     // 이벤트 (다른 매니저가 구독 가능)
     public event Action<string> OnLoginSuccess;
@@ -25,6 +37,8 @@ public class NetworkManager
     public event Action<string> OnChatReceived;
     public event Action OnGameStart;
     public event Action<string> OnError;
+
+
 
     // ===================================================
     // 로그인: 연결 + 패킷 전송 + 내부 상태처리 한 번에
@@ -275,15 +289,26 @@ public class NetworkManager
                     //    Managers.UI.UpdateRoomPlayerList(roomData.Players);
                     //});
                     break;
-                    break;
+                 
 
                 case Define.StoC_Event.GAME_START:
-                    Debug.Log("[Event] 게임 시작 신호 수신");
-                    UnityMainThreadDispatcher.Instance?.Enqueue(() =>
                     {
+
+                        Debug.Log("[Event] 게임 시작 신호 수신");
+
+                        float x = reader.ReadFloat();
+                        float y = reader.ReadFloat();
+                        float z = reader.ReadFloat();
+                        // --- 스폰 위치 적용 ---
+                        Managers.Network.pendingSpawnPos = new Vector3(x, y, z);
+
+                        // UDP 연결 (UDP 게임 서버 시작)
+                        InitUdp(ConnectedIp);
+
+
                         OnGameStart?.Invoke();
-                    });
-                    break;
+                        break;
+                    }
             }
 
         }

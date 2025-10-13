@@ -65,12 +65,24 @@ public class UnityMainThreadDispatcher : MonoBehaviour
 
     private void Update()
     {
+
         lock (_executionQueue)
         {
             while (_executionQueue.Count > 0)
             {
                 var action = _executionQueue.Dequeue();
-                action?.Invoke();
+                try
+                {
+                    action?.Invoke();
+                }
+                catch (MissingReferenceException)
+                {
+                    Debug.LogWarning("[Dispatcher] 대상 오브젝트가 이미 파괴됨 → 스킵");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[Dispatcher] 실행 중 예외: {e.Message}");
+                }
             }
         }
     }

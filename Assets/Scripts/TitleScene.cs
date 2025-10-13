@@ -41,6 +41,12 @@ public class TitleScene : MonoBehaviour
         sfxSlider.value = SoundManager.Instance.GetSFXVolume();
 
         SoundManager.Instance?.PlayBGM("BackGround_BGM");
+
+        // 네트워크용 이벤트 키 받아오기
+        Managers.Network.OnLoginSuccess += OnLoginNetwork;
+        Managers.Network.OnRoomCreate += OnHostNetwork;
+        Managers.Network.OnRoomJoin += OnRoomJoin;
+
     }
 
     private void Update()
@@ -65,10 +71,24 @@ public class TitleScene : MonoBehaviour
     }
     public void OnOpenSettings() => settingsPanel.SetActive(true);
 
-    public void OnHost() => SceneManager.LoadScene("NetworkScene");
+    public void OnHost() { Managers.Network.CreateRoom(); }
+    
+    private void OnHostNetwork(int roomid) 
+    { 
+        Managers.Network.JoinRoom(roomid);
+    }
 
+    private void OnRoomJoin(int roomid) 
+    {
+        Managers.MainThread.Enqueue(() =>
+        {
+            SceneManager.LoadScene("NetworkScene");
+        });
+    }
+    
     public void OnGuest()
     {
+        // 방참가. 
         NewGamePanel.SetActive(false);
         ContinuePanel.SetActive(false);
         InvitePanel.SetActive(true);
@@ -97,13 +117,14 @@ public class TitleScene : MonoBehaviour
         loginPanel.SetActive(false);
     }
 
-    // 초대코드 입력 처리
+    // 초대코드 입력 처리 
     private void OnCodeSubmitted(string code)
     {
         Debug.Log($"입력된 초대 코드: {code}");
-        ProcessInviteCode(code);
+        Managers.Network.JoinRoom(int.Parse(code));
         inviteInputField.text = "";
     }
+
 
     private void ProcessInviteCode(string code)
     {
@@ -122,12 +143,24 @@ public class TitleScene : MonoBehaviour
     private void OnLoginSubmitted(string code)
     {
         playerName = code;
+        Managers.Network.Login(code);
         LoginInputField.text = "";
-        loginPanel.SetActive(false);
-        if(isNewGame)
-            NewGamePanel.SetActive(true);
-        else
-            ContinuePanel.SetActive(true);
+    }
+
+    // 로그인 되었는지 확인하는함수 되었다면 다음화면진행
+    private void OnLoginNetwork(string username)
+    {
+        // 메인 스레드에서 실행되도록 던지기
+        Managers.MainThread.Enqueue(() =>
+        {
+            playerName = username;
+            loginPanel.SetActive(false);
+
+            if (isNewGame)
+                NewGamePanel.SetActive(true);
+            else
+                ContinuePanel.SetActive(true);
+        });
     }
 
     private void OnBGMVolumeChanged(float value)

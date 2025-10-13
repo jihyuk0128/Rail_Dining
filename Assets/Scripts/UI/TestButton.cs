@@ -10,7 +10,8 @@ public class TestButton : UI_Popup
 
     enum Buttons
     {
-        TestButton
+        TestButton,
+        TestButton2
     }
 
     private void Start()
@@ -25,6 +26,7 @@ public class TestButton : UI_Popup
 
 
         GetButton((int)Buttons.TestButton).gameObject.BindEvent(OnButtonClicked1);
+        GetButton((int)Buttons.TestButton2).gameObject.BindEvent(OnButtonClicked2);
 
 
     }
@@ -32,8 +34,16 @@ public class TestButton : UI_Popup
 
     public void OnButtonClicked1(PointerEventData data)
     {
-        Managers.UI.ShowPopupUI<UI_Chest>();  // ÀÛ¾÷´ë UI
-        Managers.Inventory.AddItemToChest(1);
+        Managers.Network.Login("TEST");
+        Managers.Network.CreateRoom();
+        Managers.Network.JoinRoom(1);
+        Managers.Network.StartGame();
+
+   
     }
 
+    public void OnButtonClicked2(PointerEventData data)
+    {
+       
+    }
 }

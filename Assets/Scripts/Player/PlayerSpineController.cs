@@ -22,7 +22,6 @@ public class PlayerSpineController : MonoBehaviour
     public Vector3 spineOffset = Vector3.zero; // 발밑 기준 보정
 
     private SkeletonAnimation activeSpine; // 현재 활성화 Spine
-    private bool facingRight = true;
 
     private PlayerAnimState currentState = PlayerAnimState.Idle; // 현재 상태
 
@@ -77,9 +76,6 @@ public class PlayerSpineController : MonoBehaviour
     // 좌우반전
     void FlipPivot(bool faceRight)
     {
-        if (facingRight == faceRight) return;
-
-        facingRight = faceRight;
         Vector3 scale = spinePivot.localScale;
         scale.x = faceRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
         spinePivot.localScale = scale;
@@ -132,4 +128,5 @@ public class PlayerSpineController : MonoBehaviour
     {
         ChangeAnimation(PlayerAnimState.Falling);
     }
+
 }

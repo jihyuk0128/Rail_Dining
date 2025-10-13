@@ -1,4 +1,3 @@
-using JetBrains.Rider.Unity.Editor;
 using UnityEngine;
 
 public enum TutorialState

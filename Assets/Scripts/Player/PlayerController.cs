@@ -17,9 +17,22 @@ public class PlayerController : MonoBehaviour
     public bool IsFall { get; private set; } = false; // 넘어짐 체크 
     public bool isEventActive { get; private set; } = false;
 
+    // udp
+    private float udpSendTimer = 0f;
+    private float udpSendInterval = 0.05f; // 20Hz 전송
+    private Vector3 _lastSentPos;
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        if (Managers.Network.pendingSpawnPos.HasValue)
+        {
+            transform.position = Managers.Network.pendingSpawnPos.Value;
+            Debug.Log($"[PlayerSpawn] 대기 중이던 스폰 위치 적용: {transform.position}");
+            Managers.Network.pendingSpawnPos = null; // 한 번 적용 후 초기화
+        }
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -63,11 +76,41 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (IsFall || isEventActive) return;
+        if(IsFall || isEventActive) return;
 
         float currentSpeed = IsRunning ? runSpeed : moveSpeed;
         Vector2 movement = moveInput.normalized * currentSpeed;
-        rb.MovePosition(rb.position + movement * Time.fixedDeltaTime); 
+        rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+
+        // === UDP 이동 패킷 전송 (주기 제어) ===
+        if (Managers.Network.UdpGame == null)
+            return;
+
+
+        udpSendTimer += Time.fixedDeltaTime;
+        if (udpSendTimer >= udpSendInterval) // 0.05초마다 한 번만
+        {
+            udpSendTimer = 0f;
+
+            float dist = Vector3.Distance(transform.position, _lastSentPos);
+            if (dist > 0.01f) // 최소 이동 거리 조건
+            {
+                Managers.Network.UdpGame.SendPlayerMove(
+                    Managers.Network.player.Username,
+                    new Vector3(transform.position.x, transform.position.y, 0f)
+                );
+
+                _lastSentPos = transform.position;
+                Managers.Network.UdpGame.SendPlayerState(
+                Managers.Network.player.Username,
+                moveInput,
+                IsRunning,
+                IsFall
+                );
+
+                _lastSentPos = transform.position;
+            }
+        }
     }
 
     public void SetFall(float duration)

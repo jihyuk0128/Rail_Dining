@@ -19,6 +19,8 @@ public class NetworkScene : MonoBehaviour
 
     private bool isMale = true;
 
+    
+
     private void Start()
     {
         // 버튼 이벤트 등록
@@ -29,17 +31,29 @@ public class NetworkScene : MonoBehaviour
         // 초기 이미지 설정 (예: Player1 = 남, Player2 = 여)
         player1Image.sprite = maleSprite;
         player2Image.sprite = femaleSprite;
+
+        // 네트워크 이벤트 등록
+        Managers.Network.OnGameStart += OnStartGameNetwork;
     }
 
     // 업무시작버튼
     private void OnStartGame()
     {
-        SceneManager.LoadScene("TutorialScene");
+        Managers.Network.StartGame();
+    }
+
+    private void OnStartGameNetwork()
+    {
+        Managers.MainThread.Enqueue(() =>
+        {
+            SceneManager.LoadScene("TutorialScene");
+        });
     }
 
     //나가기버튼
     private void OnExit()
     {
+        Managers.Network.LeaveRoom();
         SceneManager.LoadScene("TitleScene");
     }
     // 캐릭터 교체버튼

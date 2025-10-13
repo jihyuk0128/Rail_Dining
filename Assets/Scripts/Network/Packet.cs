@@ -13,13 +13,14 @@ public class PacketWriter : IDisposable
     }
 
     public void WriteInt(int value) => _writer.Write(value);
-
     public void WriteString(string value)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(value);
         _writer.Write(bytes.Length);
         _writer.Write(bytes);
     }
+    public void WriteFloat(float value) => _writer.Write(value);
+    public void WriteBool(bool value) => _writer.Write(value);
 
     public byte[] ToArrayWithLengthPrefix()
     {
@@ -33,6 +34,7 @@ public class PacketWriter : IDisposable
         }
     }
 
+    public byte[] ToArray() => _stream.ToArray();
     public void Dispose() => _stream.Dispose();
 }
 
@@ -45,7 +47,8 @@ public class PacketReader : IDisposable
     }
 
     public int ReadInt() => _reader.ReadInt32();
-
+    public float ReadFloat() => _reader.ReadSingle();
+    public bool ReadBool() => _reader.ReadBoolean();
     public string ReadString()
     {
         int len = _reader.ReadInt32();
