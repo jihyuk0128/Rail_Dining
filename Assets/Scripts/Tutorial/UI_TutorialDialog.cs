@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UI_TutorialDialog : UI_Popup
@@ -55,7 +56,7 @@ public class UI_TutorialDialog : UI_Popup
             var dialogue = Managers.Data.DialogueDict[i];
             Get<Image>((int)Images.CharacterImage).sprite = Managers.Resource.Load<Sprite>($"Art/UI/Tutorial/{dialogue.CharImg}");
             Get<TextMeshProUGUI>((int)Texts.DialogueText).text = dialogue.CharDialogue;
-            yield return new WaitWhile(() => Input.anyKey);
+            yield return new WaitWhile(() => Input.anyKey );
             yield return new WaitUntil(() => Input.anyKeyDown);
         }
         EndDialogue();

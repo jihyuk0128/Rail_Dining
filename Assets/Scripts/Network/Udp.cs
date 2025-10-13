@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class Udp
 {
-    private const int BROADCAST_PORT = 8888;
     private const int TIMEOUT_MS = 3000; // 3초 대기
 
     public static (string ip, int port)? FindServer()
@@ -19,7 +18,7 @@ public class Udp
                 udp.Client.ReceiveTimeout = TIMEOUT_MS;
 
                 byte[] sendData = Encoding.UTF8.GetBytes("DISCOVER_SERVER");
-                IPEndPoint broadcastEP = new IPEndPoint(IPAddress.Broadcast, BROADCAST_PORT);
+                IPEndPoint broadcastEP = new IPEndPoint(IPAddress.Broadcast, Define.UDP_PORT);
 
                 // 서버 찾기 신호 송신
                 udp.Send(sendData, sendData.Length, broadcastEP);

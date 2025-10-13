@@ -10,27 +10,46 @@ public class Define
         EndDrag
     }
 
-    public enum Protocol
+    public const int UDP_PORT = 8888;
+    public const int TCP_PORT = 7777;
+    public const int MAX_ROOM_PLAYER = 2;
+
+    // ================================
+    //  클라이언트 → 서버
+    // ================================
+    public enum CtoS
     {
-        None = 0,
-        Login = 1,
-        CreateRoom = 2,
-        JoinRoom = 3,
-        Chat = 4,
-        GetRoomList = 5,
-        LeaveRoom = 6,
-        StartGame = 7,
-        Event = 8,
-        RoomInfo = 9,
+        LOGIN = 1,
+        CREATE_ROOM,
+        JOIN_ROOM,
+        LEAVE_ROOM,
+        CHAT,
+        START_GAME,
     }
 
-    public enum ServerEvent
+    // ================================
+    //  서버 → 클라이언트 응답
+    // ================================
+    public enum StoC_Response
     {
-        None = 0,
-        PlayerJoined = 1,
-        PlayerLeft = 2,
-        HostLeft = 3,
-        RoomClosed = 4,
-        GameStarted = 5,
+        LOGIN_OK = 100,
+        ROOM_CEATE_OK,
+        ROOM_JOIN_OK,
+        ROOM_JOIN_FAIL,
+        ROOM_LEAVE_OK,
+        HOST_ASSIGNED,
+        ACTION_DENIED,
+
+    }
+
+    // ================================
+    //  서버 → 클라이언트 이벤트
+    // ================================
+    public enum StoC_Event
+    {
+        BROADCAST_CHAT = 200,
+        PLAYER_JOINED,
+        PLAYER_LEFT,
+        GAME_START,
     }
 }

@@ -9,7 +9,7 @@ public class Managers : MonoBehaviour
     UIManager _ui = new();
     DataManager _data = new();
     InventoryManager _inventory = new();
-    NetworkManager _network = NetworkManager.Instance;
+    NetworkManager _network = new();
 
     public static ResourceManager Resource => Instance._resource;
     public static UIManager UI => Instance._ui;
@@ -30,6 +30,7 @@ public class Managers : MonoBehaviour
         {
             go = new GameObject("@Managers");
             go.AddComponent<Managers>();
+            go.AddComponent<UnityMainThreadDispatcher>();
         }
 
         DontDestroyOnLoad(go);
@@ -39,4 +40,6 @@ public class Managers : MonoBehaviour
     }
 
     public static void Clear() { }
+
+
 }

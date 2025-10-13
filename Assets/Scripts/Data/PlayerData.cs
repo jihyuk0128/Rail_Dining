@@ -1,14 +1,13 @@
 using UnityEngine;
 
-public class PlayerData 
+public class ClientPlayer
 {
-    public string Username { get; private set; }
-    public int Gender { get ; private set; }
+    public string Username { get; set; }
+    public int CurrentRoomId { get; set; } = -1;
+    public bool IsHost { get; set; }
 
-    public PlayerData(string username, int gender)
+    public ClientPlayer(string name)
     {
-        Username = username;
-        Gender = gender;
-
+        Username = name;
     }
 }

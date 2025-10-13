@@ -31,6 +31,8 @@ public class TutorialNPC : MonoBehaviour, IInteractable
 
     public void Interact(GameObject player)
     {
+        Managers.UI.ShowPopupUI<UI_CraftingBox>();
+
         if (!canInteract || IsServed) return;
         if(State == TutorialState.WaitingForOrder)
         {
