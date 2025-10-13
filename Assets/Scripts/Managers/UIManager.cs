@@ -23,13 +23,13 @@ public class UIManager
             return root;
         }
     }
-    public void SetCanvas(GameObject go, bool sort =true)
+    public void SetCanvas(GameObject go, bool sort = true)
     {
         Canvas canvas = Utils.GetOrAddComponent<Canvas>(go);
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.overrideSorting = true;
 
-        if(sort)
+        if (sort)
         {
             canvas.sortingOrder = _sortorder;
             _sortorder++;

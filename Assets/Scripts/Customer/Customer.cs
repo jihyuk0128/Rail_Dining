@@ -44,7 +44,7 @@ public class Customer : MonoBehaviour, IInteractable
         StartCoroutine(CustomerRoutine());
     }
 
-    private IEnumerator CustomerRoutine()
+    private IEnumerator CustomerRoutine() // 서버에서 
     {
         // 1. 등장
         state = CustomerState.Entering;

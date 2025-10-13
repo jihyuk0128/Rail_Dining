@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using TMPro;                
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine.EventSystems;
 public class UI_Button : UI_Popup
 {
@@ -16,6 +14,10 @@ public class UI_Button : UI_Popup
     enum Buttons
     {
         PointButton,
+        PointButton2,
+        PointButton3,
+        PointButton4,
+        PointButton5,
     }
 
     enum Texts
@@ -41,6 +43,8 @@ public class UI_Button : UI_Popup
     private void Start()
     {
         Init();
+        Managers.Network.OnRoomCreate += test;
+        Managers.Network.OnHostAssigned += test2;
     }
 
     public override void Init()
@@ -53,21 +57,57 @@ public class UI_Button : UI_Popup
         Bind<Image>(typeof(Images));
 
 
-        GetButton((int)Buttons.PointButton).gameObject.BindEvent(OnButtonClicked);
+        GetButton((int)Buttons.PointButton).gameObject.BindEvent(OnButtonClicked1);
+        GetButton((int)Buttons.PointButton2).gameObject.BindEvent(OnButtonClicked2);
+        GetButton((int)Buttons.PointButton3).gameObject.BindEvent(OnButtonClicked3);
+        GetButton((int)Buttons.PointButton4).gameObject.BindEvent((PointerEventData data) => { Managers.Network.LeaveRoom(); });
+        GetButton((int)Buttons.PointButton5).gameObject.BindEvent((PointerEventData data) => { Managers.Network.JoinRoom(1); });
 
-        GameObject go = GetImage((int)Images.ItemIcon).gameObject;
-        BindEvent(go, (PointerEventData data) => { go.transform.position = data.position; }, Define.UIEvent.Drag);
+
     }
 
     int _score = 0;
 
 
-    public void OnButtonClicked(PointerEventData data)
+    public void OnButtonClicked1(PointerEventData data)
     {
         Debug.Log("ButtonClicked");
 
-        _score++;
-        GetTextMeshProUGUI((int)TextMeshProUGUIS.ScoreText).text = $"score : {_score}";
-        Managers.Network.Connect();
+        Managers.Network.Login("h231");
     }
+
+    public void test2 (string msg)
+    {
+        Debug.Log(msg);
+    }
+    public void test (int roomid)
+    {
+        Managers.Network.JoinRoom(roomid);
+        
+    }
+
+    public void OnButtonClicked2(PointerEventData data)
+    {
+        Debug.Log("ButtonClicked2");
+
+        Managers.Network.CreateRoom();
+
+        //if (Managers.Network.IsConnected)
+        //{
+        //    Managers.Network.CreateRoom();// 結持失
+        //}
+    }
+
+    public void OnButtonClicked3(PointerEventData data)
+    {
+        Debug.Log("ButtonClicked3");
+
+        Managers.Network.StartGame();
+
+        //if (Managers.Network.IsConnected)
+        //{
+        //    Managers.Network.CreateRoom();// 結持失
+        //}
+    }
+
 }

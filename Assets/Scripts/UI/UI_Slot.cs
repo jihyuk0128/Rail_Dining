@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class UI_Slot : UI_Base
 {
@@ -27,6 +26,11 @@ public class UI_Slot : UI_Base
         parentCanvas = GetComponentInParent<Canvas>();
         if (parentCanvas == null)
             Debug.LogWarning("[UI_Slot] 부모 Canvas를 찾을 수 없음!");
+
+        //if (SlotType == SlotType.Chest)
+        //{
+        //    GetObject((int)Texts.AmountText).SetActive(false);
+        //}
     }
 
     public void SetData(ItemSlot data)
@@ -51,11 +55,18 @@ public class UI_Slot : UI_Base
             icon.sprite = Resources.Load<Sprite>(slotData.Item.iconPath);
             amountText.text = slotData.Amount > 1 ? slotData.Amount.ToString() : "";
         }
+
+       if(SlotType.Chest == SlotType)
+        {
+            amountText.text = "";
+        }
     }
 
     // 드래그 시작
     void OnBeginDrag(PointerEventData data)
     {
+        if (SlotType.Chest == SlotType || SlotType.Result == SlotType) return;
+
         if (slotData == null || slotData.Item == null) return;
 
         Managers.UI.ShowDragIcon(slotData.Item.iconPath, parentCanvas);
@@ -66,12 +77,14 @@ public class UI_Slot : UI_Base
     // 드래그 중
     void OnDrag(PointerEventData data)
     {
+        if (SlotType.Chest == SlotType || SlotType.Result == SlotType) return;
         Managers.UI.UpdateDragIcon(data.position);
     }
 
     // 드래그 끝
     void OnEndDrag(PointerEventData data)
     {
+        if (SlotType.Chest == SlotType || SlotType.Result == SlotType) return;
         Managers.UI.HideDragIcon();
         var results = new System.Collections.Generic.List<RaycastResult>();
         EventSystem.current.RaycastAll(data, results);
@@ -102,7 +115,7 @@ public class UI_Slot : UI_Base
         Debug.Log($"{SlotType}타입 {Index}선택됨");
 
         // 인벤토리에 추가
-        if (SlotType == SlotType.Result)
+        if (SlotType == SlotType.Result)    
         {
             var result = Managers.Inventory.ResultSlot;
 
@@ -118,12 +131,32 @@ public class UI_Slot : UI_Base
 
                 // UI 갱신
                 Managers.Inventory.RefreshAllUI();
-            }
-            else
-            {
-                Debug.Log("결과 슬롯이 비어 있음.");
+                return;
             }
         }
+
+        if (SlotType == SlotType.Chest)
+        {
+            var chest = Managers.Inventory.ChestSlots[Index];
+
+            if (chest != null && chest.Item != null && chest.Amount > 0)
+            {
+                Debug.Log($"[결과 수령] {chest.Item.name} x 1");
+
+                // 인벤토리에 추가
+                Managers.Inventory.AddItemToInventory(chest.Item.id, 1);
+
+                // 갯수추가
+                chest.Amount++;
+
+                // UI 갱신
+                Managers.Inventory.RefreshAllUI();
+            }
+
+        }
+
+    
+        return;
     }
 }
 

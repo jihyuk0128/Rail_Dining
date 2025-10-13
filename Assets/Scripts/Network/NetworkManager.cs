@@ -1,194 +1,291 @@
 using System;
+using System.IO;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Threading;
 using UnityEngine;
 
 public class NetworkManager
 {
-    private static NetworkManager _instance;
-    public static NetworkManager Instance => _instance ??= new NetworkManager();
+    private TcpClient _tcp;
+    private NetworkStream _stream;
+    private byte[] _recvBuffer = new byte[4096];
+    public bool IsConnected => _tcp != null && _tcp.Connected;
 
-    // 내부 네트워크 필드
-    private TcpClient client;
-    private NetworkStream stream;
-    private Thread recvThread;
+    public string ConnectedIp { get; private set; }
+    public ClientPlayer player { get; private set; }
+    public RoomData roomData { get; private set; }
 
-    // 로그 이벤트 (UIManager나 Console 연결용)
-    public event Action<string> OnLog;
 
-    // 외부 생성 금지
-    private NetworkManager()
-    {
-        Log("클라이언트 매니저 생성 완료");
-    }
+    // 이벤트 (다른 매니저가 구독 가능)
+    public event Action<string> OnLoginSuccess;
+    public event Action<int> OnRoomCreate;
+    public event Action<int> OnRoomJoin;
+    public event Action<string> OnRoomLeave;
+    public event Action<string> OnHostAssigned;
+    public event Action<string> OnChatReceived;
+    public event Action OnGameStart;
+    public event Action<string> OnError;
 
-    // 서버 연결 (자동 탐색)
-    public void Connect()
-    {
-        var serverInfo = Udp.FindServer();
-        if (serverInfo == null)
-        {
-            Log("같은 네트워크에서 서버를 찾을 수 없습니다.");
-            return ;
-        }
-
-        string ip = serverInfo.Value.ip;
-        int port = serverInfo.Value.port;
-
-        try
-        {
-            client = new TcpClient();
-            client.Connect(ip, port);
-            stream = client.GetStream();
-
-            Log($"서버 연결 성공 ({ip}:{port})");
-
-            SendPacket((int)Define.Protocol.Login, pw => pw.WriteString("지혁"));
-            recvThread = new Thread(ReceiveLoop);
-            recvThread.Start();
-        }
-        catch (Exception ex)
-        {
-            Log($"서버 연결 실패: {ex.Message}");
-            return ;
-        }
-
-        return;
-    }
-
-    // 방 생성
-    public void CreateRoom()
-    {
-        SendPacket((int)Define.Protocol.CreateRoom);
-        Log("방 생성 요청 전송");
-    }
-
-    // 방 입장
-    public void JoinRoom(int roomId = 1)
-    {
-        SendPacket((int)Define.Protocol.JoinRoom, pw => pw.WriteInt(roomId));
-        Log($"방 입장 요청 (RoomId={roomId})");
-    }
-
-    // 패킷 전송
-    private void SendPacket(int protocol, Action<PacketWriter> body = null)
-    {
-        if (stream == null)
-        {
-            Log("서버에 연결되어 있지 않습니다.");
-            return;
-        }
-
-        using (var pw = new PacketWriter())
-        {
-            pw.WriteInt(protocol);
-            body?.Invoke(pw);
-            byte[] data = pw.ToArrayWithLengthPrefix();
-            stream.Write(data, 0, data.Length);
-        }
-    }
-
-    // 수신 루프 (스레드)
-    private void ReceiveLoop()
+    // ===================================================
+    // 로그인: 연결 + 패킷 전송 + 내부 상태처리 한 번에
+    // ===================================================
+    public async void Login(string name)
     {
         try
         {
-            byte[] buffer = new byte[4096];
-            while (true)
+            if (!IsConnected)
             {
-                int read = stream.Read(buffer, 0, buffer.Length);
-                if (read == 0) break;
+                var server = Udp.FindServer();
+                if (server == null)
+                {
+                    OnError?.Invoke("[UDP] 서버를 찾을 수 없습니다.");
+                    return;
+                }
 
-                byte[] data = new byte[read];
-                Array.Copy(buffer, data, read);
-
-                // Unity 메인스레드로 이벤트 전달
-                UnityMainThreadDispatcher.Instance().Enqueue(() => HandlePacket(data));
+                ConnectedIp = server.Value.ip;
+                _tcp = new TcpClient();
+                await _tcp.ConnectAsync(server.Value.ip, server.Value.port);
+                _stream = _tcp.GetStream();
+                Debug.Log($"[Network] 서버 연결 성공: {ConnectedIp}:{server.Value.port}");
+                StartReceive();
             }
-        }
-        catch (Exception ex)
-        {
-            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+
+            player = new ClientPlayer(name);
+            Debug.Log($"[Network] 로그인 시도: {player.Username}");
+
+            Send(pw =>
             {
-                Log($"서버 연결 종료: {ex.Message}");
+                pw.WriteInt((int)Define.CtoS.LOGIN);
+                pw.WriteString(player.Username);
             });
-        }
-    }
-
-    // 패킷 처리
-    private void HandlePacket(byte[] data)
-    {
-        using (var pr = new PacketReader(data))
-        {
-            int protocol = pr.ReadInt();
-
-            switch ((Define.Protocol)protocol)
-            {
-                case Define.Protocol.CreateRoom:
-                    int roomId = pr.ReadInt();
-                    Log($"[서버] 방 생성 완료 (RoomId={roomId})");
-                    break;
-
-                case Define.Protocol.GetRoomList:
-                    int count = pr.ReadInt();
-                    Log($"[서버] 방 목록 {count}개 수신");
-                    for (int i = 0; i < count; i++)
-                    {
-                        int id = pr.ReadInt();
-                        string host = pr.ReadString();
-                        int cur = pr.ReadInt();
-                        int max = pr.ReadInt();
-
-                        RoomData roomData = new RoomData(id, host, cur, max);
-                        Log(roomData.ToString());
-                    }
-                    break;
-
-                case Define.Protocol.Event:
-                    int roomIdEvent = pr.ReadInt();
-                    int eventType = pr.ReadInt();
-                    string param = pr.ReadString();
-                    Log($"[이벤트] Room {roomIdEvent} → {(Define.ServerEvent)eventType} ({param})");
-                    break;
-
-                case Define.Protocol.RoomInfo:
-                    int rId = pr.ReadInt();
-                    string hostName = pr.ReadString();
-                    int maxPlayers = pr.ReadInt();
-                    int curPlayers = pr.ReadInt();
-                    Log($"[Room {rId}] Host: {hostName} ({curPlayers}/{maxPlayers})");
-
-                    for (int i = 0; i < curPlayers; i++)
-                        Log($" - {pr.ReadString()}");
-                    break;
-
-                default:
-                    Log($"알 수 없는 프로토콜 ({protocol}) 수신");
-                    break;
-            }
-        }
-    }
-
-    // 로그 출력 (UI 연결용)
-    private void Log(string msg)
-    {
-        Debug.Log(msg);
-        OnLog?.Invoke(msg); // UIManager가 구독해서 표시 가능
-    }
-
-    // 종료 처리
-    public void Close()
-    {
-        try
-        {
-            recvThread?.Abort();
-            stream?.Close();
-            client?.Close();
-            Log("연결 종료됨");
         }
         catch (Exception e)
         {
-            Log($"종료 중 오류: {e.Message}");
+            OnError?.Invoke($"로그인 실패: {e.Message}");
+        }
+    }
+
+    // ===================================================
+    // 방 관련 요청 (상태 확인 + 패킷 전송)
+    // ===================================================
+    public void CreateRoom()
+    {
+        if (!IsConnected || roomData != null)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않거나 이미 방이있음");
+            return;
+        }
+
+        Debug.Log("[Network] 방 생성 요청");
+        Send(pw =>
+        {
+            pw.WriteInt((int)Define.CtoS.CREATE_ROOM);
+            pw.WriteString(player.Username);
+        });
+    }
+
+    public void JoinRoom(int roomId)
+    {
+        if (!IsConnected || roomData != null)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않거나 이미 방이있음");
+            return;
+        }
+
+        Debug.Log($"[Network] 방 접속 요청: {roomId}");
+        Send(pw =>
+        {
+            pw.WriteInt((int)Define.CtoS.JOIN_ROOM);
+            pw.WriteInt(roomId);
+        });
+    }
+
+    public void LeaveRoom()
+    {
+        if (!IsConnected || roomData != null)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않음");
+            return;
+        }
+
+        Debug.Log("[Network] 방 나가기 요청");
+        Send(pw => pw.WriteInt((int)Define.CtoS.LEAVE_ROOM));
+    }
+
+    public void StartGame()
+    {
+        if (!IsConnected)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않음");
+            return;
+        }
+
+        Debug.Log("[Network] 게임 시작 요청");
+        Send(pw =>
+        {
+            pw.WriteInt((int)Define.CtoS.START_GAME);
+        });
+    }
+
+    // ===================================================
+    // 내부 공통 전송 로직
+    // ===================================================
+    private void Send(Action<PacketWriter> build)
+    {
+        try
+        {
+            using (var pw = new PacketWriter())
+            {
+                build(pw);
+                byte[] data = pw.ToArrayWithLengthPrefix();
+                _stream.Write(data, 0, data.Length);
+            }
+        }
+        catch (Exception e)
+        {
+            OnError?.Invoke($"패킷 전송 실패: {e.Message}");
+        }
+    }
+
+    // ===================================================
+    // 수신 처리
+    // ===================================================
+    private void StartReceive()
+    {
+        _stream.BeginRead(_recvBuffer, 0, _recvBuffer.Length, OnReceive, null);
+    }
+
+    private void OnReceive(IAsyncResult ar)
+    {
+        try
+        {
+            int bytes = _stream.EndRead(ar);
+            if (bytes <= 0) return;
+
+            byte[] data = new byte[bytes];
+            Array.Copy(_recvBuffer, data, bytes);
+
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                int len = reader.ReadInt32();
+                byte[] body = reader.ReadBytes(len);
+
+                using (var pr = new PacketReader(body))
+                {
+                    int id = pr.ReadInt();
+                    HandlePacket(id, pr);
+                }
+            }
+
+            StartReceive();
+        }
+        catch (Exception e)
+        {
+            OnError?.Invoke($"데이터 수신 실패: {e.Message}");
+        }
+    }
+
+    private void HandlePacket(int id, PacketReader reader)
+    {
+        // ------------------------------
+        // [1] 서버 → 클라 응답(Response)
+        // ------------------------------
+        if (Enum.IsDefined(typeof(Define.StoC_Response), id))
+        {
+            switch ((Define.StoC_Response)id)
+            {
+                case Define.StoC_Response.LOGIN_OK:
+                    player.Username = reader.ReadString();
+                    OnLoginSuccess?.Invoke(player.Username);
+                    Debug.Log("[Network] Login 성공!");
+                    return;
+
+                case Define.StoC_Response.ROOM_CEATE_OK:
+                    {
+                        int roomId = reader.ReadInt();
+                        OnRoomCreate?.Invoke(roomId);
+                        Debug.Log($"[Network] Room 생성 완료 ({roomId})");
+                        return;
+                    }
+
+                case Define.StoC_Response.ROOM_JOIN_OK:
+                    {
+                        player.CurrentRoomId = reader.ReadInt();
+                        OnRoomJoin?.Invoke(player.CurrentRoomId);
+                        roomData = new RoomData(player.CurrentRoomId, false);
+                        Debug.Log($"[Network] Room 참가 성공: {player.CurrentRoomId}");
+                        return;
+                    }
+                case Define.StoC_Response.ROOM_LEAVE_OK:
+                    {
+                        roomData = null; // roomdata삭제
+                        player.CurrentRoomId = -1;
+                        Debug.Log("[Network] 방 나가기 성공");
+                        return;
+                    }
+                case Define.StoC_Response.HOST_ASSIGNED:
+                    string msg = reader.ReadString();
+                    roomData.IsHost = true;
+                    Debug.Log($"[Network] {msg}");
+                    OnHostAssigned?.Invoke(msg);
+                    break;
+
+                case Define.StoC_Response.ACTION_DENIED:
+                    string reason = reader.ReadString();
+                    OnError?.Invoke(reason);
+                    Debug.LogWarning($"[Network] 동작 거부: {reason}");
+                    return;
+            }
+        }
+
+        // ------------------------------
+        // [2] 서버 → 클라 이벤트(Event)
+        // ------------------------------
+        if (Enum.IsDefined(typeof(Define.StoC_Event), id))
+        {
+            switch ((Define.StoC_Event)id)
+            {
+                case Define.StoC_Event.BROADCAST_CHAT:
+                    string chat = reader.ReadString();
+                    OnChatReceived?.Invoke(chat);
+                    Debug.Log($"[Chat] {chat}");
+                    break;
+
+                case Define.StoC_Event.PLAYER_JOINED:
+                    string joinedName = reader.ReadString();
+                    roomData?.AddPlayer(joinedName);
+                    Debug.Log($"[Event] 플레이어 입장: {joinedName}");
+                    Debug.Log($"현재방상태 {roomData.CurrentPlayers}명 , {roomData.Players[0]}");
+
+
+                    //UnityMainThreadDispatcher.Instance?.Enqueue(() =>
+                    //{
+                    //    // UI에 인원 갱신 요청
+                    //    Managers.UI.UpdateRoomPlayerList(roomData.Players);
+                    //});
+                    break;
+
+                case Define.StoC_Event.PLAYER_LEFT:
+                    string leftName = reader.ReadString();
+                    roomData?.RemovePlayer(leftName);
+                    Debug.Log($"[Event] 플레이어 퇴장: {leftName}");
+
+                    //UnityMainThreadDispatcher.Instance?.Enqueue(() =>
+                    //{
+                    //    Managers.UI.UpdateRoomPlayerList(roomData.Players);
+                    //});
+                    break;
+                    break;
+
+                case Define.StoC_Event.GAME_START:
+                    Debug.Log("[Event] 게임 시작 신호 수신");
+                    UnityMainThreadDispatcher.Instance?.Enqueue(() =>
+                    {
+                        OnGameStart?.Invoke();
+                    });
+                    break;
+            }
+
         }
     }
 }

@@ -74,14 +74,14 @@ public class UI_FoodBox : UI_Popup
             _inventorySlots[i].SetData(Managers.Inventory.InventorySlots[i]);
 
         for (int i = 0; i < _craftingSlots.Count; i++)
-            _craftingSlots[i].SetData(Managers.Inventory.CraftingSlots[i]);
+            _craftingSlots[i].SetData(Managers.Inventory.CraftingSlots[i]); 
 
         _resultSlot.SetData(Managers.Inventory.ResultSlot);
     }
 
     void OnClose(PointerEventData data)
     {
-        Managers.Inventory.CraftingSlots.Clear();
+        //Managers.Inventory.CraftingSlots.Clear();
         Managers.Inventory.UnregisterFoodBoxUI();
         Managers.UI.ClosePopupUI();
     }

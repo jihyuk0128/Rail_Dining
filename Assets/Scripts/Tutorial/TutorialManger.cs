@@ -17,10 +17,20 @@ public class TutorialManager : MonoBehaviour
 
     IEnumerator TutorialRoutine()
     {
+        Managers.Inventory.Init(8, 4);  //  먼저!
+        // 기본 UI 띄우기
+        Managers.UI.ShowSceneUI<UI_BasicScene>();   // 항상 켜지는 인벤토리
+
+        // 아이템 테스트용으로 몇 개 넣기
+        Managers.Inventory.AddItemToInventory(1, 5);  // Egg 5개
+        Managers.Inventory.AddItemToInventory(1, 20);  // Egg 5개
+
+        //Managers.UI.ShowPopupUI<UI_Button>();
         // 튜토리얼 대화창 시작
+
         UI_TutorialDialog dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
         dialog.PlayDialogueRange(0,2);
-
+  
         // 대화가 끝날 때까지 대기
         yield return new WaitUntil(() => isDialogFinished);
         player?.SetEvent(false);
@@ -31,8 +41,8 @@ public class TutorialManager : MonoBehaviour
 
         // 종료 대화창 시작
         player?.SetEvent(true);
-        dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
-        dialog.PlayDialogueRange(0, 1);
+       // dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
+        //dialog.PlayDialogueRange(0, 1);
 
         // 대화가 끝날 때까지 대기
         yield return new WaitUntil(() => isDialogFinished);

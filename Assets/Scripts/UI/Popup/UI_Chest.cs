@@ -1,16 +1,15 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_CraftingBox : UI_Popup
+public class UI_Chest : UI_Popup
 {
-    enum Buttons { CloseButton, CraftButton }
-    enum GameObjects { InventoryGrid, CraftingGrid, ResultSlot }
+    enum Buttons { CloseButton }
+    enum GameObjects { InventoryGrid, ChestGrid }
 
     List<UI_Slot> _inventorySlots = new();
-    List<UI_Slot> _craftingSlots = new();
-    UI_Slot _resultSlot;
+    List<UI_Slot> _chestSlots = new();
 
     private void Start()
     {
@@ -22,21 +21,15 @@ public class UI_CraftingBox : UI_Popup
         Bind<Button>(typeof(Buttons));
         Bind<GameObject>(typeof(GameObjects));
 
-        Managers.Inventory.RegisterCraftingBoxUI(this);
+        Managers.Inventory.RegisterChestUI(this);
+
 
         GetButton((int)Buttons.CloseButton).gameObject.BindEvent(OnClose);
-        GetButton((int)Buttons.CraftButton).gameObject.BindEvent((PointerEventData data) => { Managers.Inventory.Craft(); });
 
         CreateSlots(GetObject((int)GameObjects.InventoryGrid), 8, SlotType.Inventory, _inventorySlots);
-        CreateSlots(GetObject((int)GameObjects.CraftingGrid), 4, SlotType.Crafting, _craftingSlots);
 
-        var resultParent = GetObject((int)GameObjects.ResultSlot).transform;
-        var go = Managers.Resource.Instantiate("UI/Slot", resultParent);
-        _resultSlot = go.GetComponent<UI_Slot>();
-        _resultSlot.SlotType = SlotType.Result;
-        _resultSlot.Index = 0;
-        _resultSlot.Init();
-
+        CreateSlots(GetObject((int)GameObjects.ChestGrid), 12, SlotType.Chest, _chestSlots);
+       
         RefreshUI();
     }
 
@@ -58,16 +51,13 @@ public class UI_CraftingBox : UI_Popup
         for (int i = 0; i < _inventorySlots.Count; i++)
             _inventorySlots[i].SetData(Managers.Inventory.InventorySlots[i]);
 
-        for (int i = 0; i < _craftingSlots.Count; i++)
-            _craftingSlots[i].SetData(Managers.Inventory.CraftingSlots[i]);
-
-        _resultSlot.SetData(Managers.Inventory.ResultSlot);
+        for(int i = 0; i < _chestSlots.Count; i++)
+            _chestSlots[i].SetData(Managers.Inventory.ChestSlots[i]); 
     }
 
     void OnClose(PointerEventData data)
     {
-        //Managers.Inventory.CraftingSlots.Clear();
-        Managers.Inventory.UnregisterCraftingBoxUI();
+        Managers.Inventory.UnRegisterChestUI(this);
         Managers.UI.ClosePopupUI();
     }
 

@@ -12,6 +12,8 @@ public class TutorialNPC : MonoBehaviour, IInteractable
 
     public void Interact(GameObject player)
     {
+        Managers.UI.ShowPopupUI<UI_CraftingBox>();
+
         if (!canInteract || IsServed) return;
         Debug.Log("튜토리얼 NPC: 음료 받음");
         IsServed = true;

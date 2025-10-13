@@ -1,18 +1,20 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum SlotType { Inventory, Crafting, Result }
+public enum SlotType { Inventory, Crafting, Result, Chest }
 public enum MoveMode { One,Half,All}
 
 public class InventoryManager
 {
     public List<ItemSlot> InventorySlots { get; private set; } = new();
     public List<ItemSlot> CraftingSlots { get; private set; } = new();
+    public List<ItemSlot> ChestSlots { get; private set; } = new();
     public ItemSlot ResultSlot { get; private set; } = new();
 
     public UI_Inventory InventoryUI { get; private set; }
     public UI_CraftingBox CraftingBoxUI { get; private set; }
     public UI_FoodBox FoodBoxUI { get; private set; }
+    public UI_Chest ChestUI { get; private set; }
     public UI_Slot DragSourceSlot { get; set; }
 
     public void Init(int inventoryCount, int craftingCount)
@@ -35,23 +37,55 @@ public class InventoryManager
         }
 
         ResultSlot = new ItemSlot();
+        for (int i = 0; i < 12; i++)
+        {
+            ChestSlots.Add(new ItemSlot()); //창고 12개 생성
+            Debug.Log("창고생성");
+        }
     }
 
     public void RegisterInventoryUI(UI_Inventory ui) => InventoryUI = ui;
     public void RegisterCraftingBoxUI(UI_CraftingBox ui) => CraftingBoxUI = ui;
     public void RegisterFoodBoxUI(UI_FoodBox ui) => FoodBoxUI = ui;
+    public void RegisterChestUI(UI_Chest ui) => ChestUI = ui;
+      
     public void UnregisterCraftingBoxUI()
     {
         CraftingBoxUI = null;
-        CraftingSlots.Clear();
+        //CraftingSlots.Clear();
     }
     public void UnregisterFoodBoxUI()
     {
         FoodBoxUI = null;
-        CraftingSlots.Clear();
+        //CraftingSlots.Clear();
     }
+    public void UnRegisterChestUI(UI_Chest ui)
+    {
+        ChestUI = null;
+        for (int i = 0; i < 12; i++) ChestSlots[i].Clear();
+    }
+    public void AddItemToChest(int id)
+    {
+        if (!Managers.Data.ItemDict.ContainsKey(id))
+        {
+            Debug.LogWarning($"Item ID {id} 없음");
+            return;
+        }
 
 
+        for (int i = 0; i < ChestSlots.Count; i++)
+        {
+            if (ChestSlots[i].Item == null)
+            {
+                ChestSlots[i].Item = Managers.Data.ItemDict[id];
+                ChestSlots[i].Amount = 10;
+                Debug.Log($"[창고] {ChestSlots[i].Item.name} x{10} 추가됨");
+                RefreshAllUI();
+                return;
+            }
+        }
+
+    }
 
     public void AddItemToInventory(int id, int amount = 1)
     {
@@ -67,8 +101,13 @@ public class InventoryManager
             {
                 InventorySlots[i].Item = Managers.Data.ItemDict[id];
                 InventorySlots[i].Amount = amount;
-                Debug.Log($"[인벤] {InventorySlots[i].Item.name} x{amount} 추가됨");
                 RefreshAllUI();
+                return;
+            }
+
+            if (InventorySlots[i].Item.id == id && !InventorySlots[i].IsFull)
+            {
+                InventorySlots[i].Amount++;
                 return;
             }
         }
@@ -125,6 +164,7 @@ public class InventoryManager
         InventoryUI?.RefreshUI();
         CraftingBoxUI?.RefreshUI();
         FoodBoxUI?.RefreshUI();
+        ChestUI?.RefreshUI();
     }
 
     public void Craft()

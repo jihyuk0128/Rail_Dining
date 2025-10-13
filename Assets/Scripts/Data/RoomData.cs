@@ -1,22 +1,36 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomData
 {
     public int RoomId;
-    public string HostName;
-    public int CurrentPlayers;
+    public bool IsHost;
+    public List<string> Players { get; private set; } = new();
+    public int CurrentPlayers = 0;
     public int MaxPlayers;
 
-    public RoomData(int roomId, string hostName, int current, int max)
+    public RoomData(int roomId, bool isHost)
     {
         RoomId = roomId;
-        HostName = hostName;
-        CurrentPlayers = current;
-        MaxPlayers = max;
+        IsHost = isHost;
+        CurrentPlayers++;
+        MaxPlayers = 2;
     }
 
-    public override string ToString()
+    public void AddPlayer(string name)
     {
-        return $"Room {RoomId} | Host: {HostName} | Players: {CurrentPlayers}/{MaxPlayers}";
+        if (!Players.Contains(name))
+            Players.Add(name);
+        CurrentPlayers++;
+    }
+
+    public void RemovePlayer(string name)
+    {
+        Players.Remove(name);
+    }
+
+    public void Clear()
+    {
+        Players.Clear();
     }
 }
