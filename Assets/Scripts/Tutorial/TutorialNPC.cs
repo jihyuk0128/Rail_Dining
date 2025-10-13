@@ -30,26 +30,27 @@ public class TutorialNPC : MonoBehaviour, IInteractable
 
     public void Interact(GameObject player)
     {
-        Managers.UI.ShowPopupUI<UI_CraftingBox>();
-
         if (!canInteract || IsServed) return;
         if(State == TutorialState.WaitingForOrder)
         {
             State = TutorialState.WaitingForDrink;
-            orderMenu = Managers.Data.ItemDict[1];
+            orderMenu = Managers.Data.ItemDict[210];
             Debug.Log($"손님이 {orderMenu.name} 를 주문했습니다!");
             orderUI.ShowOrder(orderMenu, 0, 2);
         }
         else
         {
-            /*
+
             if (orderMenu != )
                 return;
-            */
+            
             if (servCount < 2 )
             {
-                orderUI.UpdateProgress(1, 2);
-                servCount++;
+                if (Managers.Inventory.CheckItemToRemove(orderMenu))
+                {
+                    servCount++;
+                    orderUI.UpdateProgress(servCount, 2);
+                }
             }
             if(servCount == 2)
             {

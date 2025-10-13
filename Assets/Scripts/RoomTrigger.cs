@@ -4,6 +4,7 @@ public class RoomTrigger : MonoBehaviour
 {
     [Header("이 트리거가 보여줄 카메라 위치")]
     public Transform cameraTarget;
+    public DoorInteract door;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -13,6 +14,11 @@ public class RoomTrigger : MonoBehaviour
             if (cam != null && cameraTarget != null)
             {
                 cam.MoveToRoom(cameraTarget.position);
+            }
+            if(door != null)
+            {
+                if (door.isOpen)
+                    door.CloseDoor();
             }
         }
     }

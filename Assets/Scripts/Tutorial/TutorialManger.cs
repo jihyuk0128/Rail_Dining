@@ -31,7 +31,7 @@ public class TutorialManager : MonoBehaviour
 
         // 종료 대화창 시작
         player?.SetEvent(true);
-        isDialogFinished = true;
+        isDialogFinished = false;
         dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
         dialog.PlayDialogueRange(8, 10);
 
@@ -40,7 +40,7 @@ public class TutorialManager : MonoBehaviour
         player?.SetEvent(false);
         Debug.Log("튜토리얼 완료!");
 
-        //SceneManager.LoadScene("TestScene");
+        SceneManager.LoadScene("TestScene");
     }
 
     public void OnDialogFinished()

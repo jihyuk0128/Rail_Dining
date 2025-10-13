@@ -6,7 +6,7 @@ public class DoorInteract : MonoBehaviour, IInteractable
     [Header("설정")]
     public float autoCloseDelay = 2f;  // 문이 자동으로 닫히기까지 시간
 
-    private bool isOpen = false;
+    public bool isOpen { get; private set; } = false;
     private Coroutine autoCloseCoroutine;
 
     // 플레이어가 상호작용 키를 눌렀을 때
@@ -27,19 +27,9 @@ public class DoorInteract : MonoBehaviour, IInteractable
         if (col != null)
             col.enabled = false;
 
-        // 자동 닫힘 시작
-        if (autoCloseCoroutine != null)
-            StopCoroutine(autoCloseCoroutine);
-        autoCloseCoroutine = StartCoroutine(AutoCloseDoor());
     }
 
-    private IEnumerator AutoCloseDoor()
-    {
-        yield return new WaitForSeconds(autoCloseDelay);
-        CloseDoor();
-    }
-
-    private void CloseDoor()
+    public void CloseDoor()
     {
         isOpen = false;
 

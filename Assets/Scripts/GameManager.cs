@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,10 +16,13 @@ public class GameManager : MonoBehaviour
     public CustomerSpawner customerSpawner;
     public MoneyManager moneyManager;
 
-    private int currentDay = 1;
+    public int currentDay { get; private set; } = 1;
     private bool isPlaying = false;
     private int quota = 1;
     private bool resultClosed = false;
+
+    // 임시 랜덤 테이블
+    public List<int> availableItemIDs = new() { 103, 104, 106, 108, 112, 113, 114, 116, 119, 120, 304 };
 
     private void Awake()
     {
@@ -115,7 +119,8 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("결과창 닫힘 → 다음 날 시작");
         //currentDay++;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        RestartGame();
         resultClosed = true;
     }
 
@@ -139,4 +144,23 @@ public class GameManager : MonoBehaviour
     }
 
     public bool IsPlaying() => isPlaying;
+
+    public ItemData GetRandomOrder()
+    {
+        if (availableItemIDs.Count == 0)
+        {
+            Debug.LogWarning("선택 가능한 메뉴 ID가 없습니다!");
+            return null;
+        }
+
+        int randomIndex = Random.Range(0, availableItemIDs.Count);
+        int itemId = availableItemIDs[randomIndex];
+
+        if (Managers.Data.ItemDict.TryGetValue(itemId, out var item))
+            return item;
+
+        Debug.LogWarning($"Item ID {itemId}를 찾을 수 없습니다!");
+        return null;
+    }
+  
 }

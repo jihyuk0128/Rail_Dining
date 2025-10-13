@@ -1,5 +1,6 @@
-using UnityEngine;
+using JetBrains.Rider.Unity.Editor;
 using System.Collections.Generic;
+using UnityEngine;
 
 public enum SlotType { Inventory, Crafting, Result, Chest }
 public enum MoveMode { One,Half,All}
@@ -198,7 +199,7 @@ public class InventoryManager
 
         foreach (var slot in CraftingSlots)
             slot.Clear();
-        SoundManager.Instance.PlaySFX("MakingCocktails_SFX");
+
         Debug.Log($"[제작 성공] {ResultSlot.Item.name} x{ResultSlot.Amount}");
         RefreshAllUI();
     }
@@ -206,10 +207,48 @@ public class InventoryManager
     private bool CheckRecipe(RecipeData recipe, List<int> current)
     {
         if (recipe.ingredients.Count != current.Count) return false;
-        for (int i = 0; i < recipe.ingredients.Count; i++)
+        // 정렬해서 순서상관없이 값만 비교
+        var sortedRecipe = new List<int>(recipe.ingredients);
+        var sortedCurrent = new List<int>(current);
+
+        sortedRecipe.Sort();
+        sortedCurrent.Sort();
+
+        for (int i = 0; i < sortedRecipe.Count; i++)
         {
-            if (recipe.ingredients[i] != current[i]) return false;
+            if (sortedRecipe[i] != sortedCurrent[i])
+                return false;
         }
         return true;
+    }
+
+    // 아이템 비교해서 있으면 true 반환 밑 해당아이템 한 개 제거
+    public bool CheckItemToRemove(ItemData orderItem)
+    {
+        bool hasCorrectItem = false;
+
+        foreach (var slot in Managers.Inventory.InventorySlots)
+        {
+            if (slot.Item != null && slot.Item.id == orderItem.id)
+            {
+                // 올바른 아이템 발견 → 한 개 제거
+                slot.Amount--;
+                if (slot.Amount <= 0)
+                    slot.Clear();
+
+                Managers.Inventory.RefreshAllUI();
+                hasCorrectItem = true;
+                break;
+            }
+        }
+        return hasCorrectItem;
+    }
+
+    public void ClearInventory()
+    {
+        foreach (var slot in InventorySlots)
+            slot.Clear();
+
+        RefreshAllUI();
     }
 }
