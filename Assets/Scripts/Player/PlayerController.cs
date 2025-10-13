@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
 
     // udp
     private float udpSendTimer = 0f;
-    private float udpSendInterval = 0.05f; // 20Hz 전송
+    private float udpSendInterval = 0.01f; // 20Hz 전송
     private Vector3 _lastSentPos;
 
 
@@ -92,20 +92,19 @@ public class PlayerController : MonoBehaviour
         {
             udpSendTimer = 0f;
 
+            Vector2 dir = moveInput;
+            if (dir.sqrMagnitude > 0.001f)
+                dir.Normalize();
+
             float dist = Vector3.Distance(transform.position, _lastSentPos);
-            if (dist > 0.01f) // 최소 이동 거리 조건
+            if (dist > 0.0001f) // 최소 이동 거리 조건
             {
                 Managers.Network.UdpGame.SendPlayerMove(
                     Managers.Network.player.Username,
-                    new Vector3(transform.position.x, transform.position.y, 0f)
-                );
-
-                _lastSentPos = transform.position;
-                Managers.Network.UdpGame.SendPlayerState(
-                Managers.Network.player.Username,
-                moveInput,
-                IsRunning,
-                IsFall
+                    new Vector3(transform.position.x, transform.position.y, 0f),
+                    moveInput,
+                   IsRunning,
+                   IsFall
                 );
 
                 _lastSentPos = transform.position;

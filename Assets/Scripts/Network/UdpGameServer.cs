@@ -57,40 +57,22 @@ public class UdpGameServer
                     float x = reader.ReadFloat();
                     float y = reader.ReadFloat();
                     float z = reader.ReadFloat();
-
-
-                    Debug.Log($"[UDP] 이동 브로드캐스트 수신: {playerName} ({x}, {y}, {z}");
-
-                    if (playerName == Managers.Network.player.Username)
-                        return;
-
-                    // 메인스레드에서 처리 (유니티 오브젝트 접근)
-                    UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                    {
-                        Vector3 pos = new Vector3(x, y, z);
-                        var manager = UnityEngine.Object.FindFirstObjectByType<PlayerManager>();
-                        if (manager != null)
-                            manager.UpdatePlayer(playerName, pos);
-                    });
-                }
-                else if(pid == (int)Define.UdpPacket.PLAYER_STATE_BROADCAST)
-                {
-                    string playerName = reader.ReadString();
                     float mx = reader.ReadFloat();
                     float my = reader.ReadFloat();
                     bool isRunning = reader.ReadBool();
                     bool isFalling = reader.ReadBool();
-                    
+
                     if (playerName == Managers.Network.player.Username)
                         return;
-                    
+
                     UnityMainThreadDispatcher.Instance.Enqueue(() =>
                     {
+                        Vector3 pos = new Vector3(x, y, z);
+                        Vector2 move = new Vector2(mx, my);
                         var manager = UnityEngine.Object.FindFirstObjectByType<PlayerManager>();
                         if (manager != null)
-                            manager.UpdatePlayerSpine(playerName, new Vector2(mx, my), isRunning, isFalling);
+                            manager.UpdatePlayer(playerName, pos, move, isRunning, isFalling);
                     });
-
                 }
             }
 
@@ -116,42 +98,32 @@ public class UdpGameServer
     ///  플레이어 이동정보전송
     /// </summary>
     
-    public void SendPlayerMove(string name, Vector3 pos)
+    public void SendPlayerMove(string name, Vector3 pos, Vector2 move, bool isRunning, bool isFalling)
     {
         if (!_running || _udp == null) return;
 
         try
         {
-            using(var pw = new PacketWriter())
+            using (var pw = new PacketWriter())
             {
-                pw.WriteInt((int)Define.UdpPacket.PLAYER_MOVE);  // 패킷 ID
+                pw.WriteInt((int)Define.UdpPacket.PLAYER_MOVE);
                 pw.WriteString(name);
                 pw.WriteFloat(pos.x);
                 pw.WriteFloat(pos.y);
                 pw.WriteFloat(pos.z);
+                pw.WriteFloat(move.x);
+                pw.WriteFloat(move.y);
+                pw.WriteBool(isRunning);
+                pw.WriteBool(isFalling);
 
                 byte[] data = pw.ToArray();
                 _udp.Send(data, data.Length, _serverEP);
-
             }
         }
         catch (Exception e)
         {
             Debug.LogWarning($"[UDP] 이동 패킷 전송 실패: {e.Message}");
         }
-    }
-
-    public void SendPlayerState(string username, Vector2 moveInput, bool isRunning, bool isFalling)
-    {
-        PacketWriter writer = new PacketWriter();
-        writer.WriteInt((int)Define.UdpPacket.PLAYER_STATE);
-        writer.WriteString(username);
-        writer.WriteFloat(moveInput.x);
-        writer.WriteFloat(moveInput.y);
-        writer.WriteBool(isRunning);
-        writer.WriteBool(isFalling);
-        byte[] data = writer.ToArray();
-        _udp.Send(data, data.Length, _serverEP);
     }
 
     private GameObject FindRemotePlayer(string name)

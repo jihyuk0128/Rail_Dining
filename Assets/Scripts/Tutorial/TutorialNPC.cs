@@ -21,17 +21,34 @@ public class TutorialNPC : MonoBehaviour, IInteractable
         orderUI = GetComponentInChildren<CustomerOrderUI>();
         State = TutorialState.WaitingForOrder;
         orderUI.ShowWaiting();
+
+        Managers.Network.OnGameStartTitle += test;
     }
 
     public void EnableInteraction(bool value)
     {
         canInteract = value;
+
+    }
+
+    public void test()
+    {
+        IsServed = true;
     }
 
     public void Interact(GameObject player)
     {
+      
         if (!canInteract || IsServed) return;
-        if(State == TutorialState.WaitingForOrder)
+
+        Managers.Network.Send(pw =>
+        {
+            pw.WriteInt((int)Define.StoC_Event.GAME_START_TITLE);
+        });
+
+
+
+        if (State == TutorialState.WaitingForOrder)
         {
             State = TutorialState.WaitingForDrink;
             orderMenu = Managers.Data.ItemDict[210];
@@ -41,8 +58,8 @@ public class TutorialNPC : MonoBehaviour, IInteractable
         else
         {
 
-            if (orderMenu != )
-                return;
+            //if (orderMenu != )
+            //    return;
             
             if (servCount < 2 )
             {

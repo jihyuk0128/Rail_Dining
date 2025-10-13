@@ -37,6 +37,8 @@ public class NetworkManager
     public event Action<string> OnChatReceived;
     public event Action OnGameStart;
     public event Action<string> OnError;
+    public event Action<int> OnCustomerSpawn;
+    public event Action OnGameStartTitle;
 
 
 
@@ -144,7 +146,7 @@ public class NetworkManager
     // ===================================================
     // 내부 공통 전송 로직
     // ===================================================
-    private void Send(Action<PacketWriter> build)
+    public void Send(Action<PacketWriter> build)
     {
         try
         {
@@ -307,6 +309,21 @@ public class NetworkManager
 
 
                         OnGameStart?.Invoke();
+                        break;
+                    }
+
+                case Define.StoC_Event.CUSTOMER_SPAWN:    
+                    {
+                        int gender = reader.ReadInt();
+                        Debug.Log($"[Event] 손님 스폰 수신 (gender: {gender})");
+
+                        OnCustomerSpawn?.Invoke(gender);
+                        break;
+                    }
+                case Define.StoC_Event.GAME_START_TITLE:
+                    {
+                        Debug.Log($"[Event] 튜토리얼종료");
+                        OnGameStartTitle?.Invoke();
                         break;
                     }
             }

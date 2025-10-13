@@ -67,6 +67,29 @@ public class Customer : MonoBehaviour, IInteractable
         {
             yield return StartCoroutine(LeaveRoutine());
         }
+
+        //// 1. 등장
+        //state = CustomerState.Entering;
+        //Vector3 entryTarget = GameObject.Find("StartPoint").transform.position;
+        //yield return MoveToRoutine(entryTarget);
+        //
+        //// 2. 좌석찾는 시간
+        //state = CustomerState.SearchingSeat;
+        //float searchTime = 2.0f;
+        //yield return new WaitForSeconds(searchTime);
+        //
+        //// 3. 좌석으로 이동
+        //targetSeat = SeatManager.Instance.GetEmptySeat();
+        //if (targetSeat != null)
+        //{
+        //    state = CustomerState.MovingToSeat;
+        //    targetSeat.IsSeating = true;
+        //    yield return MoveToSeatWithRoute(targetSeat);
+        //}
+        //else
+        //{
+        //    yield return StartCoroutine(LeaveRoutine());
+        //}
     }
 
     private void SitDown()
@@ -168,7 +191,7 @@ public class Customer : MonoBehaviour, IInteractable
     {
         state = CustomerState.Leaving;
         orderUI.HideOrder();
-        float leaveTime = Random.Range(2f, 3f);
+        float leaveTime = 3.0f;
         yield return new WaitForSeconds(leaveTime);
 
         if (targetSeat != null) targetSeat.IsSeating = false;

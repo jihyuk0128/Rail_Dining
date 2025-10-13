@@ -52,6 +52,10 @@ public class Define
         PLAYER_JOINED,
         PLAYER_LEFT,
         GAME_START,
+        GAME_START_TITLE,
+
+        CUSTOMER_SPAWN, // 새로 추가
+
     }
     // ================================
     //  UDP 이동 관련 패킷

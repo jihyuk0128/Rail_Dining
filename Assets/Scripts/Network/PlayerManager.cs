@@ -30,15 +30,15 @@ public class PlayerManager : MonoBehaviour
         var playerObj = players[name];
         var sync = playerObj.GetComponent<PlayerNetworkSync>();
 
-        // ?? 새 위치를 target으로 설정
-        sync.SetTarget(pos, 0f);  // targetRotZ는 현재 안 쓰니까 0으로 둠
+        // 새 위치를 target으로 설정
+        sync.SetTarget(pos, 0f);  //
 
-        // ?? 부드러운 방향 계산 (직전 위치 대비)
+        // 부드러운 방향 계산 (직전 위치 대비)
         Vector3 smoothDir = pos - sync.lastPos;
         sync.lastPos = pos;
 
         // 너무 짧은 변화는 무시 (미세한 흔들림 방지)
-        if (smoothDir.magnitude < 0.005f)
+        if (smoothDir.magnitude < 0.010f)
             return;
 
         var spine = playerObj.GetComponent<PlayerSpineController>();
@@ -49,27 +49,37 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void UpdatePlayerSpine(string name, Vector2 moveInput, bool isRunning, bool isFalling)
+    public void UpdatePlayer(string name, Vector3 pos, Vector2 moveDir, bool isRunning, bool isFalling)
     {
+        // 자기 자신은 이미 있으므로 무시
+        if (name == Managers.Network.player.Username)
+            return;
+
+        // --- 플레이어 생성 ---
         if (!players.ContainsKey(name))
         {
-            Debug.LogWarning($"[PlayerManager] {name} Spine 업데이트 실패: 존재하지 않음");
-            return;
+            GameObject newPlayer = Instantiate(remotePlayerPrefab, pos, Quaternion.identity);
+            newPlayer.name = name;
+
+            // 네트워크 동기화용 컴포넌트 추가
+            if (newPlayer.GetComponent<PlayerNetworkSync>() == null)
+                newPlayer.AddComponent<PlayerNetworkSync>();
+
+            players.Add(name, newPlayer);
         }
 
+        // --- 참조 캐싱 ---
         var playerObj = players[name];
-        if (playerObj == null)
-        {
-            Debug.LogWarning($"[PlayerManager] {name} 오브젝트가 null임");
-            return;
-        }
+        var sync = playerObj.GetComponent<PlayerNetworkSync>();
 
+        // --- 이동 보간 대상 설정 ---
+        sync.SetTarget(pos, 0f); // targetPos, rotZ
+        sync.lastPos = pos;
+
+        // --- Spine 상태 업데이트 ---
         var spine = playerObj.GetComponent<PlayerSpineController>();
         if (spine == null)
-        {
-            Debug.LogWarning($"[PlayerManager] {name} SpineController 없음");
             return;
-        }
 
         if (isFalling)
         {
@@ -77,6 +87,15 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        spine.UpdateSpine(moveInput, isRunning);
+        // moveDir이 너무 작으면 무시
+        if (moveDir.sqrMagnitude < 0.001f)
+        {
+            spine.UpdateSpine(Vector2.zero, false);
+            return;
+        }
+
+        // 정규화해서 전달
+        moveDir.Normalize();
+        spine.UpdateSpine(moveDir, isRunning);
     }
 }

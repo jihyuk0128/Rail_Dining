@@ -14,6 +14,7 @@ public class CustomerSpawner : MonoBehaviour
 
     private bool isSpwaning = false;
 
+
     private void Start()
     {
         if (customerPrefab != null && spawnPoint != null)
@@ -48,7 +49,7 @@ public class CustomerSpawner : MonoBehaviour
         // 필요하면 Customer 스크립트 초기화 코드 추가 가능
     }
 
-    // 인스펙터에서 손님 생성 즉시 테스트용 메서드
+    //인스펙터에서 손님 생성 즉시 테스트용 메서드
     [ContextMenu("스폰 테스트")]
     private void SpawnOneCustomer()
     {
