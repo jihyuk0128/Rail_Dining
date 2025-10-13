@@ -63,6 +63,13 @@ public class PlayerInteraction : MonoBehaviour
                 if (ui != null)
                     ui.SetInteractionVisible(true);
             }
+            else
+            {
+                // 일반 오브젝트의 InteractionUI 표시
+                var ui = (currentTarget as MonoBehaviour)?.GetComponentInChildren<InteractionUI>();
+                if (ui != null)
+                    ui.SetVisible(true);
+            }
         }
     }
 
@@ -75,6 +82,12 @@ public class PlayerInteraction : MonoBehaviour
                 var ui = prevCustomer.GetComponentInChildren<CustomerOrderUI>();
                 if (ui != null)
                     ui.SetInteractionVisible(false);
+            }
+            else
+            {
+                var ui = (currentTarget as MonoBehaviour)?.GetComponentInChildren<InteractionUI>();
+                if (ui != null)
+                    ui.SetVisible(false);
             }
 
             currentTarget = null;

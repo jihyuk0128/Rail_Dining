@@ -1,19 +1,46 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class TitleScene : MonoBehaviour
 {
+    [Header("Panels")]
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject NewGamePanel;
     [SerializeField] private GameObject ContinuePanel;
     [SerializeField] private GameObject InvitePanel;
+    [SerializeField] private GameObject loginPanel;
+
+    [Header("Audio")]
+    [SerializeField] private Slider bgmSlider;
+    [SerializeField] private Slider sfxSlider;
+
+    [Header("Input")]
     public TMP_InputField inviteInputField;
+    public TMP_InputField LoginInputField;
+
+    public string playerName = null;
+    private bool isNewGame = true;
 
     private void Start()
     {
         // 입력창 이벤트 등록
         inviteInputField.onSubmit.AddListener(OnCodeSubmitted);
+        LoginInputField.onSubmit.AddListener(OnLoginSubmitted);
+
+        // 사운드 슬라이더 이벤트 등록
+        if (bgmSlider != null)
+            bgmSlider.onValueChanged.AddListener(OnBGMVolumeChanged);
+        if (sfxSlider != null)
+            sfxSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
+
+        // 현재 사운드 매니저의 볼륨값 반영
+        bgmSlider.value = SoundManager.Instance.GetBGMVolume();
+        sfxSlider.value = SoundManager.Instance.GetSFXVolume();
+
+        SoundManager.Instance?.PlayBGM("BackGround_BGM");
     }
 
     private void Update()
@@ -25,37 +52,28 @@ public class TitleScene : MonoBehaviour
         }
     }
 
-    // 게임 시작 버튼
+    // UI 버튼 이벤트들
     public void OnStartGame()
     {
-        NewGamePanel.SetActive(true);
+        loginPanel.SetActive(true);
+        isNewGame = true;
     }
-
-    // 컨티뉴 버튼
     public void OnContinue()
     {
-        ContinuePanel.SetActive(true);
+        loginPanel.SetActive(true);
+        isNewGame = false;
     }
+    public void OnOpenSettings() => settingsPanel.SetActive(true);
 
-    // 설정 열기 버튼
-    public void OnOpenSettings()
-    {
-        settingsPanel.SetActive(true);
-    }
+    public void OnHost() => SceneManager.LoadScene("NetworkScene");
 
-    // 호스트 버튼
-    public void OnHost()
-    {
-        SceneManager.LoadScene("NetworkScene");
-    }
-    // 게스트 버튼
     public void OnGuest()
     {
         NewGamePanel.SetActive(false);
         ContinuePanel.SetActive(false);
         InvitePanel.SetActive(true);
     }
-    // 게임 종료 버튼
+
     public void OnQuitGame()
     {
 #if UNITY_EDITOR
@@ -76,22 +94,19 @@ public class TitleScene : MonoBehaviour
         ContinuePanel.SetActive(false);
         settingsPanel.SetActive(false);
         InvitePanel.SetActive(false);
+        loginPanel.SetActive(false);
     }
 
+    // 초대코드 입력 처리
     private void OnCodeSubmitted(string code)
     {
         Debug.Log($"입력된 초대 코드: {code}");
-
-        // 임시 처리
         ProcessInviteCode(code);
-
-        // 입력창 초기화
         inviteInputField.text = "";
     }
 
     private void ProcessInviteCode(string code)
     {
-        // 대충 테스트용
         if (code.Length == 8)
         {
             Debug.Log("방 참가 시도");
@@ -101,5 +116,27 @@ public class TitleScene : MonoBehaviour
         {
             Debug.LogWarning("잘못된 초대 코드 형식입니다!");
         }
+    }
+
+    // 로그인 이름 입력받으면 호출되는 함수
+    private void OnLoginSubmitted(string code)
+    {
+        playerName = code;
+        LoginInputField.text = "";
+        loginPanel.SetActive(false);
+        if(isNewGame)
+            NewGamePanel.SetActive(true);
+        else
+            ContinuePanel.SetActive(true);
+    }
+
+    private void OnBGMVolumeChanged(float value)
+    {
+        SoundManager.Instance.SetBGMVolume(value);
+    }
+
+    private void OnSFXVolumeChanged(float value)
+    {
+        SoundManager.Instance.SetSFXVolume(value);
     }
 }

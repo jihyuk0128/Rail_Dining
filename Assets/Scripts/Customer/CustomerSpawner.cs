@@ -9,7 +9,10 @@ public class CustomerSpawner : MonoBehaviour
     public int spawnCount = 5;          // 생성할 손님 총 수
     public float spawnInterval = 2f;    // 손님 생성 간격 (초)
 
-    private int spawned = 0;
+    public int spawnedCount { get; private set; } = 0;
+    public int SuccessCount { get; private set; } = 0;
+
+    private bool isSpwaning = false;
 
     private void Start()
     {
@@ -25,10 +28,10 @@ public class CustomerSpawner : MonoBehaviour
 
     private IEnumerator SpawnCustomersRoutine()
     {
-        while (spawned < spawnCount)
+        while (spawnedCount < spawnCount)
         {
-            SpawnCustomer();
-            spawned++;
+            if(isSpwaning)
+                SpawnCustomer();
             yield return new WaitForSeconds(spawnInterval);
         }
     }
@@ -39,8 +42,9 @@ public class CustomerSpawner : MonoBehaviour
         int i = 0;
         if (Random.value < 0.5f) i = 1;
         else i = 0;
-            GameObject newCustomer = Instantiate(customerPrefab[i], spawnPoint.position, Quaternion.identity, spawnPoint);
-        newCustomer.name = $"Customer_{spawned + 1}";
+            GameObject newCustomer = Instantiate(customerPrefab[i], spawnPoint.position, Quaternion.identity, transform);
+        newCustomer.name = $"Customer_{spawnedCount + 1}";
+        spawnedCount++;
         // 필요하면 Customer 스크립트 초기화 코드 추가 가능
     }
 
@@ -50,4 +54,12 @@ public class CustomerSpawner : MonoBehaviour
     {
         SpawnCustomer();
     }
+    public void AddSuccessCount()
+    {
+        SuccessCount++;
+        Debug.Log(SuccessCount);
+    }
+
+    public void StartSpawning() => isSpwaning = true;
+    public void StopSpawning() => isSpwaning = false;
 }

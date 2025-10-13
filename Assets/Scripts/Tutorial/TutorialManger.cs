@@ -41,8 +41,14 @@ public class TutorialManager : MonoBehaviour
 
         // 종료 대화창 시작
         player?.SetEvent(true);
+<<<<<<< HEAD
        // dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
         //dialog.PlayDialogueRange(0, 1);
+=======
+        isDialogFinished = true;
+        dialog = Managers.UI.ShowPopupUI<UI_TutorialDialog>();
+        dialog.PlayDialogueRange(0, 1);
+>>>>>>> AJWMergebranch
 
         // 대화가 끝날 때까지 대기
         yield return new WaitUntil(() => isDialogFinished);

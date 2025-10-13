@@ -32,7 +32,7 @@ public class CustomerOrderUI : MonoBehaviour
         menuPanel.SetActive(true);
 
         // 아이콘 로딩
-        Sprite icon = Resources.Load<Sprite>(item.iconPath);
+        Sprite icon = Managers.Resource.Load<Sprite>(item.iconPath);
         if (icon != null)
             menuIcon.sprite = icon;
         else

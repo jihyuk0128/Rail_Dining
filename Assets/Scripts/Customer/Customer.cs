@@ -114,6 +114,12 @@ public class Customer : MonoBehaviour, IInteractable
         {
             Debug.Log("손님이 음료를 받고 돈을 지불합니다.");
             //MoneyManager.Instance.AddMoney(price);
+            CustomerSpawner spawner = transform.parent?.GetComponent<CustomerSpawner>();
+            if (spawner != null)
+            {
+                spawner.AddSuccessCount();
+            }
+
             if (waitCoroutine != null) StopCoroutine(waitCoroutine);
             StartCoroutine(LeaveRoutine());
         }

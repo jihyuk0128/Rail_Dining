@@ -34,6 +34,10 @@ public class TestButton : UI_Popup
     {
         Managers.UI.ShowPopupUI<UI_Chest>();  // ÀÛ¾÷´ë UI
         Managers.Inventory.AddItemToChest(1);
-    }
-
+        Managers.Inventory.AddItemToChest(2);
+        Managers.Inventory.AddItemToChest(3);
+        Managers.Inventory.AddItemToChest(4);
+        Managers.Inventory.AddItemToChest(5);
+    }   
 }
+

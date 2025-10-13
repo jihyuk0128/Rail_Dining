@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerInteractionCollider : MonoBehaviour
 {
-    public Transform player;               // 플레이어 Transform
+    public PlayerController player;               // 플레이어 Transform
     public Transform interactionCollider;  // 상호작용 콜라이더 Transform
     public float offset = 1f;              // 플레이어 전방으로 떨어지는 거리
 
@@ -10,7 +10,7 @@ public class PlayerInteractionCollider : MonoBehaviour
 
     private void Awake()
     {
-        player = GameObject.Find("Player").transform;
+        player = GameObject.Find("Player").GetComponent<PlayerController>();
         interactionCollider = transform;
     }
 
@@ -18,7 +18,7 @@ public class PlayerInteractionCollider : MonoBehaviour
     {
         inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        if (inputDirection != Vector2.zero)
+        if (inputDirection != Vector2.zero && !player.isEventActive)
         {
             MoveCollider(inputDirection);
         }
