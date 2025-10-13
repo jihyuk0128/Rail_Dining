@@ -94,6 +94,8 @@ public class PlayerController : MonoBehaviour
         IsFall = true;
         moveInput = Vector2.zero; // 입력 초기화
 
+        Managers.Inventory.ClearInventory();
+
         if (spineController != null)
         {
             spineController.PlayFallAnimation(); // 넘어짐 애니메이션 재생 
@@ -109,4 +111,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // TrainEvent로 정지중일때 손님에게 충돌이 끝나면 멈추게
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (isEventActive && collision.collider.CompareTag("Customer"))
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+    }
 }

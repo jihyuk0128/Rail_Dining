@@ -121,6 +121,7 @@ public class CustomerSpineController : MonoBehaviour
         }
 
         activeSpine.AnimationState.SetAnimation(0, animName, true);
+        activeSpine.timeScale = 1f;
         if (currentState == CustomerAnimState.Idle)
             activeSpine.timeScale = 0f;
     }

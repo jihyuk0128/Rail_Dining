@@ -4,15 +4,13 @@ using UnityEngine.InputSystem;
 public class SettingUIPopUp : MonoBehaviour
 {
     private UI_Settings settingsUI;
+    private UI_BasicScene basicSceneUI;
 
     private void Start()
     {
         Managers.Inventory.Init(8, 4);  //  먼저!
         // 기본 UI 띄우기
-        Managers.UI.ShowSceneUI<UI_BasicScene>();   // 항상 켜지는 인벤토리
-
-        Managers.Inventory.AddItemToInventory(1, 5);  // Egg 5개
-        Managers.Inventory.AddItemToInventory(1, 20);  // Egg 5개
+        basicSceneUI = Managers.UI.ShowSceneUI<UI_BasicScene>();   // 항상 켜지는 인벤토리
     }
 
     private void Update()
@@ -29,5 +27,18 @@ public class SettingUIPopUp : MonoBehaviour
                 settingsUI = null;
             }
         }
+
+        if (basicSceneUI != null && settingsUI == null)
+        {
+            if (Keyboard.current.qKey.isPressed)
+            {
+                basicSceneUI?.SetRecipeVisible(true);
+            }
+            else if (Keyboard.current.qKey.wasReleasedThisFrame)
+            {
+                basicSceneUI?.SetRecipeVisible(false);
+            }
+        }
+
     }
 }

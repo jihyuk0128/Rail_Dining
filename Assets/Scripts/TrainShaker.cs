@@ -57,6 +57,7 @@ public class TrainShaker : MonoBehaviour
 
     public void TrainShake()
     {
+        SoundManager.Instance.PlaySFX("TrainShake_SFX");
         StartCoroutine(ShakeRoutine());
     }
 }

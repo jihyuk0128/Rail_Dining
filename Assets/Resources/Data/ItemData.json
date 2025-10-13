@@ -5,6 +5,114 @@
       "name": "Egg",
       "maxStack": 20,
       "iconPath": "Art/Items/All_Items/EGG"
+    },
+    {
+      "id": 101,
+      "name": "EGG",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/EGG"
+    },
+    {
+      "id": 102,
+      "name": "RASBERRY SYRUP",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/RASBERRY SYRUP"
+    },
+    {
+      "id": 103,
+      "name": "RUM",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/RUM"
+    },
+    {
+      "id": 104,
+      "name": "LEMON",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/LEMON"
+    },
+    {
+      "id": 106,
+      "name": "VERMOUTH",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/VERMOUTH"
+    },
+    {
+      "id": 108,
+      "name": "VODKA",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/VODKA"
+    },
+    {
+      "id": 112,
+      "name": "WHISKEY",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/WHISKEY"
+    },
+    {
+      "id": 113,
+      "name": "JIN",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/JIN"
+    },
+    {
+      "id": 114,
+      "name": "GINGER ALE",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/GINGER ALE"
+    },
+    {
+      "id": 116,
+      "name": "PINEAPPLE",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/PINEAPPLE"
+    },
+    {
+      "id": 119,
+      "name": "LEMON JUICE",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/LEMON JUICE"
+    },
+    {
+      "id": 120,
+      "name": "PINEAPPLE SYRUP",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/PINEAPPLE JUICE"
+    },
+    {
+      "id": 201,
+      "name": "GODFATHER",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/GODFATHER"
+    },
+    {
+      "id": 210,
+      "name": "CLOVER CLUB",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/CLOVER CLUB"
+    },
+    {
+      "id": 301,
+      "name": "GRILLED BACON",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/GRILLED BACON"
+    },
+    {
+      "id": 302,
+      "name": "GRILLED SAUSAGE",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/GRILLED SAUSAGE"
+    },
+    {
+      "id": 303,
+      "name": "SUNNY SIDE UP",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/SUNNY SIDE UP"
+    },
+    {
+      "id": 304,
+      "name": "FRIED EGG",
+      "maxStack": 16,
+      "iconPath": "Art/Items/All_Items/FRIED EGG"
     }
   ]
 }

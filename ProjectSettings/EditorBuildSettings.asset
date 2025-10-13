@@ -5,22 +5,22 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/AJWScenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/AJWScenes/TitleScene.unity
     guid: 9c8470c66881d7942832bcebe310f93c
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/AJWScenes/TestScene.unity
     guid: fd8c8f24184926e46ab6a0297d69426b
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/AJWScenes/NetworkScene.unity
     guid: 8e495d1d24ab30b4087652a8e3f228db
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/AJWScenes/TutorialScene.unity
     guid: bd652fe87ed9302448c2df8e2cae42e4
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/KJHScenes/networktest.unity
     guid: 751b3927c03891849ab8e5ea72e6b49f
   m_configObjects:

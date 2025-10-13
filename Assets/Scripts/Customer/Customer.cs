@@ -87,11 +87,28 @@ public class Customer : MonoBehaviour, IInteractable
     {
         if (state == CustomerState.WaitingForOrder)
         {
+            UI_BasicScene uiScene = FindObjectOfType<UI_BasicScene>();
+            if (uiScene == null)
+            {
+                Debug.LogWarning("UI_BasicScene을 찾을 수 없습니다!");
+                return;
+            }
+
+            if (uiScene.GetOrderCount() > 8)
+            {
+                Debug.Log("주문이 가득 차서 손님이 주문하지 못했습니다!");
+                return;
+            }
+
             state = CustomerState.WaitingForDrink;
-            int ItemID = 1;
-            orderMenu = Managers.Data.ItemDict[ItemID];
+
+            orderMenu = GameManager.Instance.GetRandomOrder();
             Debug.Log($"손님이 {orderMenu.name} 를 주문했습니다!");
+
+            uiScene.AddOrder(orderMenu); // 주문 ui 추가
+
             orderUI.ShowOrder(orderMenu, 0, 1);
+            SoundManager.Instance.PlaySFX("OrderAccept_SFX");
             waitCoroutine = StartCoroutine(WaitForDrink()); 
         }
     }
@@ -103,29 +120,48 @@ public class Customer : MonoBehaviour, IInteractable
         if (state == CustomerState.WaitingForDrink)
         {
             Debug.Log("손님이 기다리다 떠났습니다.");
+            UI_BasicScene uiScene = FindObjectOfType<UI_BasicScene>();
+            uiScene.RemoveOrder(orderMenu); // 주문 제거
             yield return StartCoroutine(LeaveRoutine());
         }
     }
     
-
-    public void ServeDrink(ItemData menu)
+   
+    public void ServeDrink(GameObject player)
     {
-        if (state == CustomerState.WaitingForDrink && menu.id == orderMenu.id)
+        if (state == CustomerState.WaitingForDrink )
         {
+            // 아이템이 없으면 실패 처리
+            if (!Managers.Inventory.CheckItemToRemove(orderMenu))
+            {
+                Debug.Log("플레이어가 올바른 음료를 가지고 있지 않습니다!");
+                StartCoroutine(ShowOrderHint());
+                return;
+            }
 
             Debug.Log("손님이 음료를 받고 돈을 지불합니다.");
             //MoneyManager.Instance.AddMoney(price);
             //인벤토리에서 현재 가리키고 있는 아이템을 지우기?
-            
+
+            UI_BasicScene uiScene = FindObjectOfType<UI_BasicScene>();
+            uiScene.RemoveOrder(orderMenu); // 주문 제거
             CustomerSpawner spawner = transform.parent?.GetComponent<CustomerSpawner>();
             if (spawner != null)
             {
                 spawner.AddSuccessCount();
             }
-
+            SoundManager.Instance.PlaySFX("OrderDelivery_SFX");
             if (waitCoroutine != null) StopCoroutine(waitCoroutine);
             StartCoroutine(LeaveRoutine());
         }
+    }
+
+    private IEnumerator ShowOrderHint()
+    {
+        var basicUI = FindObjectOfType<UI_BasicScene>();
+        basicUI?.SetRecipeVisible(true);
+        yield return new WaitForSeconds(2f);
+        basicUI?.SetRecipeVisible(false);
     }
 
     private IEnumerator LeaveRoutine()
@@ -202,8 +238,7 @@ public class Customer : MonoBehaviour, IInteractable
         }
         else if(state == CustomerState.WaitingForDrink)
         {
-            string menu = player.GetComponent<PlayerState>().CocktailName;           
-            ServeDrink(orderMenu); // ServeDrink(menu); player.currentItem 이런거? 플레이어가 현재 가리키는 아이템 데이터 넘기기
+            ServeDrink(player); // ServeDrink(menu); player.currentItem 이런거? 플레이어가 현재 가리키는 아이템 데이터 넘기기
         }
     }
 
@@ -217,5 +252,21 @@ public class Customer : MonoBehaviour, IInteractable
             return 0; // 우선순위 높음
         }
         return 1; // 우선순위 낮음
+    }
+
+    private void RemoveItemFromInventory(int itemId)
+    {
+        var inv = Managers.Inventory.InventorySlots;
+        foreach (var slot in inv)
+        {
+            if (slot.Item != null && slot.Item.id == itemId)
+            {
+                slot.Amount--;
+                if (slot.Amount <= 0) slot.Clear();
+                Managers.Inventory.RefreshAllUI();
+                Debug.Log($"인벤토리에서 {itemId} 제거 완료");
+                return;
+            }
+        }
     }
 }

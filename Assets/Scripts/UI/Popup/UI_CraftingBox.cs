@@ -25,7 +25,7 @@ public class UI_CraftingBox : UI_Popup
         Managers.Inventory.RegisterCraftingBoxUI(this);
 
         GetButton((int)Buttons.CloseButton).gameObject.BindEvent(OnClose);
-        GetButton((int)Buttons.CraftButton).gameObject.BindEvent((PointerEventData data) => { Managers.Inventory.Craft(); });
+        GetButton((int)Buttons.CraftButton).gameObject.BindEvent(OnCraft);
 
         CreateSlots(GetObject((int)GameObjects.InventoryGrid), 8, SlotType.Inventory, _inventorySlots);
         CreateSlots(GetObject((int)GameObjects.CraftingGrid), 4, SlotType.Crafting, _craftingSlots);
@@ -38,6 +38,12 @@ public class UI_CraftingBox : UI_Popup
         _resultSlot.Init();
 
         RefreshUI();
+    }
+
+    private void OnCraft(PointerEventData data)
+    {
+        Managers.Inventory.Craft();
+        SoundManager.Instance.PlaySFX("MakingCocktails_SFX");
     }
 
     void CreateSlots(GameObject parent, int count, SlotType type, List<UI_Slot> list)

@@ -783,8 +783,8 @@ MonoBehaviour:
   swapButton: {fileID: 73960771}
   player1Image: {fileID: 111889463}
   player2Image: {fileID: 405218532}
-  maleSprite: {fileID: -3511440811441493887, guid: f2c875f61d4682742a20873afd5ddd54, type: 3}
-  femaleSprite: {fileID: -5385088659030303085, guid: cd341a77f2b7c1d4a9441411cd176af2, type: 3}
+  maleSprite: {fileID: 7461382603979303181, guid: db7d8822a9978b94d90bd43730350143, type: 3}
+  femaleSprite: {fileID: -5035168415789413750, guid: 028c2952ebae7654098296e02eb0e268, type: 3}
 --- !u!4 &507820682
 Transform:
   m_ObjectHideFlags: 0

@@ -83,6 +83,7 @@ public class UI_ShakeTrainEvent : UI_Scene
     {
         for (int i = 3; i > 0; i--)
         {
+            SoundManager.Instance.PlaySFX("TrainShake_SFX");
             UpdateLoadingButtons(i);
             yield return new WaitForSeconds(1f);
         }
