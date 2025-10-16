@@ -79,8 +79,21 @@ public class PlayerController : MonoBehaviour
         if(IsFall || isEventActive) return;
 
         float currentSpeed = IsRunning ? runSpeed : moveSpeed;
-        Vector2 movement = moveInput.normalized * currentSpeed;
+        Vector2 movement;
+
+        // 상하좌우는 그대로
+        if (moveInput.x == 0 || moveInput.y == 0) 
+        {
+            movement = moveInput.normalized * currentSpeed;
+        }
+        else
+        {   // 대각선이동은 아이소메트릭 방향으로
+            Vector2 isoDir = new Vector2(moveInput.x, (moveInput.y) / 2);
+            movement = isoDir.normalized * currentSpeed;
+        }
+
         rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+
 
         // === UDP 이동 패킷 전송 (주기 제어) ===
         if (Managers.Network.UdpGame == null)
@@ -92,7 +105,7 @@ public class PlayerController : MonoBehaviour
         {
             udpSendTimer = 0f;
 
-            Vector2 dir = moveInput;
+            Vector2 dir = movement;
             if (dir.sqrMagnitude > 0.001f)
                 dir.Normalize();
 
@@ -102,7 +115,7 @@ public class PlayerController : MonoBehaviour
                 Managers.Network.UdpGame.SendPlayerMove(
                     Managers.Network.player.Username,
                     new Vector3(transform.position.x, transform.position.y, 0f),
-                    moveInput,
+                    dir,
                    IsRunning,
                    IsFall
                 );

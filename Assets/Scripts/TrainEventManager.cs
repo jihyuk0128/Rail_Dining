@@ -50,12 +50,12 @@ public class TrainEventManager : MonoBehaviour
         float r = Random.value;
         if (r < 0.8f)
         {
-            player.SetEvent(true);
+            //player.SetEvent(true);
             StartCoroutine(WASDChallenge());
         }
         else
         {
-            player.SetEvent(true);
+            //player.SetEvent(true);
             StartCoroutine(SpacebarChallenge());
         }
     }

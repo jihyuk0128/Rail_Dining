@@ -143,8 +143,8 @@ public class UI_Slot : UI_Base
             {
                 Debug.Log($"[결과 수령] {chest.Item.name} x 1");
 
-                // 인벤토리에 추가
-                Managers.Inventory.AddItemToInventory(chest.Item.id, chest.Item.maxStack);
+                // 인벤토리에 추가 + 1개씩
+                Managers.Inventory.AddItemToInventory(chest.Item.id, 1);
 
                 // 갯수추가
                 chest.Amount++;
