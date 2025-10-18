@@ -5,8 +5,10 @@ public class PlayerInteractionCollider : MonoBehaviour
     public PlayerController player;               // 플레이어 Transform
     public Transform interactionCollider;  // 상호작용 콜라이더 Transform
     public float offset = 1f;              // 플레이어 전방으로 떨어지는 거리
+    public float holdDiagonalTime = 0.05f; // 마지막 대각선 유지 시간 (초)
 
     private Vector2 inputDirection;
+    private float diagonalHoldTimer = 0f;
 
     private void Awake()
     {
@@ -20,7 +22,20 @@ public class PlayerInteractionCollider : MonoBehaviour
 
         if (inputDirection != Vector2.zero && !player.isEventActive)
         {
-            MoveCollider(inputDirection);
+            if(Mathf.Abs(inputDirection.x) > 0 && Mathf.Abs(inputDirection.y) > 0)
+            {
+                diagonalHoldTimer = holdDiagonalTime;
+                MoveCollider(inputDirection);
+            }
+            else
+            {
+                diagonalHoldTimer -= Time.deltaTime;
+                if(diagonalHoldTimer <= 0f)
+                {
+                    diagonalHoldTimer = 0f;
+                    MoveCollider(inputDirection);
+                }
+            }   
         }
     }
 
@@ -41,6 +56,10 @@ public class PlayerInteractionCollider : MonoBehaviour
         else if (angle >= -112.5f && angle < -67.5f) newPos = Vector2.down;      // ↓
         else if (angle >= -67.5f && angle < -22.5f) newPos = new Vector2(1, -1);  // ↘
         
-        interactionCollider.localPosition = newPos.normalized * offset;
+        if ( newPos == Vector2.left || newPos == Vector2.right)
+            interactionCollider.localPosition = newPos.normalized * (offset * 1.5f);
+        else 
+            interactionCollider.localPosition = newPos.normalized * offset;
+
     }
 }

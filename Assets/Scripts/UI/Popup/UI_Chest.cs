@@ -61,4 +61,8 @@ public class UI_Chest : UI_Popup
         Managers.UI.ClosePopupUI();
     }
 
+    public override void Unregister()
+    {
+        Managers.Inventory.UnRegisterChestUI(this);
+    }
 }

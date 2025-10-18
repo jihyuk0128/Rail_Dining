@@ -47,17 +47,7 @@ public class TrainEventManager : MonoBehaviour
 
     private void TriggerEvent()
     {
-        float r = Random.value;
-        if (r < 0.8f)
-        {
-            //player.SetEvent(true);
-            StartCoroutine(WASDChallenge());
-        }
-        else
-        {
-            //player.SetEvent(true);
-            StartCoroutine(SpacebarChallenge());
-        }
+        StartCoroutine(SpacebarChallenge());   
     }
 
     // WASD 2키 이벤트 (순차적) 

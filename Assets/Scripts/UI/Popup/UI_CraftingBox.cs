@@ -77,4 +77,8 @@ public class UI_CraftingBox : UI_Popup
         Managers.UI.ClosePopupUI();
     }
 
+    public override void Unregister()
+    {
+        Managers.Inventory.UnregisterCraftingBoxUI();
+    }
 }

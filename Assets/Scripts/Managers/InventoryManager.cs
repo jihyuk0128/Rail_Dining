@@ -173,8 +173,10 @@ public class InventoryManager
 
         foreach (var slot in CraftingSlots)
         {
-            if (slot.Item == null) return;
-            current.Add(slot.Item.id);
+            if (slot.Item == null)
+                current.Add(0);
+            else
+                current.Add(slot.Item.id);
         }
 
         RecipeData match = null;

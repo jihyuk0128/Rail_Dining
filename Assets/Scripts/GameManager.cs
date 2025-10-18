@@ -140,6 +140,9 @@ public class GameManager : MonoBehaviour
     {
         // 씬이 완전히 로드된 후 다시 루프 시작
         yield return new WaitForSeconds(0.1f);
+        if (customerSpawner == null)
+            customerSpawner = GameObject.Find("CustomerSpawner").GetComponent<CustomerSpawner>();
+        customerSpawner.ReStart(); // 스포너 카운트 리셋
         StartCoroutine(GameLoop());
     }
 

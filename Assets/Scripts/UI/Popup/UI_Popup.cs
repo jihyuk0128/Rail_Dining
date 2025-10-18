@@ -11,4 +11,6 @@ public class UI_Popup : UI_Base
     {
         Managers.UI.ClosePopupUI();
     }
+
+    public virtual void Unregister() { }
 }

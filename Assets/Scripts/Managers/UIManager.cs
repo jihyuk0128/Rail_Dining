@@ -60,6 +60,7 @@ public class UIManager
             return;
 
         UI_Popup popup = _popupStack.Pop();
+        popup.Unregister();
         Managers.Resource.Destroy(popup.gameObject);
         popup = null;
         _sortorder--;

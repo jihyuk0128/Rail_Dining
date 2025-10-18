@@ -17,7 +17,7 @@ public class SettingUIPopUp : MonoBehaviour
     {
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            if (settingsUI == null)
+            if (!Managers.UI.IsPopupOpen())
             {
                 settingsUI = Managers.UI.ShowPopupUI<UI_Settings>();
             }

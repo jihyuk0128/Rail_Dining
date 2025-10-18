@@ -30,6 +30,7 @@ public class CustomerOrderUI : MonoBehaviour
     {
         questionPanel.SetActive(false);
         menuPanel.SetActive(true);
+        SetInteractionVisible(false);
 
         // 아이콘 로딩
         Sprite icon = Managers.Resource.Load<Sprite>(item.iconPath);

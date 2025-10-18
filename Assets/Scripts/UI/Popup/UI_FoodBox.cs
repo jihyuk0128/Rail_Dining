@@ -86,4 +86,9 @@ public class UI_FoodBox : UI_Popup
         Managers.Inventory.UnregisterFoodBoxUI();
         Managers.UI.ClosePopupUI();
     }
+
+    public override void Unregister()
+    {
+        Managers.Inventory.UnregisterFoodBoxUI();
+    }
 }

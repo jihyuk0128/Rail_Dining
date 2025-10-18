@@ -51,7 +51,7 @@
     },
     {
       "recipeId": 20004,
-      "ingredients": 101,
+      "ingredients": [ 101, 0, 0, 0 ],
       "resultId": 304,
       "resultAmount": 1,
       "gridSize": 4

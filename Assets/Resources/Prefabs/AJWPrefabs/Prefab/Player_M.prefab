@@ -41,7 +41,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4097012250371986323}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -87,7 +87,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4097012250371986323}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -126,10 +126,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0, y: 0.25}
-      - {x: -0.5, y: 0}
-      - {x: 0, y: -0.25}
-      - {x: 0.5, y: 0}
+    - - {x: 0, y: 0.35}
+      - {x: -0.7, y: 0}
+      - {x: 0, y: -0.35}
+      - {x: 0.7, y: 0}
   m_UseDelaunayMesh: 0
 --- !u!114 &1934473635285871805
 MonoBehaviour:
@@ -146,6 +146,7 @@ MonoBehaviour:
   player: {fileID: 0}
   interactionCollider: {fileID: 0}
   offset: 0.5
+  holdDiagonalTime: 0.05
 --- !u!1 &4600667690227276252
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,7 +553,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f281434c705b94343a1b8977b0d2ff0d, type: 2}
+  - {fileID: 2100000, guid: 78bff21640b71a3459c40728b35cb19f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

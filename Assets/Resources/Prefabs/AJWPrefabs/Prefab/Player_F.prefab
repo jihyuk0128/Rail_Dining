@@ -681,7 +681,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9202302724979352496}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -727,7 +727,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9202302724979352496}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -766,10 +766,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0, y: 0.25}
-      - {x: -0.5, y: 0}
-      - {x: 0, y: -0.25}
-      - {x: 0.5, y: 0}
+    - - {x: 0, y: 0.35}
+      - {x: -0.7, y: 0}
+      - {x: 0, y: -0.35}
+      - {x: 0.7, y: 0}
   m_UseDelaunayMesh: 0
 --- !u!114 &903869582455570891
 MonoBehaviour:
@@ -786,3 +786,4 @@ MonoBehaviour:
   player: {fileID: 0}
   interactionCollider: {fileID: 0}
   offset: 0.5
+  holdDiagonalTime: 0.05
