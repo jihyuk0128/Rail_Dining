@@ -17,8 +17,14 @@ public class RoomTrigger : MonoBehaviour
             }
             if(door != null)
             {
+                /*
                 if (door.isOpen)
                     door.CloseDoor();
+                */
+                if (cameraTarget.transform.position.x == 0)
+                    door.SetIsBarPoint(true);
+                else
+                    door.SetIsBarPoint(false);
             }
         }
     }

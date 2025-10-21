@@ -5,6 +5,9 @@ public class DoorInteract : MonoBehaviour, IInteractable
 {
     [Header("설정")]
     public float autoCloseDelay = 2f;  // 문이 자동으로 닫히기까지 시간
+    public GameObject BarPoint;
+    public GameObject StoregePoint;
+    private bool isBarPoint = false;
 
     public bool isOpen { get; private set; } = false;
     private Coroutine autoCloseCoroutine;
@@ -15,7 +18,21 @@ public class DoorInteract : MonoBehaviour, IInteractable
         if (isOpen)
             return;
 
-        OpenDoor();
+        //OpenDoor();
+        ChangePosition(player);
+    }
+
+    private void ChangePosition(GameObject player)
+    {
+        if (isBarPoint == true)
+            player.transform.position = StoregePoint.transform.position;
+        else
+            player.transform.position = BarPoint.transform.position;
+    }
+
+    public void SetIsBarPoint(bool set)
+    {
+        isBarPoint = set;
     }
 
     private void OpenDoor()

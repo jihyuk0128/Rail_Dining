@@ -107,7 +107,7 @@ public class PlayerSpineController : MonoBehaviour
         activeSpine.AnimationState.SetAnimation(0, animName, true);
 
         // 러닝일 경우 속도 증가
-        activeSpine.timeScale = (newState == PlayerAnimState.Running) ? 3f : 1f;
+        activeSpine.timeScale = (newState == PlayerAnimState.Running) ? 2.5f : 1.5f;
     }
 
     // 상태와 Spine 애니메이션 이름 매핑

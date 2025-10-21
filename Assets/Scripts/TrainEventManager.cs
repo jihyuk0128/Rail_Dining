@@ -195,4 +195,9 @@ public class TrainEventManager : MonoBehaviour
         } while (picked == exclude);
         return picked;
     }
+
+    public bool GetEventActive()
+    {
+        return isEventActive;
+    }
 }

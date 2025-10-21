@@ -12,7 +12,10 @@ public class SeatManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        seats = FindObjectsOfType<Seat>();
+        // SeatId 기준으로 정렬해서 항상 일정한 순서 보장
+        seats = FindObjectsOfType<Seat>()
+            .OrderBy(seat => seat.SeatId)
+            .ToArray();
     }
 
     public Seat GetEmptySeat()
