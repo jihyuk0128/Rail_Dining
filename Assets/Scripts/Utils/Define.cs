@@ -26,6 +26,8 @@ public class Define
         LEAVE_ROOM,
         CHAT,
         START_GAME,
+        TUTORIAL_END,
+        TAKE_ORDER,
     }
 
     // ================================
@@ -40,6 +42,7 @@ public class Define
         ROOM_LEAVE_OK,
         HOST_ASSIGNED,
         ACTION_DENIED,
+        ORDER_MENU,
 
     }
 
@@ -52,7 +55,8 @@ public class Define
         PLAYER_JOINED,
         PLAYER_LEFT,
         GAME_START,
-        GAME_START_TITLE,
+        GAME_START_DAY,
+        DAY_END,
 
         CUSTOMER_SPAWN, // 새로 추가
 

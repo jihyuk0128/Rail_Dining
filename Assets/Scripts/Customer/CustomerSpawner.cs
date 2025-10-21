@@ -1,12 +1,14 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UI_ShakeTrainEvent;
 
 public class CustomerSpawner : MonoBehaviour
 {
     [Header("손님 생성 설정")]
     public GameObject[] customerPrefab;   // 생성할 손님 Prefab
     public Transform spawnPoint;        // 손님이 등장할 위치
-    public int spawnCount = 5;          // 생성할 손님 총 수
+    //public int spawnCount = 5;          // 생성할 손님 총 수
     public float spawnInterval = 2f;    // 손님 생성 간격 (초)
 
     public int spawnedCount { get; private set; } = 0;
@@ -19,7 +21,7 @@ public class CustomerSpawner : MonoBehaviour
     {
         if (customerPrefab != null && spawnPoint != null)
         {
-            StartCoroutine(SpawnCustomersRoutine());
+            Managers.Network.OnCustomerSpawn += SpawnCustomer;
         }
         else
         {
@@ -27,34 +29,43 @@ public class CustomerSpawner : MonoBehaviour
         }
     }
 
-    private IEnumerator SpawnCustomersRoutine()
-    {
-        while (spawnedCount < spawnCount)
-        {
-            if(isSpwaning)
-                SpawnCustomer();
-            yield return new WaitForSeconds(spawnInterval);
-        }
-    }
+    //private IEnumerator SpawnCustomersRoutine()
+    //{
+    //    while (spawnedCount < spawnCount)
+    //    {
+    //        if(isSpwaning)
+    //            SpawnCustomer();
+    //        yield return new WaitForSeconds(spawnInterval);
+    //    }
+    //}
 
-    private void SpawnCustomer()
+    private void SpawnCustomer(int gender,int customerid , float searchTime) // 여기서스폰
     {
-        // 임시 남여 랜덤 스폰
-        int i = 0;
-        if (Random.value < 0.5f) i = 1;
-        else i = 0;
-            GameObject newCustomer = Instantiate(customerPrefab[i], spawnPoint.position, Quaternion.identity, transform);
-        newCustomer.name = $"Customer_{spawnedCount + 1}";
-        spawnedCount++;
-        // 필요하면 Customer 스크립트 초기화 코드 추가 가능
+        Managers.MainThread.Enqueue(() =>
+        {
+
+            GameObject newCustomer = Instantiate(customerPrefab[gender], spawnPoint.position, Quaternion.identity, transform);
+            newCustomer.name = $"Customer_{customerid}";
+
+            // Customer 컴포넌트 가져와서 초기화
+            Customer customer = newCustomer.GetComponent<Customer>();
+            if (customer != null)
+            {
+                customer.Init(customerid, gender, searchTime);
+            }
+            else
+            {
+                Debug.LogWarning("Customer 컴포넌트가 프리팹에 없습니다!");
+            }
+        });
     }
 
     //인스펙터에서 손님 생성 즉시 테스트용 메서드
-    [ContextMenu("스폰 테스트")]
-    private void SpawnOneCustomer()
-    {
-        SpawnCustomer();
-    }
+    //[ContextMenu("스폰 테스트")]
+    //private void SpawnOneCustomer()
+    //{
+    //    SpawnCustomer();
+    //}
     public void AddSuccessCount()
     {
         SuccessCount++;
@@ -67,4 +78,9 @@ public class CustomerSpawner : MonoBehaviour
     }
     public void StartSpawning() => isSpwaning = true;
     public void StopSpawning() => isSpwaning = false;
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnCustomerSpawn -= SpawnCustomer;
+    }
 }
