@@ -20,6 +20,8 @@ public class Customer : MonoBehaviour, IInteractable
     public Seat targetSeat;
     public ItemData orderMenu;     // 주문 메뉴 
     public float waitTime = 30f; // 음료 대기 시간 
+    public int custmoerId; // customerid
+    public float searchTime;
 
     private Coroutine waitCoroutine;
     public Vector2 CurrentDirection { get; private set; } // 현재 이동 방향
@@ -32,6 +34,13 @@ public class Customer : MonoBehaviour, IInteractable
     // 손님 주문 아이템 UI
     private CustomerOrderUI orderUI;
 
+    public void Init(int id, int gender, float searchtime)
+    {
+        custmoerId = id;
+        searchTime = searchtime;
+        StartCoroutine(CustomerRoutine());
+    }
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -40,7 +49,7 @@ public class Customer : MonoBehaviour, IInteractable
         spineController = GetComponent<CustomerSpineController>();
         orderUI = GetComponentInChildren<CustomerOrderUI>();
 
-        StartCoroutine(CustomerRoutine());
+        Managers.Network.OnOrderMenu += TakeOrder;
     }
 
     private IEnumerator CustomerRoutine() // 서버에서 
@@ -52,7 +61,6 @@ public class Customer : MonoBehaviour, IInteractable
 
         // 2. 좌석찾는 시간
         state = CustomerState.SearchingSeat;
-        float searchTime = Random.Range(1f, 2f);
         yield return new WaitForSeconds(searchTime);
 
         // 3. 좌석으로 이동
@@ -68,28 +76,6 @@ public class Customer : MonoBehaviour, IInteractable
             yield return StartCoroutine(LeaveRoutine());
         }
 
-        //// 1. 등장
-        //state = CustomerState.Entering;
-        //Vector3 entryTarget = GameObject.Find("StartPoint").transform.position;
-        //yield return MoveToRoutine(entryTarget);
-        //
-        //// 2. 좌석찾는 시간
-        //state = CustomerState.SearchingSeat;
-        //float searchTime = 2.0f;
-        //yield return new WaitForSeconds(searchTime);
-        //
-        //// 3. 좌석으로 이동
-        //targetSeat = SeatManager.Instance.GetEmptySeat();
-        //if (targetSeat != null)
-        //{
-        //    state = CustomerState.MovingToSeat;
-        //    targetSeat.IsSeating = true;
-        //    yield return MoveToSeatWithRoute(targetSeat);
-        //}
-        //else
-        //{
-        //    yield return StartCoroutine(LeaveRoutine());
-        //}
     }
 
     private void SitDown()
@@ -104,12 +90,17 @@ public class Customer : MonoBehaviour, IInteractable
         spineController.isSiting = true;
         spineController.seatDirection = targetSeat.seatDirection;
         spineController.UpdateSpine(Vector2.zero);
+
+        Managers.Network.TakeOrder(custmoerId);
     }
 
-    public void TakeOrder()
+    public void TakeOrder(int ordermenu)
     {
-        if (state == CustomerState.WaitingForOrder)
+        Managers.MainThread.Enqueue(() =>
         {
+            if (state != CustomerState.WaitingForOrder)
+                return;
+
             UI_BasicScene uiScene = FindObjectOfType<UI_BasicScene>();
             if (uiScene == null)
             {
@@ -124,20 +115,18 @@ public class Customer : MonoBehaviour, IInteractable
             }
 
             state = CustomerState.WaitingForDrink;
+            orderMenu = GameManager.Instance.Getorder(ordermenu);
 
-            orderMenu = GameManager.Instance.GetRandomOrder();
             Debug.Log($"손님이 {orderMenu.name} 를 주문했습니다!");
 
-            uiScene.AddOrder(orderMenu); // 주문 ui 추가
-
+            uiScene.AddOrder(orderMenu); // 주문 UI 추가
             orderUI.ShowOrder(orderMenu, 0, 1);
             SoundManager.Instance.PlaySFX("OrderAccept_SFX");
-            waitCoroutine = StartCoroutine(WaitForDrink()); 
-        }
+            waitCoroutine = StartCoroutine(WaitForDrink());
+        });
     }
 
-    
-     private IEnumerator WaitForDrink()
+    private IEnumerator WaitForDrink() // 음료대기 
     {
         yield return new WaitForSeconds(waitTime);
         if (state == CustomerState.WaitingForDrink)
@@ -150,9 +139,9 @@ public class Customer : MonoBehaviour, IInteractable
     }
     
    
-    public void ServeDrink(GameObject player)
+    public void ServeDrink(GameObject player) // 주문완료
     {
-        if (state == CustomerState.WaitingForDrink )
+        if (state == CustomerState.WaitingForDrink ) 
         {
             // 아이템이 없으면 실패 처리
             if (!Managers.Inventory.CheckItemToRemove(orderMenu))
@@ -255,11 +244,7 @@ public class Customer : MonoBehaviour, IInteractable
     // IInteractable 구현
     public void Interact(GameObject player)
     {
-        if (state == CustomerState.WaitingForOrder)
-        {
-            TakeOrder();
-        }
-        else if(state == CustomerState.WaitingForDrink)
+        if(state == CustomerState.WaitingForDrink)
         {
             ServeDrink(player); // ServeDrink(menu); player.currentItem 이런거? 플레이어가 현재 가리키는 아이템 데이터 넘기기
         }
@@ -291,5 +276,28 @@ public class Customer : MonoBehaviour, IInteractable
                 return;
             }
         }
+    }
+
+    public void Leave()
+    {
+        // 주문내역 ui 삭제
+        UI_BasicScene uiScene = FindObjectOfType<UI_BasicScene>();
+        uiScene.RemoveOrder(orderMenu); // 주문 제거
+        CustomerSpawner spawner = transform.parent?.GetComponent<CustomerSpawner>();
+        if (spawner != null)
+        {
+            spawner.AddSuccessCount();
+        }
+        // 떠나는 사운드 재생 
+        SoundManager.Instance.PlaySFX("OrderDelivery_SFX");
+        // 대기루틴 정지
+        if (waitCoroutine != null) StopCoroutine(waitCoroutine);
+        // 떠나기 루틴
+        StartCoroutine(LeaveRoutine());
+    }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnOrderMenu -= TakeOrder;
     }
 }

@@ -13,6 +13,8 @@ public class TutorialManager : MonoBehaviour
         player = FindObjectOfType<PlayerController>();
         player?.SetEvent(true);
         StartCoroutine(TutorialRoutine());
+
+        Managers.Network.OnGameStartDay += Test;
     }
 
     IEnumerator TutorialRoutine()
@@ -40,11 +42,25 @@ public class TutorialManager : MonoBehaviour
         player?.SetEvent(false);
         Debug.Log("튜토리얼 완료!");
 
-        SceneManager.LoadScene("TestScene");
+        // 튜토리얼 완료 여부 전송 
+        Managers.Network.TutorialEnd();
     }
 
     public void OnDialogFinished()
     {
         isDialogFinished = true;
+    }
+
+    public void Test(int day)
+    {
+        Managers.MainThread.Enqueue(() =>
+        {
+            SceneManager.LoadScene("TestScene");
+        });
+    }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnGameStartDay -= Test;
     }
 }

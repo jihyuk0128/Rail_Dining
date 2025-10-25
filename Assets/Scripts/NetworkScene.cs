@@ -73,4 +73,9 @@ public class NetworkScene : MonoBehaviour
             isMale = true;
         }
     }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnGameStart -= OnStartGameNetwork;
+    }
 }

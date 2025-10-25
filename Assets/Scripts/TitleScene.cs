@@ -172,4 +172,11 @@ public class TitleScene : MonoBehaviour
     {
         SoundManager.Instance.SetSFXVolume(value);
     }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnLoginSuccess -= OnLoginNetwork;
+        Managers.Network.OnRoomCreate -= OnHostNetwork;
+        Managers.Network.OnRoomJoin -= OnRoomJoin;
+    }
 }

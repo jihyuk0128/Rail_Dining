@@ -21,8 +21,6 @@ public class TutorialNPC : MonoBehaviour, IInteractable
         orderUI = GetComponentInChildren<CustomerOrderUI>();
         State = TutorialState.WaitingForOrder;
         orderUI.ShowWaiting();
-
-        Managers.Network.OnGameStartTitle += test;
     }
 
     public void EnableInteraction(bool value)
@@ -31,22 +29,12 @@ public class TutorialNPC : MonoBehaviour, IInteractable
 
     }
 
-    public void test()
-    {
-        IsServed = true;
-    }
 
     public void Interact(GameObject player)
     {
-      
         if (!canInteract || IsServed) return;
 
-        Managers.Network.Send(pw =>
-        {
-            pw.WriteInt((int)Define.StoC_Event.GAME_START_TITLE);
-        });
-
-
+        IsServed = true;
 
         if (State == TutorialState.WaitingForOrder)
         {

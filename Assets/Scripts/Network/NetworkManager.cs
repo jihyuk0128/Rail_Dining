@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class NetworkManager
@@ -37,8 +36,9 @@ public class NetworkManager
     public event Action<string> OnChatReceived;
     public event Action OnGameStart;
     public event Action<string> OnError;
-    public event Action<int> OnCustomerSpawn;
-    public event Action OnGameStartTitle;
+    public event Action<int,int,float> OnCustomerSpawn;
+    public event Action<int> OnGameStartDay;
+    public event Action<int> OnOrderMenu;
 
 
 
@@ -140,6 +140,37 @@ public class NetworkManager
         Send(pw =>
         {
             pw.WriteInt((int)Define.CtoS.START_GAME);
+        });
+    }
+
+    public void TutorialEnd()
+    {
+        if (!IsConnected)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않음");
+            return;
+        }
+
+        Debug.Log("[Network] 튜토리얼 종료 메세지 보냄");
+        Send(pw =>
+        {
+            pw.WriteInt((int)Define.CtoS.TUTORIAL_END);
+        });
+    }
+
+    public void TakeOrder(int customerid)
+    {
+        if (!IsConnected)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않음");
+            return;
+        }
+
+        Debug.Log($"[Network] customerid : {customerid} 에게 레시피 뽑아줘");
+        Send(pw =>
+        {
+            pw.WriteInt((int)Define.CtoS.TAKE_ORDER);
+            pw.WriteInt(customerid);
         });
     }
 
@@ -249,8 +280,16 @@ public class NetworkManager
                 case Define.StoC_Response.ACTION_DENIED:
                     string reason = reader.ReadString();
                     OnError?.Invoke(reason);
-                    Debug.LogWarning($"[Network] 동작 거부: {reason}");
+                    Debug.LogWarning($"[Network] 응답 : {reason}");
                     return;
+
+                case Define.StoC_Response.ORDER_MENU:
+                    {
+                        int ordermenu = reader.ReadInt();
+                        Debug.Log($"[SERVER] 레시피 불러오기 시작");
+                        OnOrderMenu?.Invoke(ordermenu);
+                        return;
+                    }
             }
         }
 
@@ -264,13 +303,13 @@ public class NetworkManager
                 case Define.StoC_Event.BROADCAST_CHAT:
                     string chat = reader.ReadString();
                     OnChatReceived?.Invoke(chat);
-                    Debug.Log($"[Chat] {chat}");
+                    Debug.Log($"[SERVER] {chat}");
                     break;
 
                 case Define.StoC_Event.PLAYER_JOINED:
                     string joinedName = reader.ReadString();
                     roomData?.AddPlayer(joinedName);
-                    Debug.Log($"[Event] 플레이어 입장: {joinedName}");
+                    Debug.Log($"[SERVER] 플레이어 입장: {joinedName}");
                     Debug.Log($"현재방상태 {roomData.CurrentPlayers}명 , {roomData.Players[0]}");
 
 
@@ -284,7 +323,7 @@ public class NetworkManager
                 case Define.StoC_Event.PLAYER_LEFT:
                     string leftName = reader.ReadString();
                     roomData?.RemovePlayer(leftName);
-                    Debug.Log($"[Event] 플레이어 퇴장: {leftName}");
+                    Debug.Log($"[SERVER] 플레이어 퇴장: {leftName}");
 
                     //UnityMainThreadDispatcher.Instance?.Enqueue(() =>
                     //{
@@ -296,7 +335,7 @@ public class NetworkManager
                 case Define.StoC_Event.GAME_START:
                     {
 
-                        Debug.Log("[Event] 게임 시작 신호 수신");
+                        Debug.Log("[SERVER] 게임 시작 신호 수신"); 
 
                         float x = reader.ReadFloat();
                         float y = reader.ReadFloat();
@@ -315,15 +354,18 @@ public class NetworkManager
                 case Define.StoC_Event.CUSTOMER_SPAWN:    
                     {
                         int gender = reader.ReadInt();
-                        Debug.Log($"[Event] 손님 스폰 수신 (gender: {gender})");
+                        int CustomerId = reader.ReadInt();
+                        float searchTime = reader.ReadFloat();
+                        Debug.Log($"[SERVER] 손님 스폰 수신 (gender: {gender}  , cusmterid {CustomerId} , seardchtime {searchTime})");
 
-                        OnCustomerSpawn?.Invoke(gender);
+                        OnCustomerSpawn?.Invoke(gender, CustomerId, searchTime);
                         break;
                     }
-                case Define.StoC_Event.GAME_START_TITLE:
+                case Define.StoC_Event.GAME_START_DAY:
                     {
-                        Debug.Log($"[Event] 튜토리얼종료");
-                        OnGameStartTitle?.Invoke();
+                        int day = reader.ReadInt();
+                        Debug.Log($"[SERVER] {day} 일차 시작!");
+                        OnGameStartDay?.Invoke(day);
                         break;
                     }
             }

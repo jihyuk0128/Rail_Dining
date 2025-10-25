@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
 
     public bool IsPlaying() => isPlaying;
 
-    public ItemData GetRandomOrder()
+    public ItemData Getorder(int randId)
     {
         if (availableItemIDs.Count == 0)
         {
@@ -156,8 +156,7 @@ public class GameManager : MonoBehaviour
             return null;
         }
 
-        int randomIndex = Random.Range(0, availableItemIDs.Count);
-        int itemId = availableItemIDs[randomIndex];
+        int itemId = availableItemIDs[randId];
 
         if (Managers.Data.ItemDict.TryGetValue(itemId, out var item))
             return item;
