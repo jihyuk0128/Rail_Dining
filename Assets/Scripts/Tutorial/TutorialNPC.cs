@@ -5,6 +5,7 @@ public enum TutorialState
     WaitingForOrder,
     WaitingForDrink
 }
+// 바뀐거적용점
 
 public class TutorialNPC : MonoBehaviour, IInteractable
 {
