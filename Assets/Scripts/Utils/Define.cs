@@ -28,6 +28,7 @@ public class Define
         START_GAME,
         TUTORIAL_END,
         TAKE_ORDER,
+        ORDER_SUCCESS,
     }
 
     // ================================
@@ -59,6 +60,7 @@ public class Define
         DAY_END,
 
         CUSTOMER_SPAWN, // 새로 추가
+        CUSTOMER_LEAVE,
 
     }
     // ================================

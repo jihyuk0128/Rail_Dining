@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public enum CustomerState
@@ -19,8 +20,8 @@ public class Customer : MonoBehaviour, IInteractable
     public CustomerState state;
     public Seat targetSeat;
     public ItemData orderMenu;     // 주문 메뉴 
-    public float waitTime = 30f; // 음료 대기 시간 
-    public int custmoerId; // customerid
+    public float waitTime; // 음료 대기 시간 
+    public int customerid; // customerid
     public float searchTime;
 
     private Coroutine waitCoroutine;
@@ -36,7 +37,7 @@ public class Customer : MonoBehaviour, IInteractable
 
     public void Init(int id, int gender, float searchtime)
     {
-        custmoerId = id;
+        customerid = id;
         searchTime = searchtime;
         StartCoroutine(CustomerRoutine());
     }
@@ -91,10 +92,10 @@ public class Customer : MonoBehaviour, IInteractable
         spineController.seatDirection = targetSeat.seatDirection;
         spineController.UpdateSpine(Vector2.zero);
 
-        Managers.Network.TakeOrder(custmoerId);
+        Managers.Network.TakeOrder(customerid);
     }
 
-    public void TakeOrder(int ordermenu)
+    public void TakeOrder(int id ,int ordermenu, float time)
     {
         Managers.MainThread.Enqueue(() =>
         {
@@ -116,6 +117,7 @@ public class Customer : MonoBehaviour, IInteractable
 
             state = CustomerState.WaitingForDrink;
             orderMenu = GameManager.Instance.Getorder(ordermenu);
+            waitTime = time;
 
             Debug.Log($"손님이 {orderMenu.name} 를 주문했습니다!");
 
@@ -144,27 +146,18 @@ public class Customer : MonoBehaviour, IInteractable
         if (state == CustomerState.WaitingForDrink ) 
         {
             // 아이템이 없으면 실패 처리
-            if (!Managers.Inventory.CheckItemToRemove(orderMenu))
-            {
-                Debug.Log("플레이어가 올바른 음료를 가지고 있지 않습니다!");
-                StartCoroutine(ShowOrderHint());
-                return;
-            }
+            //if (!Managers.Inventory.CheckItemToRemove(orderMenu))
+            //{
+            //    Debug.Log("플레이어가 올바른 음료를 가지고 있지 않습니다!");
+            //    StartCoroutine(ShowOrderHint());
+            //    return;
+            //}
 
             Debug.Log("손님이 음료를 받고 돈을 지불합니다.");
             //MoneyManager.Instance.AddMoney(price);
             //인벤토리에서 현재 가리키고 있는 아이템을 지우기?
-
-            UI_BasicScene uiScene = FindObjectOfType<UI_BasicScene>();
-            uiScene.RemoveOrder(orderMenu); // 주문 제거
-            CustomerSpawner spawner = transform.parent?.GetComponent<CustomerSpawner>();
-            if (spawner != null)
-            {
-                spawner.AddSuccessCount();
-            }
-            SoundManager.Instance.PlaySFX("OrderDelivery_SFX");
-            if (waitCoroutine != null) StopCoroutine(waitCoroutine);
-            StartCoroutine(LeaveRoutine());
+            Debug.Log($"{customerid}번 손님 주문완료");
+            Managers.Network.OrderSuccess(customerid);
         }
     }
 
@@ -202,7 +195,7 @@ public class Customer : MonoBehaviour, IInteractable
 
         Destroy(gameObject);
     }
-
+     
     // 웨이포인트 따라서 좌석으로 이동
     private IEnumerator MoveToSeatWithRoute(Seat seat)
     {
@@ -272,7 +265,7 @@ public class Customer : MonoBehaviour, IInteractable
                 slot.Amount--;
                 if (slot.Amount <= 0) slot.Clear();
                 Managers.Inventory.RefreshAllUI();
-                Debug.Log($"인벤토리에서 {itemId} 제거 완료");
+                Debug.Log($"인벤토리에서 {itemId} 제거 완료"); 
                 return;
             }
         }

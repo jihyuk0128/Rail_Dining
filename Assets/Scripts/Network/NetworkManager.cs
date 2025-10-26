@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NetworkManager
@@ -38,7 +39,8 @@ public class NetworkManager
     public event Action<string> OnError;
     public event Action<int,int,float> OnCustomerSpawn;
     public event Action<int> OnGameStartDay;
-    public event Action<int> OnOrderMenu;
+    public event Action<int,int,float> OnOrderMenu;
+    public event Action<int> OnCustomerLeave;
 
 
 
@@ -174,6 +176,22 @@ public class NetworkManager
         });
     }
 
+    public void OrderSuccess(int customerid)
+    {
+        if (!IsConnected)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않음");
+            return;
+        }
+
+        Debug.Log($"[Network] customerid : {customerid} 주문 완료!");
+        Send(pw =>
+        {
+            pw.WriteInt((int)Define.CtoS.ORDER_SUCCESS);
+            pw.WriteInt(customerid);
+        });
+    }
+
     // ===================================================
     // 내부 공통 전송 로직
     // ===================================================
@@ -285,9 +303,11 @@ public class NetworkManager
 
                 case Define.StoC_Response.ORDER_MENU:
                     {
+                        int customerid = reader.ReadInt();
                         int ordermenu = reader.ReadInt();
+                        float time = reader.ReadFloat();
                         Debug.Log($"[SERVER] 레시피 불러오기 시작");
-                        OnOrderMenu?.Invoke(ordermenu);
+                        OnOrderMenu?.Invoke(customerid,ordermenu, time);
                         return;
                     }
             }
@@ -366,6 +386,14 @@ public class NetworkManager
                         int day = reader.ReadInt();
                         Debug.Log($"[SERVER] {day} 일차 시작!");
                         OnGameStartDay?.Invoke(day);
+
+                        break;
+                    }
+                case Define.StoC_Event.CUSTOMER_LEAVE:
+                    {
+                        int customerId = reader.ReadInt();
+                        Debug.Log($"[SERVER] {customerId}번 손님 떠남!");
+                        OnCustomerLeave?.Invoke(customerId);
                         break;
                     }
             }

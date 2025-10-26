@@ -20,7 +20,7 @@ public class UI_Inventory : UI_Base
 
         var grid = GetObject((int)GameObjects.Grid).transform;
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 4; i++)
         {
             GameObject go = Managers.Resource.Instantiate("UI/Slot", grid);
             var slot = go.GetComponent<UI_Slot>();

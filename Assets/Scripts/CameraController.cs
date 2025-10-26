@@ -14,18 +14,18 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         targetPosition = transform.position;
-        train = FindObjectOfType<TrainEventManager>();
-        player = GameObject.FindWithTag("Player");
+       //train = FindObjectOfType<TrainEventManager>();
+       //player = GameObject.FindWithTag("Player");
     }
 
     private void Update()
     {
-        if (train.GetEventActive())
-        {
-            transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -10.0f);
-            gameObject.GetComponent<Camera>().orthographicSize = CloseSize;
-        }
-        else
+        //if (train.GetEventActive())
+        //{
+        //    transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -10.0f);
+        //    gameObject.GetComponent<Camera>().orthographicSize = CloseSize;
+        //}
+        //else
         {
             // 부드럽게 이동
             transform.position = Vector3.Lerp(transform.position, targetPosition, moveSpeed * Time.deltaTime);
