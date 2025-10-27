@@ -7,7 +7,6 @@ public class ItemData
 {
     public int id;
     public string name;
-    public int maxStack;
     public string iconPath;
 }
 
@@ -31,7 +30,7 @@ public class ItemSlot
     public ItemData Item;
     public int Amount;
 
-    public const int MAX_STACK = 16; // 슬롯당 최대 개수
+    public const int MAX_STACK = 1; // 슬롯당 최대 개수
 
     public bool IsFull => Amount >= MAX_STACK;
 

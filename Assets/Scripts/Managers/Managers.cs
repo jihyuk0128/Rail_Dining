@@ -12,11 +12,26 @@ public class Managers : MonoBehaviour
     InventoryManager _inventory = new();
     NetworkManager _network = new();
 
+    // === 새 시스템 ===
+    NewSlotManager _slot = new();
+    NewInventoryManager _newInventory = new();
+    NewChestManager _newChest = new();
+    NewCraftingManager _newCrafting = new();
+
+
     public static ResourceManager Resource => Instance._resource;
     public static UIManager UI => Instance._ui;
     public static DataManager Data => Instance._data;
     public static InventoryManager Inventory => Instance._inventory;
     public static NetworkManager Network => Instance._network;
+
+    // === 새 시스템 ===
+    public static NewSlotManager Slot => Instance._slot;
+    public static NewInventoryManager NewInventory => Instance._newInventory;
+    public static NewChestManager Chest => Instance._newChest;
+    public static NewCraftingManager Crafting => Instance._newCrafting;
+
+
 
     // Dispatcher 래퍼
     public static class MainThread

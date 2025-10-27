@@ -74,7 +74,7 @@ public class CustomerSpawner : MonoBehaviour
     public void LeaveCustomer(int id)
     {
         Managers.MainThread.Enqueue(() =>
-        {
+        { 
             Customer target = customers.Find(c => c.customerid == id);
             if (target == null)
             {

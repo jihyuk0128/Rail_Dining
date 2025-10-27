@@ -1,15 +1,19 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UI_BasicScene : UI_Scene
 {
+    enum Buttons { UI_MenuButton, }
     enum GameObjects
     {
         UI_Clock,
         UI_Inventory,
-        UI_RecipeGrid
+        UI_RecipeGrid,
     }
+
 
     List<RecipeData> _RecipeList = new();
 
@@ -21,10 +25,10 @@ public class UI_BasicScene : UI_Scene
     public override void Init()
     {
         base.Init();
-
+        Bind<Button>(typeof(Buttons));
         // 자식 오브젝트 자동 바인딩
         Bind<GameObject>(typeof(GameObjects));
-
+        GetButton((int)Buttons.UI_MenuButton).gameObject.BindEvent((PointerEventData data) => { Managers.UI.ShowPopupUI<UI_Menu>(); });
     }
 
     public void UpdateRecipe(List<RecipeData> recipelist)

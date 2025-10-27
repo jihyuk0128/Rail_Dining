@@ -14,7 +14,7 @@ public class InventoryManager
     public UI_Inventory InventoryUI { get; private set; }
     public UI_CraftingBox CraftingBoxUI { get; private set; }
     public UI_FoodBox FoodBoxUI { get; private set; }
-    public UI_Chest ChestUI { get; private set; }
+    public UI_Chest ChestUI { get; private set; } 
     public UI_Slot DragSourceSlot { get; set; }
 
     public void Init(int inventoryCount, int craftingCount)
@@ -196,7 +196,6 @@ public class InventoryManager
         }
 
         ResultSlot.Item = Managers.Data.ItemDict[match.resultId];
-        ResultSlot.Amount = match.resultAmount;
 
         foreach (var slot in CraftingSlots)
             slot.Clear();

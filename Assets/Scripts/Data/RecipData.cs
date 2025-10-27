@@ -7,8 +7,6 @@ public class RecipeData
     public int recipeId;
     public List<int> ingredients;
     public int resultId;
-    public int resultAmount;
-    public int gridSize;
 }
 
 [Serializable]

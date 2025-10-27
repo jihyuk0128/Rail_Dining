@@ -20,6 +20,6 @@ public class SeatManager : MonoBehaviour
 
     public Seat GetEmptySeat()
     {
-        return seats.FirstOrDefault(seat => seat.IsSeating == false);
+        return seats.FirstOrDefault(seat => seat.IsSeating == false); 
     }
 }
