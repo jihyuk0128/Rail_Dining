@@ -11,8 +11,7 @@ public class UI_Settings : UI_Popup
         CloseButton,
         SoundButton,
         RestartButton,
-        MainButton,
-        SoundBackButton
+        MainButton
     }
 
     public enum Sliders
@@ -36,11 +35,6 @@ public class UI_Settings : UI_Popup
     private GameObject BGMOff;
     private GameObject SFXOn;
     private GameObject SFXOff;
-
-    private Vector2 BGMOnOrigin;
-    private Vector2 BGMOffOrigin;
-    private Vector2 SFXOnOrigin;
-    private Vector2 SFXOffOrigin;
 
     private bool isBGM = true;
     private bool isSFX = true;
@@ -90,11 +84,6 @@ public class UI_Settings : UI_Popup
         BGMOff = GetObject((int)Objects.BGMOff);
         SFXOn = GetObject((int)Objects.SFXOn);
         SFXOff = GetObject((int)Objects.SFXOff);
-
-        BGMOnOrigin = BGMOn.GetComponent<RectTransform>().anchoredPosition;
-        BGMOffOrigin = BGMOff.GetComponent<RectTransform>().anchoredPosition;
-        SFXOnOrigin = SFXOn.GetComponent<RectTransform>().anchoredPosition;
-        SFXOffOrigin = SFXOff.GetComponent<RectTransform>().anchoredPosition;
     }
 
     // ===== 버튼 이벤트 =====
@@ -194,83 +183,4 @@ public class UI_Settings : UI_Popup
         fromRect.anchoredPosition = startPos;
         isAnimating = false;
     }
-    /*
-    private IEnumerator AnimateIconSwitchBGM(GameObject fromIcon, GameObject toIcon)
-    {
-        isAnimating = true;
-        RectTransform fromRect = fromIcon.GetComponent<RectTransform>();
-        RectTransform toRect = toIcon.GetComponent<RectTransform>();
-
-
-        Vector2 startPos = fromRect.anchoredPosition;
-        Vector2 upPos = startPos + Vector2.up * bounceHeight;
-
-        float t = 0f;
-
-        // 위로 이동
-        while (t < bounceDuration / 2f)
-        {
-            t += Time.deltaTime;
-            float progress = t / (bounceDuration / 2f);
-            fromRect.anchoredPosition = Vector2.Lerp(BGMOrigin, upPos, Mathf.SmoothStep(0, 1, progress));
-            yield return null;
-        }
-
-        // 전환 (위쪽에서 교체)
-        fromRect.gameObject.SetActive(false);
-        toRect.gameObject.SetActive(true);
-        toRect.anchoredPosition = upPos;
-
-        // 아래로 복귀
-        t = 0f;
-        while (t < bounceDuration / 2f)
-        {
-            t += Time.deltaTime;
-            float progress = t / (bounceDuration / 2f);
-            toRect.anchoredPosition = Vector2.Lerp(upPos, BGMOrigin, Mathf.SmoothStep(0, 1, progress));
-            yield return null;
-        }
-
-        toRect.anchoredPosition = BGMOrigin;
-        isAnimating = false;
-    }
-    private IEnumerator AnimateIconSwitchSFX(GameObject fromIcon, GameObject toIcon)
-    {
-        isAnimating = true;
-        RectTransform fromRect = fromIcon.GetComponent<RectTransform>();
-        RectTransform toRect = toIcon.GetComponent<RectTransform>();
-
-
-        Vector2 startPos = fromRect.anchoredPosition;
-        Vector2 upPos = startPos + Vector2.up * bounceHeight;
-
-        float t = 0f;
-
-        // 위로 이동
-        while (t < bounceDuration / 2f)
-        {
-            t += Time.deltaTime;
-            float progress = t / (bounceDuration / 2f);
-            fromRect.anchoredPosition = Vector2.Lerp(SFXOrigin, upPos, Mathf.SmoothStep(0, 1, progress));
-            yield return null;
-        }
-
-        // 전환 (위쪽에서 교체)
-        fromRect.gameObject.SetActive(false);
-        toRect.gameObject.SetActive(true);
-        toRect.anchoredPosition = upPos;
-
-        // 아래로 복귀
-        t = 0f;
-        while (t < bounceDuration / 2f)
-        {
-            t += Time.deltaTime;
-            float progress = t / (bounceDuration / 2f);
-            toRect.anchoredPosition = Vector2.Lerp(upPos, SFXOrigin, Mathf.SmoothStep(0, 1, progress));
-            yield return null;
-        }
-
-        toRect.anchoredPosition = SFXOrigin;
-        isAnimating = false;
-    }*/
 }

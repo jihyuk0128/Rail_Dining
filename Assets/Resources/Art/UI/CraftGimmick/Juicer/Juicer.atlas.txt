@@ -1,0 +1,12 @@
+Juicer.png
+size:64,64
+filter:Linear,Linear
+pma:true
+JU
+bounds:2,2,11,25
+su
+bounds:2,44,50,13
+offsets:1,1,52,15
+su2
+bounds:2,29,50,13
+offsets:1,1,52,15

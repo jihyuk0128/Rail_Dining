@@ -130,7 +130,7 @@ public class Customer : MonoBehaviour, IInteractable
 
             uiScene.AddOrder(orderMenu); // 주문 ui 추가
 
-            orderUI.ShowOrder(orderMenu, 0, 1);
+            orderUI.ShowOrder(orderMenu, 0, 1, waitTime);
             SoundManager.Instance.PlaySFX("OrderAccept_SFX");
             waitCoroutine = StartCoroutine(WaitForDrink()); 
         }
@@ -270,7 +270,7 @@ public class Customer : MonoBehaviour, IInteractable
     public int GetPriority(GameObject player)
     {
         var playerState = player.GetComponent<PlayerState>();
-        if (playerState != null && playerState.HasCocktail) // 플레이어가 칵테일을 가지고 있을 때
+        if (state == CustomerState.WaitingForDrink) // 플레이어가 칵테일을 가지고 있을 때
         {
             return 0; // 우선순위 높음
         }
