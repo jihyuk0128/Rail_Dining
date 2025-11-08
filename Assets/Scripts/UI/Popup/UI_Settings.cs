@@ -11,7 +11,8 @@ public class UI_Settings : UI_Popup
         CloseButton,
         SoundButton,
         RestartButton,
-        MainButton
+        MainButton,
+        SoundSettingClose
     }
 
     public enum Sliders
@@ -69,7 +70,7 @@ public class UI_Settings : UI_Popup
         GetButton((int)Buttons.RestartButton).onClick.AddListener(OnRestart);
         GetButton((int)Buttons.MainButton).onClick.AddListener(OnMain);
         GetButton((int)Buttons.CloseButton).onClick.AddListener(OnClose);
-        //GetButton((int)Buttons.SoundBackButton).onClick.AddListener(BackToSettings);
+        GetButton((int)Buttons.SoundSettingClose).onClick.AddListener(BackToSettings);
 
         // 슬라이더 리스너 등록
         GetSlider((int)Sliders.BGMSlider).onValueChanged.AddListener(OnBGMVolumeChanged);
@@ -95,6 +96,7 @@ public class UI_Settings : UI_Popup
 
     private void OnRestart()
     {
+        Managers.UI.ClosePopupUI();
         Time.timeScale = 1f;
         GameManager.Instance.RestartGame();
     }
@@ -122,7 +124,8 @@ public class UI_Settings : UI_Popup
     {
         if (SoundManager.Instance != null)
             SoundManager.Instance.SetBGMVolume(value);
-        if(isBGM && value <= 0.001f)
+        if (isAnimating) return;
+        if (isBGM && value <= 0.001f)
         {
             isBGM = false;
             StartCoroutine(AnimateIcon(BGMOff));

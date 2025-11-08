@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using System.Collections;
 
 public class TitleScene : MonoBehaviour
 {
@@ -16,10 +17,22 @@ public class TitleScene : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
+    [SerializeField] private GameObject BGMOn;
+    [SerializeField] private GameObject BGMOff;
+    [SerializeField] private GameObject SFXOn;
+    [SerializeField] private GameObject SFXOff;
+    [SerializeField] private Button SoundSettingClose;
 
     [Header("Input")]
     public TMP_InputField inviteInputField;
     public TMP_InputField LoginInputField;
+
+    private bool isBGM = true;
+    private bool isSFX = true;
+    private bool isAnimating = false;
+
+    [SerializeField] private float bounceHeight = 20f;  // 튕김 높이
+    [SerializeField] private float bounceDuration = 0.3f; // 튕김 시간
 
     public string playerName = null;
     private bool isNewGame = true;
@@ -117,6 +130,11 @@ public class TitleScene : MonoBehaviour
         loginPanel.SetActive(false);
     }
 
+    public void CloseSoundPanel()
+    {
+        settingsPanel.SetActive(false);
+    }
+
     // 초대코드 입력 처리 
     private void OnCodeSubmitted(string code)
     {
@@ -163,13 +181,71 @@ public class TitleScene : MonoBehaviour
         });
     }
 
+    // ===== 슬라이더 이벤트 =====
     private void OnBGMVolumeChanged(float value)
     {
-        SoundManager.Instance.SetBGMVolume(value);
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.SetBGMVolume(value);
+        if (isAnimating) return;
+        if (isBGM && value <= 0.001f)
+        {
+            isBGM = false;
+            StartCoroutine(AnimateIcon(BGMOff));
+        }
+        else if (!isBGM && value > 0.001f)
+        {
+            isBGM = true;
+            StartCoroutine(AnimateIcon(BGMOn));
+        }
     }
 
     private void OnSFXVolumeChanged(float value)
     {
-        SoundManager.Instance.SetSFXVolume(value);
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.SetSFXVolume(value);
+        if (isAnimating) return;
+        if (isSFX && value <= 0.001f)
+        {
+            isSFX = false;
+            StartCoroutine(AnimateIcon(SFXOff));
+        }
+        else if (!isSFX && value > 0.001f)
+        {
+            isSFX = true;
+            StartCoroutine(AnimateIcon(SFXOn));
+        }
+    }
+
+    private IEnumerator AnimateIcon(GameObject fromIcon)
+    {
+        isAnimating = true;
+        RectTransform fromRect = fromIcon.GetComponent<RectTransform>();
+
+        Vector2 startPos = fromRect.anchoredPosition;
+        Vector2 upPos = startPos + Vector2.up * bounceHeight;
+
+        float t = 0f;
+
+        // 위로 이동
+        while (t < bounceDuration / 2f)
+        {
+            t += Time.deltaTime;
+            float progress = t / (bounceDuration / 2f);
+            fromRect.anchoredPosition = Vector2.Lerp(startPos, upPos, Mathf.SmoothStep(0, 1, progress));
+            yield return null;
+        }
+
+        // 아래로 복귀
+        t = 0f;
+        while (t < bounceDuration / 2f)
+        {
+            t += Time.deltaTime;
+            float progress = t / (bounceDuration / 2f);
+            fromRect.anchoredPosition = Vector2.Lerp(upPos, startPos, Mathf.SmoothStep(0, 1, progress));
+            yield return null;
+        }
+
+        fromRect.anchoredPosition = startPos;
+        isAnimating = false;
     }
 }

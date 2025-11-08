@@ -20,8 +20,8 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        /* 임시 수정
-        if (train.GetEventActive())
+
+        if (train != null && train.IsEventActive()) 
         {
             transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -10.0f);
             gameObject.GetComponent<Camera>().orthographicSize = CloseSize;
@@ -32,10 +32,6 @@ public class CameraController : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, targetPosition, moveSpeed * Time.deltaTime);
             gameObject.GetComponent<Camera>().orthographicSize = DefaultSize;
         }
-        */ 
-        // 부드럽게 이동
-        transform.position = Vector3.Lerp(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-        gameObject.GetComponent<Camera>().orthographicSize = DefaultSize;
     }
 
     public void MoveToRoom(Vector3 roomPosition)

@@ -12,6 +12,7 @@ public class UI_FryPanFlipGame : UI_Popup
     [SerializeField] private RectTransform flipBar;
     [SerializeField] private SkeletonGraphic fryPanSpine;
     [SerializeField] private Button startButton;
+    [SerializeField] private Image _spaceBarIcon;
 
     [Header("Settings")]
     [SerializeField] private float moveSpeed = 300f;
@@ -19,6 +20,14 @@ public class UI_FryPanFlipGame : UI_Popup
     [SerializeField] private float speedUpRate = 2f;
     [SerializeField] private float slowDownRate = 0.8f;
     [SerializeField] private float zonePadding = 50f;
+
+    [Header("Space Bar Sprites")]
+    [SerializeField] private Sprite[] spaceBarFrames; // 여러 프레임 이미지
+    [SerializeField] private float frameInterval = 0.2f; // 프레임 전환 간격(초)
+
+    // 애니메이션 관련 변수
+    private float frameTimer = 0f;
+    private int currentFrame = 0;
 
     private bool isPlaying = false;
     private bool movingRight = true;
@@ -53,11 +62,25 @@ public class UI_FryPanFlipGame : UI_Popup
             fryPanSpine.timeScale = 0f; // 처음엔 정지 상태
             fryPanSpine.AnimationState.Complete += OnSpineComplete;
         }
+
+        _spaceBarIcon.gameObject.SetActive(false);
     }
 
     private void Update()
     {
         if (!isPlaying) return;
+
+        // === [SpaceBar 아이콘 애니메이션 처리] ===
+        if (spaceBarFrames != null && spaceBarFrames.Length > 0 && _spaceBarIcon != null)
+        {
+            frameTimer += Time.deltaTime;              // 프레임 간 시간 누적
+            if (frameTimer >= frameInterval)           // 설정된 간격마다 프레임 전환
+            {
+                frameTimer = 0f;                       // 타이머 리셋
+                currentFrame = (currentFrame + 1) % spaceBarFrames.Length; // 다음 프레임으로
+                _spaceBarIcon.sprite = spaceBarFrames[currentFrame];       // 이미지 교체
+            }
+        }
 
         MoveCursor();
 
@@ -154,6 +177,8 @@ public class UI_FryPanFlipGame : UI_Popup
         ResetSuccessZone();
 
         PlaySpine(); // 웍질 애니메이션 시작
+
+        _spaceBarIcon.gameObject.SetActive(true);
     }
 
     private void PlaySpine()
