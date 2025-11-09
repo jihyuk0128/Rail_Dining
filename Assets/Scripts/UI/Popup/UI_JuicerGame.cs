@@ -25,11 +25,12 @@ public class UI_JuicerGame : UI_Popup
     private int currentFrame = 0;
 
     private float progress = 0f;
-    private bool isPlaying = false;
+    public bool isPlaying { get; private set; } = false;
     private bool isWaitingStop = false;
 
     public Action<string> OnMiniGameEnd; // "Success" Àü´Þ
 
+    public bool isSuccess { get; private set; } = false;
     private void Awake()
     {
         Init();
@@ -114,6 +115,7 @@ public class UI_JuicerGame : UI_Popup
 
     private void EndGame()
     {
+        isSuccess = true;
         isPlaying = false;
         isWaitingStop = true;
 
@@ -123,7 +125,7 @@ public class UI_JuicerGame : UI_Popup
         if (juicerSpine != null)
             juicerSpine.AnimationState.SetAnimation(0, "animation", false);
 
-        OnMiniGameEnd?.Invoke("Success");
+        //OnMiniGameEnd?.Invoke("Success");
     }
 
     private void OnSpineAnimationComplete(TrackEntry entry)
@@ -134,7 +136,7 @@ public class UI_JuicerGame : UI_Popup
         isWaitingStop = false;
 
         // »ìÂ¦ ÅÒÀ» µÎ°í UI ´Ý±â
-        Invoke(nameof(RequestClosePopup), 0.5f);
+        //Invoke(nameof(RequestClosePopup), 0.5f);
     }
 
     private void RequestClosePopup()

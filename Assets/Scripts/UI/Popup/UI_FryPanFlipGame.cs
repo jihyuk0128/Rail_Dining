@@ -29,7 +29,7 @@ public class UI_FryPanFlipGame : UI_Popup
     private float frameTimer = 0f;
     private int currentFrame = 0;
 
-    private bool isPlaying = false;
+    public bool isPlaying { get; private set; } = false;
     private bool movingRight = true;
     private int currentStage = 1;
     private int successCount = 0;
@@ -37,6 +37,7 @@ public class UI_FryPanFlipGame : UI_Popup
     private bool waitToStop = false;
 
     public Action<string> OnMiniGameEnd;
+    public bool isSuccess { get; private set; } = false;
 
     private void Awake()
     {
@@ -198,8 +199,9 @@ public class UI_FryPanFlipGame : UI_Popup
 
     private void EndGame(bool success)
     {
+        isSuccess = success;
         isPlaying = false;
-        OnMiniGameEnd?.Invoke(success ? "Success" : "Fail");
+        //OnMiniGameEnd?.Invoke(success ? "Success" : "Fail");
         StopSpineSmoothly();
     }
 
@@ -213,7 +215,7 @@ public class UI_FryPanFlipGame : UI_Popup
         waitToStop = false;
 
         // æ‡∞£¿« ≈“¿ª µŒ∞Ì ¥›±‚
-        Invoke(nameof(RequestClosePopup), 0.5f);
+        //Invoke(nameof(RequestClosePopup), 0.5f);
     }
 
     private void RequestClosePopup()

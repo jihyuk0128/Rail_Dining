@@ -24,7 +24,7 @@ public class UI_StirDrinkGame : UI_Popup
     [SerializeField] private float dragSensitivity = 1.0f;
     [SerializeField] private float returnSpeed = 5f;
 
-    private bool isPlaying = false;
+    public bool isPlaying { get; private set; } = false;
     private bool isDragging = false;
 
     private Vector2 dragStartPos;
@@ -39,6 +39,8 @@ public class UI_StirDrinkGame : UI_Popup
     [SerializeField] private bool reachedLeft = false;
 
     public Action<string> OnMiniGameEnd;
+
+    public bool isSuccess { get; private set; } = false;
 
     private void Awake()
     {
@@ -171,12 +173,13 @@ public class UI_StirDrinkGame : UI_Popup
 
     private IEnumerator FinishGame()
     {
+        isSuccess = true;
         isPlaying = false;
         _progressBar.fillAmount = 1f;
         yield return new WaitForSeconds(0.3f);
-        OnMiniGameEnd?.Invoke("Success");
+        //OnMiniGameEnd?.Invoke("Success");
         // ªÏ¬¶ ≈“¿ª µŒ∞Ì UI ¥›±‚
-        Invoke(nameof(RequestClosePopup), 0.5f);
+        //Invoke(nameof(RequestClosePopup), 0.5f);
     }
 
     private void RequestClosePopup()

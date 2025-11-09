@@ -32,12 +32,14 @@ public class UI_FryPanButterGame : UI_Popup
     private RenderTexture _maskRT;
     private Material _blendMat;
     private bool isDragging = false;
-    private bool isPlaying = false;
+    public bool isPlaying { get; private set; } = false;
     private float progress = 0f;
     private Material _drawMat;
     private Texture2D butterAlphaMask;
 
     public Action<string> OnMiniGameEnd;
+
+    public bool isSuccess { get; private set; } = false;
 
     private void Awake()
     {
@@ -253,6 +255,7 @@ public class UI_FryPanButterGame : UI_Popup
     private void EndGame()
     {
         Debug.Log("EndGame");
+        isSuccess = true;
         if (!isPlaying) return;
         isPlaying = false;
 
@@ -276,10 +279,10 @@ public class UI_FryPanButterGame : UI_Popup
         _progressBar.fillAmount = 1f; // 100%로 고정
 
         // 게임 종료 이벤트 트리거
-        OnMiniGameEnd?.Invoke("Success");
+       // OnMiniGameEnd?.Invoke("Success");
 
         // 살짝 텀을 두고 UI 닫기
-        Invoke(nameof(RequestClosePopup), 0.5f);
+        //Invoke(nameof(RequestClosePopup), 0.5f);
     }
 
     private void RequestClosePopup()
