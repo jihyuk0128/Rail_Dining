@@ -7,7 +7,7 @@ public class DoorInteract : MonoBehaviour, IInteractable
     public float autoCloseDelay = 2f;  // 문이 자동으로 닫히기까지 시간
     public GameObject BarPoint;
     public GameObject StoregePoint;
-    private bool isBarPoint = false;
+    private bool isBarPoint = true;
 
     public bool isOpen { get; private set; } = false;
     private Coroutine autoCloseCoroutine;

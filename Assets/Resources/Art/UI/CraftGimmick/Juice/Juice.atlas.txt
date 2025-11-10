@@ -1,0 +1,13 @@
+Juice.png
+size:64,64
+filter:Linear,Linear
+pma:true
+Ju
+bounds:2,2,14,18
+offsets:1,1,16,20
+S
+bounds:26,13,3,37
+offsets:1,1,5,39
+cup
+bounds:2,22,22,28
+offsets:1,1,24,30

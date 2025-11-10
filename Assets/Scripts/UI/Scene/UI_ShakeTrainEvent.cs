@@ -6,141 +6,196 @@ using UnityEngine.UI;
 
 public class UI_ShakeTrainEvent : UI_Scene
 {
-    public enum GameObjects
+    private enum GameObjects
     {
-        LoadingButton3,
-        LoadingButton2,
-        LoadingButton1,
-        PressButton1,
-        PressButton2,
-        SpaceBarButton
+        CursorRoot,
     }
 
-    public Action OnCountdownFinished; // 카운트다운 완료 콜백함수 실행용
+    private enum Images
+    {
+        GaugeBar,
+        SuccessZone,
+        PerfectZone,
+        SpaceBarIcon,
+    }
 
-    private Sprite OnButtonSprite;
-    private Sprite OffButtonSprite;
+    [Header("Settings")]
+    [SerializeField] private float moveSpeed = 1f;    // 커서 이동 속도
+    [SerializeField] private int maxBounces = 3;      // 왕복 횟수 제한
+    [SerializeField] private bool autoStart = false;  // 자동 시작 여부
+
+    [Header("Space Bar Sprites")]
+    [SerializeField] private Sprite[] spaceBarFrames; // 여러 프레임 이미지
+    [SerializeField] private float frameInterval = 0.2f; // 프레임 전환 간격(초)
+
+    public Action<string> OnMiniGameEnd; // 결과: "Perfect", "Success", "Fail"
+
+    private RectTransform _gaugeBar;
+    private RectTransform _successZone;
+    private RectTransform _perfectZone;
+    private RectTransform _cursorRoot;
+    private Image _spaceBarIcon;
+
+    private bool isPlaying = false;
+    private bool movingRight = true;
+    private float progress = 0f;
+    private int bounceCount = 0;
+
+    private float leftEdge;
+    private float rightEdge;
+
+    // 애니메이션 관련 변수
+    private float frameTimer = 0f;
+    private int currentFrame = 0;
 
     private void Awake()
     {
         Init();
-        HideUI();
     }
-
     public override void Init()
     {
+        base.Init();
+
         Bind<GameObject>(typeof(GameObjects));
-        Bind<Image>(typeof(GameObjects));
+        Bind<Image>(typeof(Images));
 
-        // 버튼 상태 이미지 로드 (Resources 폴더 아래 경로)
-        OnButtonSprite = Managers.Resource.Load<Sprite>("Art/UI/Loading_Click_on");
-        OffButtonSprite = Managers.Resource.Load<Sprite>("Art/UI/Loading_Click_off");
+        _gaugeBar = GetImage((int)Images.GaugeBar).GetComponent<RectTransform>();
+        _successZone = GetImage((int)Images.SuccessZone).GetComponent<RectTransform>();
+        _perfectZone = GetImage((int)Images.PerfectZone).GetComponent<RectTransform>();
+        _spaceBarIcon = GetImage((int)Images.SpaceBarIcon);
+
+        _cursorRoot = GetObject((int)GameObjects.CursorRoot)?.GetComponent<RectTransform>();
+        if (_cursorRoot == null)
+            Debug.LogWarning("[UI_ShakeTrainEvent] CursorRoot 찾기 실패!");
+
+        // 게이지 이동 범위 계산
+        leftEdge = -_gaugeBar.rect.width / 2f;
+        rightEdge = _gaugeBar.rect.width / 2f;
+
+        if (autoStart)
+            StartMiniGame();
     }
 
-    // 키 두 개 이벤트 UI 표시
-    public void ShowKeyEvent(KeyCode key1, KeyCode key2)
+    private void Update()
     {
-        // 스페이스바 버튼 숨기기
-        GetObject((int)GameObjects.SpaceBarButton).SetActive(false);
+        if (!isPlaying) return;
 
-        // 키 버튼 표시
-        GetObject((int)GameObjects.PressButton1).SetActive(true);
-        GetObject((int)GameObjects.PressButton2).SetActive(true);
-
-        Sprite sprite1 = GetKeySprite(key1);
-        Sprite sprite2 = GetKeySprite(key2);
-
-        if (sprite1 != null)
-            GetImage((int)GameObjects.PressButton1).sprite = sprite1;
-        if (sprite2 != null)
-            GetImage((int)GameObjects.PressButton2).sprite = sprite2;
-
-        // 버튼 투명도 초기화 (반투명 상태)
-        SetButtonAlpha(GetImage((int)GameObjects.PressButton1), 0.4f);
-        SetButtonAlpha(GetImage((int)GameObjects.PressButton2), 0.4f);
-
-        // 카운트다운 시작
-        StartCoroutine(StartCountdown());
-    }
-
-    // 스페이스바 이벤트 UI 표시
-    public void ShowSpaceEvent()
-    {
-        // 키 버튼 숨기기
-        GetObject((int)GameObjects.PressButton1).SetActive(false);
-        GetObject((int)GameObjects.PressButton2).SetActive(false);
-
-        // 스페이스바 버튼 표시
-        GetObject((int)GameObjects.SpaceBarButton).SetActive(true);
-
-        SetButtonAlpha(GetImage((int)GameObjects.SpaceBarButton), 0.4f);
-
-        StartCoroutine(StartCountdown());
-    }
-
-    // 카운트다운 처리
-    private IEnumerator StartCountdown()
-    {
-        for (int i = 3; i > 0; i--)
+        // 스페이스바 아이콘 애니메이션 처리
+        if (spaceBarFrames != null && spaceBarFrames.Length > 0 && _spaceBarIcon != null)
         {
-            SoundManager.Instance.PlaySFX("TrainShake_SFX");
-            UpdateLoadingButtons(i);
-            yield return new WaitForSeconds(1f);
-        }
-        GetImage((int)GameObjects.LoadingButton1).sprite = OffButtonSprite;
-
-        // 카운트다운 완료 콜백 호출
-        OnCountdownFinished?.Invoke();
-
-        // 3초 끝난 후 버튼 투명도 변경
-        if (GetObject((int)GameObjects.PressButton1).activeSelf)
-        {
-            SetButtonAlpha(GetImage((int)GameObjects.PressButton1), 1f);
-            SetButtonAlpha(GetImage((int)GameObjects.PressButton2), 1f);
+            frameTimer += Time.deltaTime;
+            if (frameTimer >= frameInterval)
+            {
+                frameTimer = 0f;
+                currentFrame = (currentFrame + 1) % spaceBarFrames.Length;
+                _spaceBarIcon.sprite = spaceBarFrames[currentFrame];
+            }
         }
 
-        if (GetObject((int)GameObjects.SpaceBarButton).activeSelf)
+        // 커서 왕복 이동
+        progress += (movingRight ? 1 : -1) * moveSpeed * Time.deltaTime;
+
+        if (progress >= 1f)
         {
-            SetButtonAlpha(GetImage((int)GameObjects.SpaceBarButton), 1f);
+            progress = 1f;
+            movingRight = false;
+            bounceCount++;
+        }
+        else if (progress <= 0f)
+        {
+            progress = 0f;
+            movingRight = true;
+            bounceCount++;
+        }
+
+        // 커서 위치 갱신
+        if (_cursorRoot != null)
+        {
+            float newX = Mathf.Lerp(leftEdge, rightEdge, progress);
+            _cursorRoot.anchoredPosition = new Vector2(newX, _cursorRoot.anchoredPosition.y);
+        }
+
+        // 실패 조건: 왕복 횟수 초과
+        if (bounceCount >= maxBounces)
+        {
+            Fail();
+            return;
+        }
+
+        // Space 입력 처리 (판정만 남기고 아이콘 변경은 제거)
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            CheckSuccess();
         }
     }
 
-    // 카운트다운 버튼 이미지 변경
-    private void UpdateLoadingButtons(int step)
+    private void CheckSuccess()
     {
-        GetImage((int)GameObjects.LoadingButton3).sprite = (step == 3) ? OnButtonSprite : OffButtonSprite;
-        GetImage((int)GameObjects.LoadingButton2).sprite = (step == 2) ? OnButtonSprite : OffButtonSprite;
-        GetImage((int)GameObjects.LoadingButton1).sprite = (step == 1) ? OnButtonSprite : OffButtonSprite;
-    }
+        if (_cursorRoot == null) return;
 
-    // 버튼 투명도 변경
-    private void SetButtonAlpha(Image img, float alpha)
-    {
-        Color c = img.color;
-        c.a = alpha;
-        img.color = c;
-    }
+        float cursorX = _cursorRoot.anchoredPosition.x;
 
-    // KeyCode → Sprite 매핑
-    private Sprite GetKeySprite(KeyCode key)
-    {
-        switch (key)
+        float successMin = _successZone.anchoredPosition.x - _successZone.rect.width / 2f;
+        float successMax = _successZone.anchoredPosition.x + _successZone.rect.width / 2f;
+
+        float perfectMin = _perfectZone.anchoredPosition.x - _perfectZone.rect.width / 2f;
+        float perfectMax = _perfectZone.anchoredPosition.x + _perfectZone.rect.width / 2f;
+
+        string result;
+
+        if (cursorX >= perfectMin && cursorX <= perfectMax)
         {
-            case KeyCode.W: return Managers.Resource.Load<Sprite>("Art/UI/button/W_button_on");
-            case KeyCode.A: return Managers.Resource.Load<Sprite>("Art/UI/button/A_button_on");
-            case KeyCode.S: return Managers.Resource.Load<Sprite>("Art/UI/button/S_button_on");
-            case KeyCode.D: return Managers.Resource.Load<Sprite>("Art/UI/button/D_button_on");
-            case KeyCode.Space: return Managers.Resource.Load<Sprite>("Art/UI/button/space_button_on");
-            default: return null;
+            result = "Perfect";
+            Debug.Log("대성공!");
+        }
+        else if (cursorX >= successMin && cursorX <= successMax)
+        {
+            result = "Success";
+            Debug.Log("성공!");
+        }
+        else
+        {
+            result = "Fail";
+            Debug.Log("실패!");
+        }
+
+        if (result == "Fail")
+        {
+            Fail();
+        }
+        else
+        {
+            isPlaying = false;
+            OnMiniGameEnd?.Invoke(result);
+            gameObject.SetActive(false);
         }
     }
-    public void HideUI()
+
+    private void Fail()
     {
+        Debug.Log("덜컹거림 실패!");
+        isPlaying = false;
+        OnMiniGameEnd?.Invoke("Fail");
         gameObject.SetActive(false);
     }
 
-    public void ShowUI()
+    public void StartMiniGame()
     {
-        gameObject.SetActive(true);
+        progress = 0f;
+        movingRight = true;
+        bounceCount = 0;
+        isPlaying = true;
+
+        // 아이콘 애니메이션 초기화
+        frameTimer = 0f;
+        currentFrame = 0;
+        if (spaceBarFrames != null && spaceBarFrames.Length > 0)
+            _spaceBarIcon.sprite = spaceBarFrames[0];
+    }
+
+    public void StopMiniGame()
+    {
+        isPlaying = false;
+        gameObject.SetActive(false);
     }
 }
