@@ -40,10 +40,8 @@ public class UI_NewCraftingSlot : UI_ParentSlot
         // 상세화면 띄우는코드는 여기에 넣으면댐
 
         var popup = Managers.UI.ShowPopupUI<UI_RecipeDetail>();
-        popup.Init();
-
-        // CraftingManager에게 “슬롯 채워라” 요청
-        Managers.Crafting.ShowRecipeDetail(popup, recipeId);
+        // CraftingManager에게 “슬롯 채워라” 
+        popup.SetRecipe(recipeId);
     }
 
     public override void Refresh()

@@ -2,57 +2,8 @@
   "drink_recipes": [
     {
       "recipeId": 1,
-      "ingredients": [ 1, 1, 1, 1 ],
-      "resultId": 1,
-      "resultAmount": 1,
-      "gridSize": 4
-    },
-    {
-      "recipeId": 2,
-      "ingredients": [ 2, 2, 3, 3 ],
-      "resultId": 11,
-      "resultAmount": 1,
-      "gridSize": 4
-    },
-    {
-      "recipeId": 10001,
-      "ingredients": [ 105, 112, 0, 0 ],
-      "resultId": 201,
-      "resultAmount": 1,
-      "gridSize": 4
-    },
-    {
-      "recipeId": 10010,
-      "ingredients": [ 101, 102, 113, 119 ],
-      "resultId": 210,
-      "resultAmount": 1,
-      "gridSize": 4
-    },
-    {
-      "recipeId": 20001,
-      "ingredients": [ 107, 107, 0, 0 ],
-      "resultId": 301,
-      "resultAmount": 1,
-      "gridSize": 4
-    },
-    {
-      "recipeId": 20002,
-      "ingredients": [ 110, 110, 0, 0 ],
-      "resultId": 302,
-      "resultAmount": 1,
-      "gridSize": 4
-    },
-    {
-      "recipeId": 20003,
-      "ingredients": [ 101, 107, 110, 0 ],
-      "resultId": 303,
-      "resultAmount": 1,
-      "gridSize": 4
-    },
-    {
-      "recipeId": 20004,
-      "ingredients": [ 101, 0, 0, 0 ],
-      "resultId": 304,
+      "ingredients": [ 101, 101, 101, 0 ],
+      "resultId": 101,
       "resultAmount": 1,
       "gridSize": 4
     }

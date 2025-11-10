@@ -31,7 +31,8 @@ public class UI_NewInventory : UI_Base
 
         // 테스트용 아이템 몇 개 추가
         Managers.NewInventory.AddItem(101);
-        Managers.NewInventory.AddItem(201);
+        Managers.NewInventory.AddItem(101);
+        Managers.NewInventory.AddItem(101);
     }
 
 }

@@ -28,7 +28,12 @@ public class UI_BasicScene : UI_Scene
         Bind<Button>(typeof(Buttons));
         // 자식 오브젝트 자동 바인딩
         Bind<GameObject>(typeof(GameObjects));
-        GetButton((int)Buttons.UI_MenuButton).gameObject.BindEvent((PointerEventData data) => { Managers.UI.ShowPopupUI<UI_Menu>(); });
+
+        // 메뉴초기화
+        GetButton((int)Buttons.UI_MenuButton).gameObject.BindEvent((PointerEventData data) => { 
+            var popup = Managers.UI.ShowPopupUI<UI_Menu>();
+            popup.MenuInit(1);
+        });
     }
 
     public void UpdateRecipe(List<RecipeData> recipelist)

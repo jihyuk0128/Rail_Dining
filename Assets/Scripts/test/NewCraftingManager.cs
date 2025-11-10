@@ -26,6 +26,7 @@ public class NewCraftingManager
         // 전체 레시피 순회
         foreach (var recipe in Managers.Data.RecipeDict.Values)
         {
+            Debug.Log($"recipe{recipe.recipeId} 생성");
             if (!Managers.Data.ItemDict.TryGetValue(recipe.resultId, out var resultItem))
                 continue;
 
@@ -56,56 +57,37 @@ public class NewCraftingManager
         Debug.Log($"[CraftingManager] 메뉴 생성 완료 (필터: {filterName}, 생성된 슬롯 수: {count})");
     }
 
-    // 레시피 상세 보기
-    public void ShowRecipeDetail(UI_RecipeDetail ui, int recipeId)
-    {
-        if (!Managers.Data.RecipeDict.TryGetValue(recipeId, out var recipe))
-        {
-            Debug.LogWarning($"[CraftingManager] 레시피 ID {recipeId} 없음");
-            return;
-        }
-
-        // 결과 아이콘 설정
-        var resultItem = Managers.Data.ItemDict[recipe.resultId];
-        //ui.ResultSlot.sprite = Resources.Load<Sprite>(resultItem.iconPath);
-
-        // --- 재료 슬롯 생성 ---
-        //var grid = ui.GridParent;
-
-        //foreach (Transform child in grid)
-        //    Object.Destroy(child.gameObject);
-
-        //foreach (int ingId in recipe.ingredients)
-        //{
-        //    if (ingId == 0) continue;
-        //
-        //    var go = Managers.Resource.Instantiate("TestPrefabs/UI_NewInventorySlot", grid);
-        //    var slot = go.GetComponent<UI_ParentSlot>();
-        //    slot.Init();
-        //    slot.SetData(new ItemSlot { Item = Managers.Data.ItemDict[ingId], Amount = 1 });
-        //}
-
-        Debug.Log($"[CraftingManager] 레시피 상세 구성 완료 (ID:{recipeId})");
-    }
-
-
     // 제작 시도
-    public void TryCraft(int recipeId)
+    public bool TryCraft(int recipeId)
     {
         if (!Managers.Data.RecipeDict.TryGetValue(recipeId, out var recipe))
         {
             Debug.LogWarning($"[CraftingManager] 제작 실패 - 레시피 ID {recipeId}를 찾을 수 없음.");
-            return;
+            return false;
         }
 
         // 재료 확인
         foreach (int ingredientId in recipe.ingredients)
         {
+            if (ingredientId == 0)
+                continue; // 빈칸은 무시
+
             if (!_inventory.HasItem(ingredientId))
             {
                 Debug.LogWarning($"[CraftingManager] 재료 부족 (ID:{ingredientId})");
-                return;
+                return false;
             }
+        }
+
+        return true;
+    }
+
+    public void SuccessCraft(int recipeId)
+    {
+        if (!Managers.Data.RecipeDict.TryGetValue(recipeId, out var recipe))
+        {
+            Debug.LogWarning($"[CraftingManager] 제작 실패 - 레시피 ID {recipeId}를 찾을 수 없음.");
+            return;
         }
 
         // 재료 제거
@@ -118,4 +100,21 @@ public class NewCraftingManager
 
         _inventory.RefreshUI();
     }
+
+    public void FailCraft(int recipeId)
+    {
+        if (!Managers.Data.RecipeDict.TryGetValue(recipeId, out var recipe))
+        {
+            Debug.LogWarning($"[CraftingManager] 제작 실패 - 레시피 ID {recipeId}를 찾을 수 없음.");
+            return;
+        }
+
+        // 재료 제거
+        foreach (int ingredientId in recipe.ingredients)
+            _inventory.RemoveItem(ingredientId);
+
+        _inventory.RefreshUI();
+    }
+
+
 }

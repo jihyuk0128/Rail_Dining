@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      sausage_omelet_0: -3274572064093197842
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

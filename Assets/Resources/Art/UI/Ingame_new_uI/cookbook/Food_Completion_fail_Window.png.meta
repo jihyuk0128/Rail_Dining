@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Food_Completion_fail_Window_0: 205022390313657510
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

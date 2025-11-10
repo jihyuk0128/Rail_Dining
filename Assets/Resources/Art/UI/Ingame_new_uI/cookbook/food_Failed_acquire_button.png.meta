@@ -222,7 +222,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      food_Failed_acquire_button_0: 3062362367538889885
+      food_Failed_acquire_button_1: 1604919030581757489
+      food_Failed_acquire_button_2: 9205377550025036322
+      food_Failed_acquire_button_3: -2504882863206091165
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

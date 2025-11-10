@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Join_as_host_button_on_0: -9001508596086568412
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

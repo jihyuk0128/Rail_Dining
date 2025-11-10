@@ -222,7 +222,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      food_acquisition_button_0: 4850766266860544530
+      food_acquisition_button_1: 7266434091696263978
+      food_acquisition_button_2: -7255936191219404327
+      food_acquisition_button_3: -6340964012483068511
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

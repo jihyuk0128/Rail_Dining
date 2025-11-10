@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      button_for_taking_out_cookbook_off_0: 8397765926212953254
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

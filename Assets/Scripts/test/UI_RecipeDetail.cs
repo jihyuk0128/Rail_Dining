@@ -13,7 +13,7 @@ public class UI_RecipeDetail : UI_Popup
 
     private int _recipeId;
 
-    public void Start()
+    public void Awake()
     {
         Init();
     }
@@ -21,8 +21,8 @@ public class UI_RecipeDetail : UI_Popup
     {
         base.Init();
         Bind<Image>(typeof(Images));
-        Bind<GameObject>(typeof(GameObject));
-        Bind<Button>(typeof(Button));
+        Bind<GameObject>(typeof(GameObjects));
+        Bind<Button>(typeof(Buttons));
 
         GetButton((int)Buttons.CloseButton).gameObject.BindEvent(OnClose);
         GetButton((int)Buttons.StartButton).gameObject.BindEvent(OnStart);
@@ -35,6 +35,8 @@ public class UI_RecipeDetail : UI_Popup
         // --- 결과 아이템 표시 ---
         var recipe = Managers.Data.RecipeDict[_recipeId];
         var result = Managers.Data.ItemDict[recipe.resultId];
+        Debug.Log($"레시피설정화면 결과 {recipe.resultId}");
+
         GetImage((int)Images.ResultSlot).sprite = Resources.Load<Sprite>(result.iconPath);
 
         // --- 기존 그리드 정리 ---
@@ -45,9 +47,10 @@ public class UI_RecipeDetail : UI_Popup
         // --- 재료 슬롯 생성 ---
         foreach (int ingId in recipe.ingredients)
         {
-            if (ingId == 0) continue; // 빈 칸 제외
+            if (ingId == 0)
+                continue; // 빈 칸 제외
 
-            GameObject slotObj = Managers.Resource.Instantiate("TestPrefabs/UI_NewInventorySlot", grid);
+            GameObject slotObj = Managers.Resource.Instantiate("TestPrefabs/UI_ParentSlot", grid);
             var slot = slotObj.GetComponent<UI_ParentSlot>();
             slot.Init();
 
@@ -57,7 +60,6 @@ public class UI_RecipeDetail : UI_Popup
         }
 
         Debug.Log($"[UI_RecipeDetail] 레시피 상세 표시 완료 - 재료 {recipe.ingredients.Count}개");
-
     }
 
     void OnClose(PointerEventData data)
@@ -67,6 +69,19 @@ public class UI_RecipeDetail : UI_Popup
 
     void OnStart(PointerEventData data)
     {
+        if (!Managers.Crafting.TryCraft(_recipeId)) // 재료가 전부있나 검사.
+        {
+            return;
+        }
 
+        Managers.UI.ClosePopupUI(); 
+        Managers.UI.ClosePopupUI();
+
+        // 여기서 미니게임
+  
+
+
+        var popup = Managers.UI.ShowPopupUI<UI_CreateResult>();
+        popup.TryCraft(true, _recipeId);
     }
 }

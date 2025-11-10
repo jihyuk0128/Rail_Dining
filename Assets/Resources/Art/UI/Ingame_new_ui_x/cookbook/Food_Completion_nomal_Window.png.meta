@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Food_Completion_nomal_Window_0: 4644213473873566186
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

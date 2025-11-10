@@ -372,7 +372,17 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Join_as_host_button_0: -2285236479268671990
+      Join_as_host_button_1: 823026683159845505
+      Join_as_host_button_2: -2253297089591184177
+      Join_as_host_button_3: -2095772082362271790
+      Join_as_host_button_4: 3312965839587332563
+      Join_as_host_button_5: -1653832230983274675
+      Join_as_host_button_6: 7243251904208287575
+      Join_as_host_button_7: 2904526148730322632
+      Join_as_host_button_8: -8960251156308012145
+      Join_as_host_button_9: 3769732211130299728
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

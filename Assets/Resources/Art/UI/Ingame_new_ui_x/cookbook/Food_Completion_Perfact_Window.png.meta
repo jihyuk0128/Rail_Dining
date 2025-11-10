@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Food_Completion_Perfact_Window_0: 561441911148900794
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

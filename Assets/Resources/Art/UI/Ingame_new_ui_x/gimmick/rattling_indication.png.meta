@@ -172,7 +172,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      rattling_indication_0: 1856516162995058138
+      rattling_indication_1: -2930470888140966198
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
