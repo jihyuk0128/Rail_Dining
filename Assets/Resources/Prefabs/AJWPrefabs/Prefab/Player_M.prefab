@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 7791363140189908716}
   - component: {fileID: 7548553045901330949}
   - component: {fileID: 4228933189025159648}
+  - component: {fileID: 567010255287320267}
   m_Layer: 0
   m_Name: Player_M
   m_TagString: Player
@@ -462,6 +463,19 @@ MonoBehaviour:
   backSpine: {fileID: 5831274690710481332}
   spinePivot: {fileID: 880397741110816619}
   spineOffset: {x: -0.36, y: 1.25, z: 0}
+--- !u!114 &567010255287320267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600667690227276252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97f7981364986774e8667818385f378f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ignoreDelay: 3
 --- !u!1 &4606454320160610943
 GameObject:
   m_ObjectHideFlags: 0
@@ -553,7 +567,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 78bff21640b71a3459c40728b35cb19f, type: 2}
+  - {fileID: 2100000, guid: d56ad485eecd1d3478bd9e0ad51ac81a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -699,7 +713,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f281434c705b94343a1b8977b0d2ff0d, type: 2}
+  - {fileID: 2100000, guid: 9a507960035e35048aff495fd0386d35, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
