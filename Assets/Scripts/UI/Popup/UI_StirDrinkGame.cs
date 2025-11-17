@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
+public class UI_StirDrinkGame : UI_Popup
 {
     private enum Images
     {
@@ -12,19 +12,31 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         Spoon,
         ProgressBar,
         StartButton,
+        ClickIcon,
+        ClickOn,
     }
 
     private Image _cup;
     private RectTransform _spoon;
     private Image _progressBar;
     private Button _startButton;
+    private Image _clickIcon;
+    private Image _clickOn;
 
     [Header("Settings")]
     [SerializeField] private float stirProgress = 0.05f; // 한 번 왕복할 때 게이지 증가량 (10%)
     [SerializeField] private float dragSensitivity = 1.0f;
     [SerializeField] private float returnSpeed = 5f;
 
-    public bool isPlaying { get; private set; } = true;
+    [Header("Space Bar Sprites")]
+    [SerializeField] private Sprite[] spaceBarFrames; // 여러 프레임 이미지
+    [SerializeField] private float frameInterval = 0.2f; // 프레임 전환 간격(초)
+
+    // 애니메이션 관련 변수
+    private float frameTimer = 0f;
+    private int currentFrame = 0;
+
+    public bool isPlaying { get; private set; } = false;
     private bool isDragging = false;
 
     private Vector2 dragStartPos;
@@ -38,7 +50,7 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
     [SerializeField] private bool reachedRight = false;
     [SerializeField] private bool reachedLeft = false;
 
-    public event Action<bool> OnMiniGameEnd;
+    public Action<string> OnMiniGameEnd;
 
     public bool isSuccess { get; private set; } = false;
 
@@ -57,6 +69,8 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         _spoon = GetImage((int)Images.Spoon).GetComponent<RectTransform>();
         _progressBar = GetImage((int)Images.ProgressBar);
         _startButton = GetImage((int)Images.StartButton).GetComponent<Button>();
+        _clickIcon = GetImage((int)Images.ClickIcon);
+        _clickOn = GetImage((int)Images.ClickOn);
 
         _progressBar.fillAmount = 0f;
         _spoon.gameObject.SetActive(false);
@@ -66,12 +80,16 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         BindEvent(_spoon.gameObject, OnBeginDragSpoon, Define.UIEvent.BeginDrag);
         BindEvent(_spoon.gameObject, OnDragSpoon, Define.UIEvent.Drag);
         BindEvent(_spoon.gameObject, OnEndDragSpoon, Define.UIEvent.EndDrag);
+
+        _clickIcon.gameObject.SetActive(false);
+        _clickOn.gameObject.SetActive(false);
     }
 
     private void StartMiniGame()
     {
         _startButton.gameObject.SetActive(false);
         _spoon.gameObject.SetActive(true);
+        _clickIcon.gameObject.SetActive(true);
         _progressBar.fillAmount = 0f;
         progress = 0f;
         isPlaying = true;
@@ -103,6 +121,24 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
     {
         if (!isPlaying) return;
 
+        // === [SpaceBar 아이콘 애니메이션 처리] ===
+        if (spaceBarFrames != null && spaceBarFrames.Length > 0 && _clickIcon != null)
+        {
+            frameTimer += Time.deltaTime;              // 프레임 간 시간 누적
+            if (frameTimer >= frameInterval)           // 설정된 간격마다 프레임 전환
+            {
+                frameTimer = 0f;                       // 타이머 리셋
+                currentFrame = (currentFrame + 1) % spaceBarFrames.Length; // 다음 프레임으로
+                _clickIcon.sprite = spaceBarFrames[currentFrame];       // 이미지 교체
+
+                if (_clickOn != null)
+                {
+                    // currentFrame == 1일 때만 켜기, 나머지 프레임은 끄기
+                    _clickOn.gameObject.SetActive(currentFrame == 1);
+                }
+            }
+        }
+
         if (!isDragging)
         {
             Vector3 pos = _spoon.localPosition;
@@ -111,7 +147,7 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         }
 
         if (progress >= 1f)
-            FinishGame();
+            StartCoroutine(FinishGame());
     }
 
     private void OnBeginDragSpoon(PointerEventData evt)
@@ -171,12 +207,13 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         Debug.Log($"[Stir] Progress = {progress * 100f:F1}%");
     }
 
-    private void FinishGame()
+    private IEnumerator FinishGame()
     {
         isSuccess = true;
         isPlaying = false;
         _progressBar.fillAmount = 1f;
-        OnMiniGameEnd?.Invoke(isSuccess);
+        yield return new WaitForSeconds(0.3f);
+        //OnMiniGameEnd?.Invoke("Success");
         // 살짝 텀을 두고 UI 닫기
         //Invoke(nameof(RequestClosePopup), 0.5f);
     }

@@ -10,7 +10,7 @@ public class UI_Settings : UI_Popup
     {
         CloseButton,
         SoundButton,
-        RestartButton,
+        //RestartButton,
         MainButton,
         SoundSettingClose
     }
@@ -67,7 +67,7 @@ public class UI_Settings : UI_Popup
 
         // 버튼 리스너 등록
         GetButton((int)Buttons.SoundButton).onClick.AddListener(OnSound);
-        GetButton((int)Buttons.RestartButton).onClick.AddListener(OnRestart);
+        //GetButton((int)Buttons.RestartButton).onClick.AddListener(OnRestart);
         GetButton((int)Buttons.MainButton).onClick.AddListener(OnMain);
         GetButton((int)Buttons.CloseButton).onClick.AddListener(OnClose);
         GetButton((int)Buttons.SoundSettingClose).onClick.AddListener(BackToSettings);

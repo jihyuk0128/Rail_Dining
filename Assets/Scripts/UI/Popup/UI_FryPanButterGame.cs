@@ -11,6 +11,7 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         FryPan_Empty,
         ButterIcon,
         ProgressBar,
+        MouseIcon,
     }
 
     private enum Buttons
@@ -22,12 +23,17 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
     private Image _butterIcon;
     private Image _progressBar;
     private Button _startButton;
+    private Image _mouseIcon;
 
     [Header("Settings")]
     [SerializeField] private float brushSize = 48f;         // 버터 브러시 크기
     [SerializeField] private Texture2D brushTexture;        // 버터 브러시 (원형, 반투명 텍스처)
     [SerializeField] private float moveSmooth = 10f;        // 마우스 따라다니기 속도
     [SerializeField] private float fillThreshold = 0.85f;   // 85% 이상 채우면 성공
+
+    [SerializeField] private float leftX = 200f;     // 왼쪽 끝
+    [SerializeField] private float rightX = 300f;     // 오른쪽 끝
+    [SerializeField] private float speed = 150f;
 
     private RenderTexture _maskRT;
     private Material _blendMat;
@@ -59,6 +65,7 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         _butterIcon = GetImage((int)Images.ButterIcon);
         _progressBar = GetImage((int)Images.ProgressBar);
         _startButton = GetButton((int)Buttons.StartButton);
+        _mouseIcon = GetImage((int)Images.MouseIcon);
 
         // 이벤트 등록
         _startButton.onClick.AddListener(StartMiniGame);
@@ -73,6 +80,7 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         // 초기 상태
         _progressBar.fillAmount = 0f;
         _butterIcon.gameObject.SetActive(false);
+        _mouseIcon.gameObject.SetActive(false);
 
         CreateRenderTexture();
     }
@@ -89,7 +97,7 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         _maskRT.Create();
 
         Shader maskShader = Shader.Find("UI/ButterMask");
-        Texture2D butteredPanTex = Resources.Load<Texture2D>("Art/UI/CraftGimmick/Fryingpan/FryPan_Butter");
+        Texture2D butteredPanTex = Resources.Load<Texture2D>("Art/UI/CraftGimmick/Fryingpan/FryPan_Butter 1");
         _blendMat = new Material(maskShader);
         _blendMat.SetTexture("_MainTex", butteredPanTex);
         _blendMat.SetTexture("_MaskTex", _maskRT);
@@ -138,6 +146,8 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         // 버튼 숨기고 버터 활성화
         _startButton.gameObject.SetActive(false);
         _butterIcon.gameObject.SetActive(true);
+        _mouseIcon.gameObject.SetActive(true);
+        StartCoroutine(MoveLoop());
 
         // 진행 상태1 초기화
         isPlaying = true;
@@ -285,6 +295,29 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         //Invoke(nameof(RequestClosePopup), 0.5f);
     }
 
+    private IEnumerator MoveLoop()
+    {
+        bool movingRight = true;
+        var rect = _mouseIcon.GetComponent<RectTransform>();
+        while (true)
+        {
+            Vector2 pos = rect.anchoredPosition;
+
+            // 방향에 따라 이동
+            float dir = movingRight ? 1f : -1f;
+            pos.x += dir * speed * Time.deltaTime;
+            rect.anchoredPosition = pos;
+
+            // 왼쪽/오른쪽 끝에 닿으면 방향 반전
+            if (pos.x >= rightX)
+                movingRight = false;
+
+            if (pos.x <= leftX)
+                movingRight = true;
+
+            yield return null;
+        }
+    }
     private void RequestClosePopup()
     {
         Managers.UI.ClosePopupUI();

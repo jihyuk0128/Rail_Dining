@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Customer
+  - Remote
   layers:
   - Default
   - TransparentFX

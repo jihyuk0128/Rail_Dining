@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/AJWScenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
+    path: Assets/Scenes/AJWScenes/CinematicScene.unity
+    guid: af9669956b5534341ba1b87a8fe31390
+  - enabled: 1
     path: Assets/Scenes/AJWScenes/TitleScene.unity
     guid: 9c8470c66881d7942832bcebe310f93c
   - enabled: 1

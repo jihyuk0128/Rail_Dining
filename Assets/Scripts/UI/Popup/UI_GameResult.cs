@@ -101,7 +101,8 @@ public class UI_GameResult : UI_Popup
     private void OnClickTitle()
     {
         Debug.Log("[UI_GameResult] Title Clicked");
+        SoundManager.Instance.StopBGM();
         Managers.UI.ClosePopupUI();
-        SceneManager.LoadScene("TitleScene");
+        SceneManager.LoadScene("CinematicScene");
     }
 }
