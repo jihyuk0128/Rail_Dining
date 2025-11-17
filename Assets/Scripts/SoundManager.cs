@@ -80,6 +80,7 @@ public class SoundManager : MonoBehaviour
     // º¼·ý ¼³Á¤
     public void SetBGMVolume(float volume)
     {
+        bgmVolume = volume;
         if (audioMixer != null)
             audioMixer.SetFloat("BGM", Mathf.Log10(Mathf.Clamp(volume, 0.001f, 1f)) * 20);
         else
@@ -88,6 +89,7 @@ public class SoundManager : MonoBehaviour
 
     public void SetSFXVolume(float volume)
     {
+        sfxVolume = volume;
         if (audioMixer != null)
             audioMixer.SetFloat("SFX", Mathf.Log10(Mathf.Clamp(volume, 0.001f, 1f)) * 20);
         else

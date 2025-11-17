@@ -234,7 +234,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6416704506416456542, guid: b38558f8eef59ee41b8fbd38e4f45b62, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9ecf3ef7e74c73e4184921a34d4f759e, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -2314,7 +2314,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2285236479268671990, guid: ea5eac082df817442822f551f12fe63e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e0b3d4264cfc6d24788b11209f69f106, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -3116,7 +3116,7 @@ MonoBehaviour:
   BGMOff: {fileID: 1637570650}
   SFXOn: {fileID: 660064928}
   SFXOff: {fileID: 2025842374}
-  SoundSettingClose: {fileID: 1337758206}
+  SoundSettingClose: {fileID: 1337758208}
   inviteInputField: {fileID: 1661069165}
   LoginInputField: {fileID: 1496385818}
   bounceHeight: 20
@@ -4714,7 +4714,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7437703076617874419, guid: fd707a89491157f46b0e4a28cda11a24, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8f4562db11876da4c80d9b1b4767d89b, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -4847,7 +4847,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7566868900790464045, guid: a71b7f3327b8c1a489e7190eb99321b5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0426b2b78ea35c24fa99182c22afcfa8, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

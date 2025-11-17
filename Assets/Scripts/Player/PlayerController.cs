@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (IsFall || isEventActive) return;
+        if (IsFall || isEventActive || !GameManager.Instance.IsPlaying()) return;
 
         if (context.performed)
         {

@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
 
     [Header("게임 설정")]
     [Tooltip("영업 플레이 시간 (초 단위)")]
-    public float ReadyTime = 30f;
     public float playTime = 60f; // 에디터에서 자유롭게 수정 가능
 
     [Header("매니저 참조")]
@@ -57,19 +56,20 @@ public class GameManager : MonoBehaviour
     // 영업 시작
     private IEnumerator StartDay()
     {
+        var popup = Managers.UI.ShowPopupUI<UI_CountDown>();
+
+        // 3, 2, 1, 0 (START)
+        for (int i = 3; i >= 0; i--)
+        {
+            popup.ShowCount(i);
+            yield return new WaitForSeconds(1f);
+        }
+
         Debug.Log($"=== Day {currentDay} Start ===");
         isPlaying = true;
 
         // bgm 시작과 같이
         SoundManager.Instance?.PlayBGM("BackGround_BGM");
-
-        // 영업 준비 시간
-        float timer = ReadyTime;
-        while (timer > 0f)
-        {
-            timer -= Time.deltaTime;
-            yield return null;
-        }
 
         // 시작 사운드 사운드
         SoundManager.Instance?.PlaySFX("WorkStart_SFX");
@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator EndDay()
     {
         Debug.Log($"=== Day {currentDay} End ===");
-
+        /*
         // 결과 데이터
         int totalOrders = customerSpawner?.spawnedCount ?? 0;
         int successOrders = customerSpawner?.SuccessCount ?? 0;
@@ -111,6 +111,10 @@ public class GameManager : MonoBehaviour
         // Managers.UI 로 결과창 표시
         UI_ResultSummary resultUI = Managers.UI.ShowPopupUI<UI_ResultSummary>();
         resultUI.SetResultData(currentDay, "1플레이어", "2플레이어", totalOrders, successOrders, earnedMoney, earnedMoney, quota, onClose: OnResultClosed);
+        */
+        var resultUI = Managers.UI.ShowPopupUI<UI_GameResult>();
+
+        resultUI.ShowResult(true);
 
         yield break;
     }

@@ -96,6 +96,7 @@ public class UI_GameResult : UI_Popup
         Debug.Log("[UI_GameResult] Restart Clicked");
         OnRetryClicked?.Invoke(); // 외부에서 재시작 로직 처리
         Managers.UI.ClosePopupUI();
+        GameManager.Instance.RestartGame();
     }
 
     private void OnClickTitle()

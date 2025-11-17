@@ -15,9 +15,25 @@ public class TrainEventManager : MonoBehaviour
 
     private bool isEventActive = false;
     private UI_ShakeTrainEvent shakeUI = null;
+    private GameObject indicationUI;
 
     private void Start()
     {
+        GameObject go = GameObject.FindWithTag("Player");
+        player = go.GetComponent<PlayerController>();
+
+        Transform ui = go.transform.Find("UI");
+        if (ui != null)
+        {
+            indicationUI = ui.Find("indication")?.gameObject;
+        }
+
+        if (indicationUI == null)
+            Debug.LogWarning("[TrainEventManager] indication UI를 찾을 수 없습니다!");
+
+        else
+            indicationUI.SetActive(false);
+
         StartCoroutine(EventRoutine());
     }
 
@@ -50,6 +66,9 @@ public class TrainEventManager : MonoBehaviour
         isEventActive = true;
 
         // UI 활성화 및 미니게임 시작
+        if (indicationUI != null)
+            StartCoroutine(ShowIndication());
+
         shakeUI.gameObject.SetActive(true);
         shakeUI.StartMiniGame();
 
@@ -83,6 +102,13 @@ public class TrainEventManager : MonoBehaviour
                 break;
         }
         // UI 자동 비활성화 (UI_ShakeTrainEvent 내부에서 처리됨)
+    }
+
+    private IEnumerator ShowIndication()
+    {
+        indicationUI.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        indicationUI.SetActive(false);
     }
 
     public bool IsEventActive() => isEventActive;
