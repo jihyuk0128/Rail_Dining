@@ -49,10 +49,13 @@ public class UI_CountDown : UI_Popup
             case 0:
                 _numberImage.sprite = spriteStart;
                 break;
+            case -1:
+                _numberImage.sprite = spriteStop;
+                break;
         }
 
         // START가 표시되면 1초 후 자동으로 닫기
-        if (num == 0)
+        if (num == 0 || num == -1)
             Invoke(nameof(ClosePopup), 1f);
     }
 

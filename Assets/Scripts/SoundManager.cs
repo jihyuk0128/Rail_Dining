@@ -137,6 +137,14 @@ public class SoundManager : MonoBehaviour
         clipCache.Add(clipName, clip);
         return clip;
     }
+
+    public void StopBGM()
+    {
+        Debug.Log("bgmoff");
+        if (bgmSource != null)
+            bgmSource.Stop();
+    }
+
     public float GetBGMVolume() => bgmVolume;
     public float GetSFXVolume() => sfxVolume;
 }

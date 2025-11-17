@@ -96,6 +96,9 @@ public class GameManager : MonoBehaviour
         // 손님 스폰 종료
         customerSpawner?.StopSpawning();
         isPlaying = false;
+        var popup = Managers.UI.ShowPopupUI<UI_CountDown>();
+        popup.ShowCount(-1);
+        yield return new WaitForSeconds(1f);
     }
 
     // 영업 종료
@@ -113,7 +116,10 @@ public class GameManager : MonoBehaviour
         resultUI.SetResultData(currentDay, "1플레이어", "2플레이어", totalOrders, successOrders, earnedMoney, earnedMoney, quota, onClose: OnResultClosed);
         */
         var resultUI = Managers.UI.ShowPopupUI<UI_GameResult>();
-
+        resultUI.OnRetryClicked += () =>
+        {
+            GameManager.Instance.RestartGame();
+        };
         resultUI.ShowResult(true);
 
         yield break;

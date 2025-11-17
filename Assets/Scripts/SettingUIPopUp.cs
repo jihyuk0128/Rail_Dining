@@ -25,7 +25,7 @@ public class SettingUIPopUp : MonoBehaviour
             {
                 settingsUI = Managers.UI.ShowPopupUI<UI_Settings>();
             }
-            else
+            else if (GameManager.Instance.IsPlaying())
             {
                 Managers.UI.ClosePopupUI();
                 settingsUI = null;
