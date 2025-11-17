@@ -197,10 +197,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      roasted_sausage_0: -1031133853251829547
-      roasted_sausage_1: 7866884379683453171
-      roasted_sausage_2: 2362182453010984965
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

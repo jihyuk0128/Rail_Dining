@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class FoodTable : MonoBehaviour, IInteractable
 {
-    UI_FoodBox foodBox;
+    UI_Menu foodBox;
     public void Interact(GameObject player)
     {
         if (foodBox == null)
-            foodBox = Managers.UI.ShowPopupUI<UI_FoodBox>();
+        {
+            var popup = Managers.UI.ShowPopupUI<UI_Menu>();
+            popup.MenuInit(4);
+        }
     }
     public Vector3 GetPosition() => transform.position;
     public int GetPriority(GameObject player) => 1;

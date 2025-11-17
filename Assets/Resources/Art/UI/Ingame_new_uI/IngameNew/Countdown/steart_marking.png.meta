@@ -247,7 +247,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      steart_marking_0: -6174154104713128631
+      steart_marking_1: -8988850994852504652
+      steart_marking_2: 8429844217521802181
+      steart_marking_3: -472631912899571170
+      steart_marking_4: 4172155880352805801
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

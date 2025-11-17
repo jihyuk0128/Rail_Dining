@@ -1,20 +1,21 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class UI_NewChestSlot : UI_SlotDragHandler
 {
     public int Index { get; private set; }
 
-    public void SetIndex(int index)
+    public override void Init()
     {
-        Index = index;
+        base.Init();
     }
 
-    protected override void HandleItemTransfer(UI_SlotDragHandler fromSlot)
+    public void SetIndex(int index)
     {
-        base.HandleItemTransfer(fromSlot);
+        Debug.Log($"[UI_NewChestSlot] SetIndex 호출됨 → index: {index}");
+        Debug.Log($"ChestSlots[{index}] = {Managers.Slot.ChestSlots[index]?.Item}");
 
-        // 창고 갱신
-        Managers.Slot.RefreshAll(SLOTTYPE.Chest);
+        Index = index;
+        SetSlotInfo(SLOTTYPE.Chest, index);
+        SetData(Managers.Slot.ChestSlots[index]);
     }
 }

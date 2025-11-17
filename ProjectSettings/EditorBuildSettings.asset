@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AJWScenes/TutorialScene.unity
     guid: bd652fe87ed9302448c2df8e2cae42e4
+  - enabled: 1
+    path: Assets/Scenes/AJWScenes/TestSceneNew.unity
+    guid: fd3935f9ac8af654db0a8f27e256b11b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -32,7 +32,7 @@ public class UI_BasicScene : UI_Scene
         // 메뉴초기화
         GetButton((int)Buttons.UI_MenuButton).gameObject.BindEvent((PointerEventData data) => { 
             var popup = Managers.UI.ShowPopupUI<UI_Menu>();
-            popup.MenuInit(1);
+            popup.MenuInit(3);
         });
     }
 

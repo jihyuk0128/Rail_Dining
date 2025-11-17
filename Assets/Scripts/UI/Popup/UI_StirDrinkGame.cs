@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_StirDrinkGame : UI_Popup
+public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
 {
     private enum Images
     {
@@ -24,7 +24,7 @@ public class UI_StirDrinkGame : UI_Popup
     [SerializeField] private float dragSensitivity = 1.0f;
     [SerializeField] private float returnSpeed = 5f;
 
-    public bool isPlaying { get; private set; } = false;
+    public bool isPlaying { get; private set; } = true;
     private bool isDragging = false;
 
     private Vector2 dragStartPos;
@@ -38,7 +38,7 @@ public class UI_StirDrinkGame : UI_Popup
     [SerializeField] private bool reachedRight = false;
     [SerializeField] private bool reachedLeft = false;
 
-    public Action<string> OnMiniGameEnd;
+    public event Action<bool> OnMiniGameEnd;
 
     public bool isSuccess { get; private set; } = false;
 
@@ -111,7 +111,7 @@ public class UI_StirDrinkGame : UI_Popup
         }
 
         if (progress >= 1f)
-            StartCoroutine(FinishGame());
+            FinishGame();
     }
 
     private void OnBeginDragSpoon(PointerEventData evt)
@@ -171,13 +171,12 @@ public class UI_StirDrinkGame : UI_Popup
         Debug.Log($"[Stir] Progress = {progress * 100f:F1}%");
     }
 
-    private IEnumerator FinishGame()
+    private void FinishGame()
     {
         isSuccess = true;
         isPlaying = false;
         _progressBar.fillAmount = 1f;
-        yield return new WaitForSeconds(0.3f);
-        //OnMiniGameEnd?.Invoke("Success");
+        OnMiniGameEnd?.Invoke(isSuccess);
         // ªÏ¬¶ ≈“¿ª µŒ∞Ì UI ¥›±‚
         //Invoke(nameof(RequestClosePopup), 0.5f);
     }

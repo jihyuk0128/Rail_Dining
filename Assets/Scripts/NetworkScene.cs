@@ -46,7 +46,7 @@ public class NetworkScene : MonoBehaviour
     {
         Managers.MainThread.Enqueue(() =>
         {
-            SceneManager.LoadScene("TutorialScene");
+            SceneManager.LoadScene("TestSceneNew");
         });
     }
 

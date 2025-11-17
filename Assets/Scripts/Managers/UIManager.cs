@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Diagnostics;
@@ -53,6 +54,31 @@ public class UIManager
 
         return popup;
     }
+
+    public UI_Popup ShowPopupUI(Type popupType)
+    {
+        if (popupType == null)
+        {
+            Debug.LogWarning("[UIManager] popupType이 null입니다!");
+            return null;
+        }
+
+        string name = popupType.Name;
+
+        // 프리팹 경로 동일하게 구성
+        GameObject go = Managers.Resource.Instantiate($"UI/Popup/{name}");
+
+        // UI_Popup으로 캐스팅
+        UI_Popup popup = go.GetComponent(popupType) as UI_Popup;
+        if (popup == null)
+            popup = go.AddComponent(popupType) as UI_Popup;
+
+        _popupStack.Push(popup);
+        go.transform.SetParent(Root.transform);
+
+        return popup;
+    }
+
 
     public void ClosePopupUI()
     {

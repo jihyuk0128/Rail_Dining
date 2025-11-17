@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      perfact_sparkle_2_0: -1510168467765507189
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

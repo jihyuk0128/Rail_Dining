@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using Spine.Unity;
 using Spine;
 
-public class UI_JuicerGame : UI_Popup
+public class UI_JuicerGame : UI_Popup, IHasMiniGameEnd
 {
     [Header("UI Elements")]
     [SerializeField] private SkeletonGraphic juicerSpine; // Spine 그래픽 (Juicer 애니메이션)
@@ -28,7 +28,7 @@ public class UI_JuicerGame : UI_Popup
     public bool isPlaying { get; private set; } = false;
     private bool isWaitingStop = false;
 
-    public Action<string> OnMiniGameEnd; // "Success" 전달
+    public event Action<bool> OnMiniGameEnd; // "Success" 전달
 
     public bool isSuccess { get; private set; } = false;
     private void Awake()
@@ -125,7 +125,7 @@ public class UI_JuicerGame : UI_Popup
         if (juicerSpine != null)
             juicerSpine.AnimationState.SetAnimation(0, "animation", false);
 
-        //OnMiniGameEnd?.Invoke("Success");
+        OnMiniGameEnd?.Invoke(isSuccess);
     }
 
     private void OnSpineAnimationComplete(TrackEntry entry)

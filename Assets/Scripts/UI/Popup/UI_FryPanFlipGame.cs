@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using Spine.Unity;
 using Spine;
 
-public class UI_FryPanFlipGame : UI_Popup
+public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
 {
     [Header("UI Elements")]
     [SerializeField] private RectTransform cursor;
@@ -36,7 +36,7 @@ public class UI_FryPanFlipGame : UI_Popup
     private float minX, maxX;
     private bool waitToStop = false;
 
-    public Action<string> OnMiniGameEnd;
+    public event Action<bool> OnMiniGameEnd;
     public bool isSuccess { get; private set; } = false;
 
     private void Awake()
@@ -201,7 +201,7 @@ public class UI_FryPanFlipGame : UI_Popup
     {
         isSuccess = success;
         isPlaying = false;
-        //OnMiniGameEnd?.Invoke(success ? "Success" : "Fail");
+        OnMiniGameEnd?.Invoke(success);
         StopSpineSmoothly();
     }
 

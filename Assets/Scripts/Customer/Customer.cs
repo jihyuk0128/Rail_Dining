@@ -121,7 +121,7 @@ public class Customer : MonoBehaviour, IInteractable
 
             Debug.Log($"손님이 {orderMenu.name} 를 주문했습니다!");
 
-            uiScene.AddOrder(orderMenu); // 주문 UI 추가
+            //uiScene.AddOrder(orderMenu); // 주문 UI 추가
             orderUI.ShowOrder(orderMenu, 0, 1);
             SoundManager.Instance.PlaySFX("OrderAccept_SFX");
             waitCoroutine = StartCoroutine(WaitForDrink());
@@ -145,14 +145,14 @@ public class Customer : MonoBehaviour, IInteractable
     {
         if (state == CustomerState.WaitingForDrink ) 
         {
-            // 아이템이 없으면 실패 처리
-            //if (!Managers.Inventory.CheckItemToRemove(orderMenu))
-            //{
-            //    Debug.Log("플레이어가 올바른 음료를 가지고 있지 않습니다!");
-            //    StartCoroutine(ShowOrderHint());
-            //    return;
-            //}
-
+            //아이템이 없으면 실패 처리
+            if (!Managers.NewInventory.HasItem(orderMenu.id))
+            {
+                Debug.Log("플레이어가 올바른 음료를 가지고 있지 않습니다!");
+                //StartCoroutine(ShowOrderHint());
+                return;
+            }
+            Managers.NewInventory.RemoveItem(orderMenu.id);
             Debug.Log("손님이 음료를 받고 돈을 지불합니다.");
             //MoneyManager.Instance.AddMoney(price);
             //인벤토리에서 현재 가리키고 있는 아이템을 지우기?

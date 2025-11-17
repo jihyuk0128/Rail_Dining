@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Beverage_production_category_0: -478408003597036886
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

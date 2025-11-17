@@ -153,8 +153,58 @@ public class NewSlotManager
                 Managers.NewInventory.RefreshUI();
                 break;
             case SLOTTYPE.Chest:
-                //Managers.Chest.RefreshUI();
+                Managers.Chest.RefreshUI();
                 break;
         }
     }
+
+    // 추가 슬롯 이동 교환로직
+    public bool MoveSlot(SLOTTYPE fromType, int fromIndex, SLOTTYPE toType, int toIndex)
+    {
+        // 리스트 가져오기
+        var fromList = GetSlotList(fromType);
+        var toList = GetSlotList(toType);
+
+        // 인덱스 체크
+        if (!IsValid(fromList, fromIndex) || !IsValid(toList, toIndex))
+        {
+            Debug.LogWarning("[SlotManager] MoveSlot: 잘못된 인덱스");
+            return false;
+        }
+
+        ItemSlot from = fromList[fromIndex];
+        ItemSlot to = toList[toIndex];
+
+        // 1) 둘 다 빈 슬롯이면 종료
+        if (from.Item == null && to.Item == null)
+            return false;
+
+        // 2) to 가 비어있으면 → 이동
+        if (to.Item == null)
+        {
+            to.Item = from.Item;
+            to.Amount = from.Amount;
+
+            from.Clear();
+            return true;
+        }
+
+        // 3) 둘 다 아이템 있음 → 스왑
+        ItemData tempItem = to.Item;
+        int tempAmount = to.Amount;
+
+        to.Item = from.Item;
+        to.Amount = from.Amount;
+
+        from.Item = tempItem;
+        from.Amount = tempAmount;
+
+        return true;
+    }
+
+    private bool IsValid(List<ItemSlot> list, int index)
+{
+    return list != null && index >= 0 && index < list.Count;
+}
+
 }

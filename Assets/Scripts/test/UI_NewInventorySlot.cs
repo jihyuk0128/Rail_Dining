@@ -8,27 +8,15 @@ public class UI_NewInventorySlot : UI_SlotDragHandler
 
     public override void Init()
     {
-        base.Init(); // 부모 Init() 호출해야 Bind 작동
-
+        base.Init();
     }
 
     public void SetIndex(int index)
     {
+        Debug.Log($"[UI_NewInventorySlot] SetIndex 호출됨 → index: {index}");
+
         Index = index;
+        SetSlotInfo(SLOTTYPE.Inventory,index);
         SetData(Managers.Slot.InventorySlots[index]);
     }
-
-    protected override void HandleItemTransfer(UI_SlotDragHandler fromSlot)
-    {
-        base.HandleItemTransfer(fromSlot);
-
-        // 인벤토리 갱신
-        Managers.Slot.RefreshAll(SLOTTYPE.Inventory);
-    }
-
-    public override void Refresh()
-    {
-        base.Refresh();
-    }
-
 }

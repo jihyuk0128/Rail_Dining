@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_FryPanButterGame : UI_Popup
+public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
 {
     private enum Images
     {
@@ -37,7 +37,7 @@ public class UI_FryPanButterGame : UI_Popup
     private Material _drawMat;
     private Texture2D butterAlphaMask;
 
-    public Action<string> OnMiniGameEnd;
+    public event Action<bool> OnMiniGameEnd;
 
     public bool isSuccess { get; private set; } = false;
 
@@ -139,7 +139,7 @@ public class UI_FryPanButterGame : UI_Popup
         _startButton.gameObject.SetActive(false);
         _butterIcon.gameObject.SetActive(true);
 
-        // 진행 상태 초기화
+        // 진행 상태1 초기화
         isPlaying = true;
         progress = 0f;
         _progressBar.fillAmount = 0f;
@@ -279,7 +279,7 @@ public class UI_FryPanButterGame : UI_Popup
         _progressBar.fillAmount = 1f; // 100%로 고정
 
         // 게임 종료 이벤트 트리거
-       // OnMiniGameEnd?.Invoke("Success");
+        OnMiniGameEnd?.Invoke(isSuccess);
 
         // 살짝 텀을 두고 UI 닫기
         //Invoke(nameof(RequestClosePopup), 0.5f);

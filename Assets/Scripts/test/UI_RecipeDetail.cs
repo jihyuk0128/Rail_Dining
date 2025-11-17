@@ -78,10 +78,14 @@ public class UI_RecipeDetail : UI_Popup
         Managers.UI.ClosePopupUI();
 
         // 여기서 미니게임
-  
+        Managers.Crafting.StartMiniGame(_recipeId); 
 
+        //bool isplaying = minigame.isPlaying;
+        //
+        //bool issuceesed = minigame.isSuccess;
+        //
+        //
+        //
 
-        var popup = Managers.UI.ShowPopupUI<UI_CreateResult>();
-        popup.TryCraft(true, _recipeId);
     }
 }

@@ -5,6 +5,120 @@
       "name": "Coffee_powder",
       "maxStack": 1,
       "iconPath": "Art/Items/All_Items/Coffee_powder"
+    },
+    {
+      "id": 102,
+      "name": "milk",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/milk"
+    },
+    {
+      "id": 103,
+      "name": "Egg",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Egg"
+    },
+    {
+      "id": 104,
+      "name": "Bread",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Bread"
+    },
+    {
+      "id": 105,
+      "name": "Strawberry",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Strawberry"
+    },
+    {
+      "id": 106,
+      "name": "Orange",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Orange"
+    },
+    {
+      "id": 107,
+      "name": "Lemon",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Lemon"
+    },
+    {
+      "id": 108,
+      "name": "sausage",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/sausage"
+    },
+    {
+      "id": 201,
+      "name": "Strawberry_juice",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Strawberry_juice"
+    },
+    {
+      "id": 202,
+      "name": "orange_juice",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/orange_juice"
+    },
+    {
+      "id": 203,
+      "name": "Lemon_juice",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Lemon_juice"
+    },
+    {
+      "id": 301,
+      "name": "coffee_latte",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/coffee_latte"
+    },
+    {
+      "id": 302,
+      "name": "Coffee",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Coffee"
+    },
+    {
+      "id": 303,
+      "name": "Strawberry_latte",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Strawberry_latte"
+    },
+    {
+      "id": 401,
+      "name": "Egg_toast",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Egg_toast"
+    },
+    {
+      "id": 402,
+      "name": "Fried_egg",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Fried_egg"
+    },
+    {
+      "id": 403,
+      "name": "roasted_sausage",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/roasted_sausage"
+    },
+    {
+      "id": 404,
+      "name": "Sausage_egg_toast",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/Sausage_egg_toast"
+    },
+    {
+      "id": 405,
+      "name": "sausage_omelet",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/sausage_omelet"
+    },
+    {
+      "id": 406,
+      "name": "hot_dog",
+      "maxStack": 1,
+      "iconPath": "Art/Items/All_Items/hot_dog"
     }
   ]
 }

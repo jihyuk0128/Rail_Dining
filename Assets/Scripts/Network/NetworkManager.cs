@@ -306,7 +306,7 @@ public class NetworkManager
                         int customerid = reader.ReadInt();
                         int ordermenu = reader.ReadInt();
                         float time = reader.ReadFloat();
-                        Debug.Log($"[SERVER] 레시피 불러오기 시작");
+                        Debug.Log($"[SERVER] 레시피 불러오기 시작 {ordermenu}");
                         OnOrderMenu?.Invoke(customerid,ordermenu, time);
                         return;
                     }

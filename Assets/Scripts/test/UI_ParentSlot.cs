@@ -8,6 +8,8 @@ public class UI_ParentSlot : UI_Base
     [SerializeField] protected Image itemIcon;
     protected ItemSlot slotData;
     private bool isInitialized = false;
+    
+
 
     public override void Init()
     {
@@ -58,6 +60,8 @@ public class UI_ParentSlot : UI_Base
             itemIcon.enabled = false;
             Debug.LogWarning($"[UI_ParentSlot] 스프라이트 로드 실패: {slotData.Item.iconPath}");
         }
+
+        itemIcon.SetNativeSize();
     }
 
     public virtual void Clear()

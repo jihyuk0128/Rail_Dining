@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     private bool resultClosed = false;
 
     // 임시 랜덤 테이블
-    public List<int> availableItemIDs = new() { 103, 104, 106, 108, 112, 113, 114, 116, 119, 120, 304 };
+    //public List<int> availableItemIDs = new() { 103, 104, 106, 108, 112, 113, 114, 116, 119, 120, 304 };
 
     private void Awake()
     {
@@ -148,20 +148,23 @@ public class GameManager : MonoBehaviour
 
     public bool IsPlaying() => isPlaying;
 
-    public ItemData Getorder(int randId)
+    public ItemData Getorder(int recipeId)
     {
-        if (availableItemIDs.Count == 0)
+        // 레시피가 존재하는지 확인
+        if (!Managers.Data.RecipeDict.TryGetValue(recipeId, out var recipe))
         {
-            Debug.LogWarning("선택 가능한 메뉴 ID가 없습니다!");
+            Debug.LogWarning($"레시피 ID {recipeId}를 찾을 수 없습니다!");
             return null;
         }
 
-        int itemId = availableItemIDs[randId];
+        // 결과 아이템 ID
+        int resultId = recipe.resultId;
 
-        if (Managers.Data.ItemDict.TryGetValue(itemId, out var item))
+        // 아이템 데이터 찾기
+        if (Managers.Data.ItemDict.TryGetValue(resultId, out var item))
             return item;
 
-        Debug.LogWarning($"Item ID {itemId}를 찾을 수 없습니다!");
+        Debug.LogWarning($"결과 아이템 ID {resultId}를 ItemDict에서 찾을 수 없습니다!");
         return null;
     }
   

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.Experimental.AI;
 
 public class NewCraftingManager
 {
@@ -19,7 +21,7 @@ public class NewCraftingManager
 
         // 기존 슬롯 제거
         foreach (Transform child in parent)
-            Object.Destroy(child.gameObject);
+            UnityEngine.Object.Destroy(child.gameObject);
 
         int count = 0;
 
@@ -82,6 +84,35 @@ public class NewCraftingManager
         return true;
     }
 
+    public void StartMiniGame(int recipeId)
+    {
+        if (!Managers.Data.RecipeDict.TryGetValue(recipeId, out var recipe))
+        {
+            Debug.LogWarning($"[CraftingManager] 레시피 ID {recipeId}를 찾을 수 없습니다!");
+            return;
+        }
+        int resultId = recipe.resultId;
+
+        if (_minigameMapping.TryGetValue(resultId, out var gameType))
+        {
+            Debug.Log($"[CraftingManager] resultId {resultId}: {gameType.Name} 실행!");
+            var miniGamePopup = Managers.UI.ShowPopupUI(gameType) as UI_Popup;
+
+            if (miniGamePopup is IHasMiniGameEnd notifier)
+            {
+                notifier.OnMiniGameEnd += (success) =>
+                {
+                    Debug.Log($"미니게임 완료! 성공여부: {success}");
+                    Managers.UI.ClosePopupUI();
+                    var popup = Managers.UI.ShowPopupUI<UI_CreateResult>();
+                    popup.TryCraft(true, recipeId);
+                };
+
+            }
+
+        }
+    }
+
     public void SuccessCraft(int recipeId)
     {
         if (!Managers.Data.RecipeDict.TryGetValue(recipeId, out var recipe))
@@ -116,5 +147,32 @@ public class NewCraftingManager
         _inventory.RefreshUI();
     }
 
+    private Dictionary<int, Type> _minigameMapping = new Dictionary<int, Type>
+    {
+        // ───────────────────────────────
+        // 200대: 주스류 (착즙기)
+        // ───────────────────────────────
+        { 201, typeof(UI_JuicerGame) }, // Strawberry_juice
+        { 202, typeof(UI_JuicerGame) }, // Orange_juice
+        { 203, typeof(UI_JuicerGame) }, // Lemon_juice
 
+        // ───────────────────────────────
+        // 300대: 커피류 (섞기)
+        // ───────────────────────────────
+        { 301, typeof(UI_StirDrinkGame) }, // coffee_latte
+        { 302, typeof(UI_StirDrinkGame) }, // Coffee
+        { 303, typeof(UI_StirDrinkGame) }, // Strawberry_latte
+
+        // ───────────────────────────────
+        // 400대: 음식류 (프라이팬/조리)
+        // ───────────────────────────────
+        { 401, typeof(UI_FryPanButterGame) }, // Egg_toast
+        { 402, typeof(UI_FryPanButterGame) }, // Fried_egg
+        { 403, typeof(UI_FryPanButterGame) }, // roasted_sausage
+        { 404, typeof(UI_FryPanFlipGame) }, // Sausage_egg_toast
+        { 405, typeof(UI_FryPanFlipGame) }, // sausage_omelet
+        { 406, typeof(UI_FryPanFlipGame) }, // hot_dog
+    };
 }
+
+
