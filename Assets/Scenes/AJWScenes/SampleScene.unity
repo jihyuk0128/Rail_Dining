@@ -8471,6 +8471,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_Network
       objectReference: {fileID: 0}
+    - target: {fileID: 6442940907987869261, guid: b48a2fe7878331f41ba9bf27ab477981, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8822,10 +8826,6 @@ PrefabInstance:
     - target: {fileID: 5298348677258263465, guid: c19593353c159934daff1a426de10041, type: 3}
       propertyPath: m_Name
       value: UI_FryPanButterGame
-      objectReference: {fileID: 0}
-    - target: {fileID: 5298348677258263465, guid: c19593353c159934daff1a426de10041, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6192613986408171607, guid: c19593353c159934daff1a426de10041, type: 3}
       propertyPath: m_Pivot.x

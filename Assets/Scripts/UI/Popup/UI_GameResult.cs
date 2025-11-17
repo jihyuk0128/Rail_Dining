@@ -103,6 +103,6 @@ public class UI_GameResult : UI_Popup
     {
         Debug.Log("[UI_GameResult] Title Clicked");
         Managers.UI.ClosePopupUI();
-        SceneManager.LoadScene("TitleScene");
+        SceneManager.LoadScene("CinematicScene");
     }
 }
