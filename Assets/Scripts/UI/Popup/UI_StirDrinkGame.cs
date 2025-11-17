@@ -12,7 +12,8 @@ public class UI_StirDrinkGame : UI_Popup
         Spoon,
         ProgressBar,
         StartButton,
-        ClickIcon
+        ClickIcon,
+        ClickOn,
     }
 
     private Image _cup;
@@ -20,6 +21,7 @@ public class UI_StirDrinkGame : UI_Popup
     private Image _progressBar;
     private Button _startButton;
     private Image _clickIcon;
+    private Image _clickOn;
 
     [Header("Settings")]
     [SerializeField] private float stirProgress = 0.05f; // 한 번 왕복할 때 게이지 증가량 (10%)
@@ -68,6 +70,7 @@ public class UI_StirDrinkGame : UI_Popup
         _progressBar = GetImage((int)Images.ProgressBar);
         _startButton = GetImage((int)Images.StartButton).GetComponent<Button>();
         _clickIcon = GetImage((int)Images.ClickIcon);
+        _clickOn = GetImage((int)Images.ClickOn);
 
         _progressBar.fillAmount = 0f;
         _spoon.gameObject.SetActive(false);
@@ -79,6 +82,7 @@ public class UI_StirDrinkGame : UI_Popup
         BindEvent(_spoon.gameObject, OnEndDragSpoon, Define.UIEvent.EndDrag);
 
         _clickIcon.gameObject.SetActive(false);
+        _clickOn.gameObject.SetActive(false);
     }
 
     private void StartMiniGame()
@@ -126,6 +130,12 @@ public class UI_StirDrinkGame : UI_Popup
                 frameTimer = 0f;                       // 타이머 리셋
                 currentFrame = (currentFrame + 1) % spaceBarFrames.Length; // 다음 프레임으로
                 _clickIcon.sprite = spaceBarFrames[currentFrame];       // 이미지 교체
+
+                if (_clickOn != null)
+                {
+                    // currentFrame == 1일 때만 켜기, 나머지 프레임은 끄기
+                    _clickOn.gameObject.SetActive(currentFrame == 1);
+                }
             }
         }
 
