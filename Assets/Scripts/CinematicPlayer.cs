@@ -33,6 +33,6 @@ public class CinematicPlayer : MonoBehaviour
 
     private void LoadNextScene()
     {
-        SceneManager.LoadScene("TitleScene");
+        SceneManager.LoadScene("NewTitleScene");
     }
 }

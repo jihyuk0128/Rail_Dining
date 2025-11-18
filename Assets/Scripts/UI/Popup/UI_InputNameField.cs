@@ -1,0 +1,81 @@
+using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using UnityEngine.Windows;
+
+public class UI_InputNameField : UI_Popup
+{
+    private string Name = null;
+    private bool Isnewgame = true;
+    enum Buttons
+    {
+        ExitButton
+    }
+
+    enum InputFields
+    {
+        LoginInput,
+    }
+
+    private void Start()
+    {
+        Init();
+    }
+    public override void Init()
+    {
+        base.Init();
+
+        Bind<Button>(typeof(Buttons));
+        Bind<TMP_InputField>(typeof(InputFields));
+
+        GetButton((int)Buttons.ExitButton).gameObject.BindEvent(OnClose);
+        TMP_InputField inputName = Get<TMP_InputField>((int)InputFields.LoginInput);
+        inputName.onSubmit.AddListener(OnSubmitName);
+
+        Managers.Network.OnLoginSuccess += OnLoginNetwork;
+        //Managers.Network.OnRoomCreate += OnHostNetwork;
+        //Managers.Network.OnRoomJoin += OnRoomJoin;
+    }
+
+    public void IsNewGame(bool game)
+    {
+        Isnewgame = game;
+    }
+
+    void OnSubmitName(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            Debug.Log("이름을 입력하세요!");
+            return;
+        }
+
+        Debug.Log($"입력된 이름: {text}");
+
+        // 서버 로그인 요청
+        Managers.Network.Login(text);
+    }
+
+    private void OnLoginNetwork(string username)
+    {
+        // 메인 스레드에서 실행되도록 던지기
+        Managers.MainThread.Enqueue(() =>
+        {
+            Managers.UI.ClosePopupUI();
+            Name = username;
+
+            if (Isnewgame)
+                Managers.UI.ShowPopupUI<UI_HostPanel>();
+            else
+                Managers.UI.ShowPopupUI<UI_GuestPanel>();
+        });
+    }
+
+    void OnClose(PointerEventData data)
+    {
+        Managers.UI.ClosePopupUI();
+    }
+}
+

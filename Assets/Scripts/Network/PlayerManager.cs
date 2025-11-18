@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public GameObject localPlayerPrefab;   // 로컬용
+    //public GameObject localPlayerPrefab;   // 로컬용
     public GameObject remotePlayerPrefab;  // 원격용
 
     private Dictionary<string, GameObject> players = new();

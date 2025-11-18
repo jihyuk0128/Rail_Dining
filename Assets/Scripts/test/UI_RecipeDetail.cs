@@ -37,7 +37,10 @@ public class UI_RecipeDetail : UI_Popup
         var result = Managers.Data.ItemDict[recipe.resultId];
         Debug.Log($"레시피설정화면 결과 {recipe.resultId}");
 
-        GetImage((int)Images.ResultSlot).sprite = Resources.Load<Sprite>(result.iconPath);
+        var _image = GetImage((int)Images.ResultSlot);
+        _image.sprite = Resources.Load<Sprite>(result.iconPath);
+        _image.SetNativeSize();
+
 
         // --- 기존 그리드 정리 ---
         var grid = GetObject((int)GameObjects.Grid).transform;

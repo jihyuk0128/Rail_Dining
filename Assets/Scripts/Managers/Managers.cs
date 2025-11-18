@@ -105,7 +105,7 @@ public class Managers : MonoBehaviour
         s_instance._newInventory.AddItem(105);
         s_instance._newInventory.AddItem(105);
         s_instance._newInventory.AddItem(102);
-        //Managers.NewInventory.AddItem(104);
+        s_instance._newInventory.AddItem(104);
         // s_instance._newCrafting.Init();   //  필요하면 추가
     }
 
