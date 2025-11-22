@@ -9,7 +9,8 @@ enum CustomerAnimState
     Idle,
     Walking,
     Siting,
-    Siting_Idle
+    Siting_Idle,
+    Happy,
 }
 
 public class CustomerSpineController : MonoBehaviour
@@ -28,6 +29,7 @@ public class CustomerSpineController : MonoBehaviour
     private SkeletonAnimation activeSpine; // 현재 활성화 Spine
     private bool facingRight = true;
     public bool isSiting = false;
+    public bool isSuccess = false;
     public SeatDirection seatDirection;
 
     private CustomerAnimState currentState = CustomerAnimState.Idle; // 현재 상태
@@ -54,6 +56,12 @@ public class CustomerSpineController : MonoBehaviour
         if (inputVector == Vector2.zero && isSiting)
         {
             ChangeAnimation(CustomerAnimState.Siting);
+            return;
+        }
+
+        if (inputVector == Vector2.zero && isSuccess)
+        {
+            ChangeAnimation(CustomerAnimState.Happy);
             return;
         }
 
@@ -136,6 +144,7 @@ public class CustomerSpineController : MonoBehaviour
             case CustomerAnimState.Walking: return "walking";
             case CustomerAnimState.Siting: return "siting";
             case CustomerAnimState.Siting_Idle: return "siting_idle";
+            case CustomerAnimState.Happy: return "happy";
             default: return "walking";
         }
     }
