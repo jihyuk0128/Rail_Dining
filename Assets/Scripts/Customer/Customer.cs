@@ -157,6 +157,9 @@ public class Customer : MonoBehaviour, IInteractable
             //MoneyManager.Instance.AddMoney(price);
             //인벤토리에서 현재 가리키고 있는 아이템을 지우기?
             Debug.Log($"{customerid}번 손님 주문완료");
+            // 손님 반응 애니메이션 재생
+            spineController.isSuccess = true; // 주문 완료시에 반응 애니메이션 재생용
+            spineController.UpdateSpine(Vector2.zero);
             Managers.Network.OrderSuccess(customerid);
         }
     }

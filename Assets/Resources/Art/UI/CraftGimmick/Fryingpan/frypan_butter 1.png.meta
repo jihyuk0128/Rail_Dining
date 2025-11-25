@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: cd3476c03447cb5419c89b40de5be2d4
+guid: 94d7d9d7ef2462245a354a17e5430e3c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -324858297916393123
-    second: frypan_butter 1_0
+      213: 5629610010995209520
+    second: frypan_butter 2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: frypan_butter 1_0
+      name: frypan_butter 2_0
       rect:
         serializedVersion: 2
         x: 13
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d59fa56691fdd7bf0800000000000000
-      internalID: -324858297916393123
+      spriteID: 0353a516a74602e40800000000000000
+      internalID: 5629610010995209520
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      frypan_butter 1_0: -324858297916393123
+      frypan_butter 2_0: 5629610010995209520
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

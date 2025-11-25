@@ -620,7 +620,7 @@ GameObject:
   - component: {fileID: 4528641788668251941}
   - component: {fileID: 7630032590528939131}
   m_Layer: 5
-  m_Name: UI_FryPanGame
+  m_Name: UI_FryPanFlipGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
