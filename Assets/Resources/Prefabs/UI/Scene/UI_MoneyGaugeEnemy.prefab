@@ -930,8 +930,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1301405552138560243}
+  - component: {fileID: 5508941302284859238}
   m_Layer: 5
-  m_Name: MoneyGaugeEnemy
+  m_Name: UI_MoneyGaugeEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -959,3 +960,15 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5508941302284859238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8890047635491603822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b8ea94c57e5a5e44828e1d0b732fe71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

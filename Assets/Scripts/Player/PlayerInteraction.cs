@@ -7,12 +7,14 @@ public class PlayerInteraction : MonoBehaviour
 {
     private List<IInteractable> interactables = new List<IInteractable>();
     private PlayerController player;
+    private TrainEventManager train;
 
     private IInteractable currentTarget; // 현재 가장 가까운 상호작용 대상 캐싱
 
     private void Awake()
     {
         player = GetComponent<PlayerController>();
+        train = FindObjectOfType<TrainEventManager>();
     }
 
     private void Update()
@@ -22,7 +24,7 @@ public class PlayerInteraction : MonoBehaviour
 
     public void Interacting(InputAction.CallbackContext context)
     {
-        if (context.started && !player.isEventActive && !player.IsFall)
+        if (context.started && !player.isEventActive && !player.IsFall && !train.IsEventActive())
         {
             Debug.Log("상호작용 키 누름");
             TryInteract();
