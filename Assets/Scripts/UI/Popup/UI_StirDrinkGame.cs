@@ -50,7 +50,7 @@ public class UI_StirDrinkGame : UI_Popup
     [SerializeField] private bool reachedRight = false;
     [SerializeField] private bool reachedLeft = false;
 
-    public Action<string> OnMiniGameEnd;
+    public event Action<bool> OnMiniGameEnd;
 
     public bool isSuccess { get; private set; } = false;
 
@@ -213,7 +213,7 @@ public class UI_StirDrinkGame : UI_Popup
         isPlaying = false;
         _progressBar.fillAmount = 1f;
         yield return new WaitForSeconds(0.3f);
-        //OnMiniGameEnd?.Invoke("Success");
+        OnMiniGameEnd?.Invoke(true);
         // ªÏ¬¶ ≈“¿ª µŒ∞Ì UI ¥›±‚
         //Invoke(nameof(RequestClosePopup), 0.5f);
     }
