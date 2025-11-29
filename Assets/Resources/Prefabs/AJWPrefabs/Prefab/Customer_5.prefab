@@ -921,6 +921,7 @@ MonoBehaviour:
   questionPanel: {fileID: 8615865521140545629}
   menuPanel: {fileID: 80082739233142156}
   menuIcon: {fileID: 2532776189097312560}
+  countText: {fileID: 0}
   interactionIcon: {fileID: 7095254602753757977}
   interactionIcon2: {fileID: 6070048495988991155}
   waitSlider: {fileID: 1749961315883087985}

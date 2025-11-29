@@ -1,25 +1,18 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UI_GuestPanel : UI_Popup
 {
-    enum Buttons
-    {
-        ExitButton
-    }
-
-    enum InputFields
-    {
-        RoomCodeInput,
-    }
+    enum Buttons { ExitButton, CheckButton }
+    enum InputFields { RoomCodeInput }
 
     private void Start()
     {
         Init();
     }
+
     public override void Init()
     {
         base.Init();
@@ -28,38 +21,57 @@ public class UI_GuestPanel : UI_Popup
         Bind<TMP_InputField>(typeof(InputFields));
 
         GetButton((int)Buttons.ExitButton).gameObject.BindEvent(OnClose);
-        TMP_InputField inputCode = Get<TMP_InputField>((int)InputFields.RoomCodeInput);
-        inputCode.onSubmit.AddListener(OnSubmitCode);
+        GetButton((int)Buttons.CheckButton).gameObject.BindEvent(OnCheck);
 
-        Managers.Network.OnRoomJoin += OnRoomJoin;
+        TMP_InputField input = Get<TMP_InputField>((int)InputFields.RoomCodeInput);
+        input.onSubmit.AddListener(OnSubmitCode);
+
+        Managers.Network.OnRoomList += OnRoomlist;
     }
 
-    private void OnRoomJoin(int roomid)
+    private void TryJoinRoom()
     {
-        // 방 입장성공.
-        Managers.MainThread.Enqueue(() =>
-        {
-            Managers.UI.ClosePopupUI();
-            Managers.UI.ShowPopupUI<UI_Network>();
-        });
-    }
+        TMP_InputField input = Get<TMP_InputField>((int)InputFields.RoomCodeInput);
+        string text = input.text;
 
-    void OnSubmitCode(string text)
-    {
         if (string.IsNullOrEmpty(text))
         {
             Debug.Log("코드를 입력하세요!");
             return;
         }
 
-        Debug.Log($"입력된 코드: {text}");
-
-        // 서버 방참가요청(추후이름설정예정)
         Managers.Network.JoinRoom(int.Parse(text));
+    }
+
+    private void OnSubmitCode(string text)
+    {
+        TryJoinRoom();
+    }
+
+    void OnCheck(PointerEventData data)
+    {
+        TryJoinRoom();
     }
 
     void OnClose(PointerEventData data)
     {
         Managers.UI.ClosePopupUI();
     }
+
+    private void OnRoomlist(string name)
+    {
+        Managers.MainThread.Enqueue(() =>
+        {
+            Managers.UI.ClosePopupUI();
+            
+            var popup = Managers.UI.ShowPopupUI<UI_Network>();
+            popup.InitName(Managers.Network.player.Username, name);
+        });
+    }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnRoomList -= OnRoomlist;
+    }
+
 }

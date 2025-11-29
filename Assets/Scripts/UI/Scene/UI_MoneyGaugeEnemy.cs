@@ -31,7 +31,7 @@ public class UI_MoneyGaugeEnemy : UI_Base
     private TextMeshProUGUI _txt75;
     private TextMeshProUGUI _txt100;
 
-    private int _goalMoney = 0;
+    private int _goalMoney = 100;
     private int _currentMoney = 0;
 
     public override void Init()
