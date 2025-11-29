@@ -31,7 +31,7 @@ public class UI_HostPanel: UI_Popup
         Managers.Network.CreateRoom();
 
         Managers.Network.OnRoomCreate += OnHostNetwork;
-        Managers.Network.OnRoomJoin += OnRoomJoin;
+        Managers.Network.OnHostAssigned += OnHostAssigned;
     }
 
     private void OnHostNetwork(int roomid)
@@ -40,13 +40,14 @@ public class UI_HostPanel: UI_Popup
         Managers.Network.JoinRoom(roomid);
     }
 
-    private void OnRoomJoin(int roomid)
+    private void OnHostAssigned(string msg)
     {
         // 积己茄规 涝厘己傍.
         Managers.MainThread.Enqueue(() =>
         {
             Managers.UI.ClosePopupUI();
-            Managers.UI.ShowPopupUI<UI_Network>();
+            var popup = Managers.UI.ShowPopupUI<UI_Network>();
+            popup.InitName(Managers.Network.player.Username, " ");
         });
     }
 
@@ -67,5 +68,11 @@ public class UI_HostPanel: UI_Popup
     void OnClose(PointerEventData data)
     {
         Managers.UI.ClosePopupUI();
+    }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnRoomCreate -= OnHostNetwork;
+        Managers.Network.OnHostAssigned -= OnHostAssigned;
     }
 }

@@ -349,12 +349,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questionPanel: {fileID: 1159213485325718093}
-  menuPanel: {fileID: 0}
-  menuIcon: {fileID: 0}
+  menuPanel: {fileID: 4345102454270380617}
+  menuIcon: {fileID: 6117189876588069030}
   countText: {fileID: 0}
-  interactionIcon: {fileID: 0}
+  interactionIcon: {fileID: 5607782424225405269}
   interactionIcon2: {fileID: 133569836587058467}
-  waitSlider: {fileID: 0}
+  waitSlider: {fileID: 6596587208981114079}
 --- !u!1 &698759814136759793
 GameObject:
   m_ObjectHideFlags: 0

@@ -1441,9 +1441,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questionPanel: {fileID: 3626372896510493287}
-  menuPanel: {fileID: 0}
-  menuIcon: {fileID: 0}
+  menuPanel: {fileID: 3594526363046291643}
+  menuIcon: {fileID: 4294302240928326477}
   countText: {fileID: 0}
-  interactionIcon: {fileID: 0}
+  interactionIcon: {fileID: 4354607198187138407}
   interactionIcon2: {fileID: 5220230128546007718}
-  waitSlider: {fileID: 0}
+  waitSlider: {fileID: 1427812793130362886}

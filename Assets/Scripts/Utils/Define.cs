@@ -44,6 +44,7 @@ public class Define
         HOST_ASSIGNED,
         ACTION_DENIED,
         ORDER_MENU,
+        ROOM_LIST,
 
     }
 

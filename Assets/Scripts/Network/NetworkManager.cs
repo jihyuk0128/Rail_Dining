@@ -1,3 +1,4 @@
+
 using System;
 using System.IO;
 using System.Net.NetworkInformation;
@@ -41,6 +42,8 @@ public class NetworkManager
     public event Action<int> OnGameStartDay;
     public event Action<int,int,float> OnOrderMenu;
     public event Action<int> OnCustomerLeave;
+    public event Action<string> OnRoomJoinEvent;
+    public event Action<string> OnRoomList;
 
 
 
@@ -289,11 +292,13 @@ public class NetworkManager
                         return;
                     }
                 case Define.StoC_Response.HOST_ASSIGNED:
-                    string msg = reader.ReadString();
-                    roomData.IsHost = true;
-                    Debug.Log($"[Network] {msg}");
-                    OnHostAssigned?.Invoke(msg);
-                    break;
+                    {
+                        string msg = reader.ReadString();
+                        roomData.IsHost = true;
+                        Debug.Log($"[Network] {msg}");
+                        OnHostAssigned?.Invoke(msg);
+                        return;
+                    }
 
                 case Define.StoC_Response.ACTION_DENIED:
                     string reason = reader.ReadString();
@@ -308,6 +313,13 @@ public class NetworkManager
                         float time = reader.ReadFloat();
                         Debug.Log($"[SERVER] 레시피 불러오기 시작 {ordermenu}");
                         OnOrderMenu?.Invoke(customerid,ordermenu, time);
+                        return;
+                    }
+                case Define.StoC_Response.ROOM_LIST:
+                    {
+                        string name = reader.ReadString();
+                        Debug.Log($"[SERVER] 기존 방 접속유저 : {name}");
+                        OnRoomList?.Invoke(name);
                         return;
                     }
             }
@@ -331,11 +343,11 @@ public class NetworkManager
                     roomData?.AddPlayer(joinedName);
                     Debug.Log($"[SERVER] 플레이어 입장: {joinedName}");
                     Debug.Log($"현재방상태 {roomData.CurrentPlayers}명 , {roomData.Players[0]}");
-
+                    OnRoomJoinEvent?.Invoke(joinedName);
 
                     //UnityMainThreadDispatcher.Instance?.Enqueue(() =>
                     //{
-                    //    // UI에 인원 갱신 요청
+                    //    // UI에 인원 갱신 요청   
                     //    Managers.UI.UpdateRoomPlayerList(roomData.Players);
                     //});
                     break;

@@ -82,6 +82,7 @@ public class UnityMainThreadDispatcher : MonoBehaviour
                 catch (Exception e)
                 {
                     Debug.LogError($"[Dispatcher] 실행 중 예외: {e.Message}");
+                    Debug.LogException(e);
                 }
             }
         }

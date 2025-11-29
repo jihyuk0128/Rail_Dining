@@ -1,17 +1,17 @@
 using TMPro;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 
 public class UI_InputNameField : UI_Popup
 {
     private string Name = null;
     private bool Isnewgame = true;
+
     enum Buttons
     {
-        ExitButton
+        ExitButton,
+        CheckButton
     }
 
     enum InputFields
@@ -23,6 +23,7 @@ public class UI_InputNameField : UI_Popup
     {
         Init();
     }
+
     public override void Init()
     {
         base.Init();
@@ -31,12 +32,12 @@ public class UI_InputNameField : UI_Popup
         Bind<TMP_InputField>(typeof(InputFields));
 
         GetButton((int)Buttons.ExitButton).gameObject.BindEvent(OnClose);
+        GetButton((int)Buttons.CheckButton).gameObject.BindEvent(OnCheck);
+
         TMP_InputField inputName = Get<TMP_InputField>((int)InputFields.LoginInput);
         inputName.onSubmit.AddListener(OnSubmitName);
 
         Managers.Network.OnLoginSuccess += OnLoginNetwork;
-        //Managers.Network.OnRoomCreate += OnHostNetwork;
-        //Managers.Network.OnRoomJoin += OnRoomJoin;
     }
 
     public void IsNewGame(bool game)
@@ -44,8 +45,14 @@ public class UI_InputNameField : UI_Popup
         Isnewgame = game;
     }
 
-    void OnSubmitName(string text)
+    /// <summary>
+    /// Enter / Check 버튼 둘 다 여기로 오게 만드는 공통 로그인 로직
+    /// </summary>
+    private void TryLogin()
     {
+        TMP_InputField inputName = Get<TMP_InputField>((int)InputFields.LoginInput);
+        string text = inputName.text;
+
         if (string.IsNullOrEmpty(text))
         {
             Debug.Log("이름을 입력하세요!");
@@ -56,6 +63,18 @@ public class UI_InputNameField : UI_Popup
 
         // 서버 로그인 요청
         Managers.Network.Login(text);
+    }
+
+    void OnSubmitName(string text)
+    {
+        // Enter 눌렀을 때 실행
+        TryLogin();
+    }
+
+    void OnCheck(PointerEventData data)
+    {
+        // Check 버튼 눌렀을 때 실행
+        TryLogin();
     }
 
     private void OnLoginNetwork(string username)
@@ -78,4 +97,3 @@ public class UI_InputNameField : UI_Popup
         Managers.UI.ClosePopupUI();
     }
 }
-
