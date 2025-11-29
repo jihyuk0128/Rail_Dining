@@ -16,6 +16,7 @@ public class UI_TitleScene : UI_Scene
     void Start()
     {
         Init();
+        SoundManager.Instance?.PlayBGM("BackGround_BGM"); // bgm Àç»ý
     }
     public override void Init()
     {
@@ -42,6 +43,7 @@ public class UI_TitleScene : UI_Scene
 
     public void OnButtonSettingButton(PointerEventData data)
     {
+        Managers.UI.ShowPopupUI<UI_SoundSetting>();
     }
 
 

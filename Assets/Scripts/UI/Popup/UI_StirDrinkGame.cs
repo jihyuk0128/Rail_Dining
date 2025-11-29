@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_StirDrinkGame : UI_Popup
+public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
 {
     private enum Images
     {
@@ -12,29 +12,22 @@ public class UI_StirDrinkGame : UI_Popup
         Spoon,
         ProgressBar,
         StartButton,
-        ClickIcon,
-        ClickOn,
+        MouseIcon,
     }
 
     private Image _cup;
     private RectTransform _spoon;
     private Image _progressBar;
     private Button _startButton;
-    private Image _clickIcon;
-    private Image _clickOn;
+    private Image _mouseIcon;
 
     [Header("Settings")]
     [SerializeField] private float stirProgress = 0.05f; // 한 번 왕복할 때 게이지 증가량 (10%)
     [SerializeField] private float dragSensitivity = 1.0f;
     [SerializeField] private float returnSpeed = 5f;
-
-    [Header("Space Bar Sprites")]
-    [SerializeField] private Sprite[] spaceBarFrames; // 여러 프레임 이미지
-    [SerializeField] private float frameInterval = 0.2f; // 프레임 전환 간격(초)
-
-    // 애니메이션 관련 변수
-    private float frameTimer = 0f;
-    private int currentFrame = 0;
+    [SerializeField] private float leftX = 200f;     // 왼쪽 끝
+    [SerializeField] private float rightX = 300f;     // 오른쪽 끝
+    [SerializeField] private float speed = 150f;
 
     public bool isPlaying { get; private set; } = false;
     private bool isDragging = false;
@@ -69,30 +62,29 @@ public class UI_StirDrinkGame : UI_Popup
         _spoon = GetImage((int)Images.Spoon).GetComponent<RectTransform>();
         _progressBar = GetImage((int)Images.ProgressBar);
         _startButton = GetImage((int)Images.StartButton).GetComponent<Button>();
-        _clickIcon = GetImage((int)Images.ClickIcon);
-        _clickOn = GetImage((int)Images.ClickOn);
+        _mouseIcon = GetImage((int)Images.MouseIcon);
 
         _progressBar.fillAmount = 0f;
         _spoon.gameObject.SetActive(false);
+        _mouseIcon.gameObject.SetActive(false);
         _startButton.onClick.AddListener(StartMiniGame);
 
         // 드래그 이벤트
         BindEvent(_spoon.gameObject, OnBeginDragSpoon, Define.UIEvent.BeginDrag);
         BindEvent(_spoon.gameObject, OnDragSpoon, Define.UIEvent.Drag);
         BindEvent(_spoon.gameObject, OnEndDragSpoon, Define.UIEvent.EndDrag);
-
-        _clickIcon.gameObject.SetActive(false);
-        _clickOn.gameObject.SetActive(false);
     }
 
     private void StartMiniGame()
     {
         _startButton.gameObject.SetActive(false);
         _spoon.gameObject.SetActive(true);
-        _clickIcon.gameObject.SetActive(true);
+        _mouseIcon.gameObject.SetActive(true);
         _progressBar.fillAmount = 0f;
         progress = 0f;
         isPlaying = true;
+
+        StartCoroutine(MoveLoop());
 
         RectTransform cupRect = _cup.GetComponent<RectTransform>();
         Vector3[] corners = new Vector3[4];
@@ -120,24 +112,6 @@ public class UI_StirDrinkGame : UI_Popup
     private void Update()
     {
         if (!isPlaying) return;
-
-        // === [SpaceBar 아이콘 애니메이션 처리] ===
-        if (spaceBarFrames != null && spaceBarFrames.Length > 0 && _clickIcon != null)
-        {
-            frameTimer += Time.deltaTime;              // 프레임 간 시간 누적
-            if (frameTimer >= frameInterval)           // 설정된 간격마다 프레임 전환
-            {
-                frameTimer = 0f;                       // 타이머 리셋
-                currentFrame = (currentFrame + 1) % spaceBarFrames.Length; // 다음 프레임으로
-                _clickIcon.sprite = spaceBarFrames[currentFrame];       // 이미지 교체
-
-                if (_clickOn != null)
-                {
-                    // currentFrame == 1일 때만 켜기, 나머지 프레임은 끄기
-                    _clickOn.gameObject.SetActive(currentFrame == 1);
-                }
-            }
-        }
 
         if (!isDragging)
         {
@@ -213,11 +187,34 @@ public class UI_StirDrinkGame : UI_Popup
         isPlaying = false;
         _progressBar.fillAmount = 1f;
         yield return new WaitForSeconds(0.3f);
-        OnMiniGameEnd?.Invoke(true);
+        OnMiniGameEnd?.Invoke(isSuccess);
         // 살짝 텀을 두고 UI 닫기
         //Invoke(nameof(RequestClosePopup), 0.5f);
     }
 
+    private IEnumerator MoveLoop()
+    {
+        bool movingRight = true;
+        var rect = _mouseIcon.GetComponent<RectTransform>();
+        while (true)
+        {
+            Vector2 pos = rect.anchoredPosition;
+
+            // 방향에 따라 이동
+            float dir = movingRight ? 1f : -1f;
+            pos.x += dir * speed * Time.deltaTime;
+            rect.anchoredPosition = pos;
+
+            // 왼쪽/오른쪽 끝에 닿으면 방향 반전
+            if (pos.x >= rightX)
+                movingRight = false;
+
+            if (pos.x <= leftX)
+                movingRight = true;
+
+            yield return null;
+        }
+    }
     private void RequestClosePopup()
     {
         Debug.Log("닫기");
