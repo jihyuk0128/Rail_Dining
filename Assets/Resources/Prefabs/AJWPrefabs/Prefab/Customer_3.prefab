@@ -380,7 +380,6 @@ MonoBehaviour:
   questionPanel: {fileID: 5242316957033760995}
   menuPanel: {fileID: 4207939873897051272}
   menuIcon: {fileID: 2414177300494444075}
-  countText: {fileID: 0}
   interactionIcon: {fileID: 7666015305124363559}
   interactionIcon2: {fileID: 432100121288780670}
   waitSlider: {fileID: 5454707862981302355}
