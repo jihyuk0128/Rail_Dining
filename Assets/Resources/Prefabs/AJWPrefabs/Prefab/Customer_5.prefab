@@ -919,12 +919,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questionPanel: {fileID: 8615865521140545629}
-  menuPanel: {fileID: 0}
-  menuIcon: {fileID: 0}
-  countText: {fileID: 0}
-  interactionIcon: {fileID: 0}
+  menuPanel: {fileID: 80082739233142156}
+  menuIcon: {fileID: 2532776189097312560}
+  interactionIcon: {fileID: 7095254602753757977}
   interactionIcon2: {fileID: 6070048495988991155}
-  waitSlider: {fileID: 0}
+  waitSlider: {fileID: 1749961315883087985}
 --- !u!1 &6070048495988991155
 GameObject:
   m_ObjectHideFlags: 0

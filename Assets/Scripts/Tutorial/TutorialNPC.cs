@@ -55,7 +55,7 @@ public class TutorialNPC : MonoBehaviour, IInteractable
                 if (Managers.Inventory.CheckItemToRemove(orderMenu))
                 {
                     servCount++;
-                    orderUI.UpdateProgress(servCount, 2);
+                    
                 }
             }
             if(servCount == 2)

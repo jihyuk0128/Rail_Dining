@@ -8,7 +8,6 @@ public class CustomerOrderUI : MonoBehaviour
     public GameObject questionPanel;   // 물음표 아이콘
     public GameObject menuPanel;       // 메뉴 패널
     public Image menuIcon;             // 아이콘 이미지
-    public TextMeshProUGUI countText;  // 개수 텍스트
     public GameObject interactionIcon; // E 아이콘
     public GameObject interactionIcon2; // E 아이콘
 
@@ -48,8 +47,6 @@ public class CustomerOrderUI : MonoBehaviour
             menuIcon.sprite = icon;
         else
             Debug.LogWarning($"[OrderUI] 아이콘을 찾을 수 없음: {item.iconPath}");
-
-        countText.text = $"{current}/{required}";
 
         // 대기시간 게이지 초기화
         waitTime = totalWaitTime;
@@ -92,15 +89,6 @@ public class CustomerOrderUI : MonoBehaviour
         if (waitSlider != null)
         {
             waitSlider.value = ratio;
-        }
-    }
-
-    // 주문 진행 중, 개수 갱신
-    public void UpdateProgress(int current, int required)
-    {
-        if (menuPanel.activeSelf)
-        {
-            countText.text = $"{current}/{required}";
         }
     }
 
