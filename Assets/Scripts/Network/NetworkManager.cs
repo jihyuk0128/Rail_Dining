@@ -44,6 +44,7 @@ public class NetworkManager
     public event Action<int> OnCustomerLeave;
     public event Action<string> OnRoomJoinEvent;
     public event Action<string> OnRoomList;
+    public event Action<int,int> OnMoneyUpdate;
 
 
 
@@ -179,7 +180,7 @@ public class NetworkManager
         });
     }
 
-    public void OrderSuccess(int customerid)
+    public void OrderSuccess(int customerid, int money)
     {
         if (!IsConnected)
         {
@@ -192,6 +193,7 @@ public class NetworkManager
         {
             pw.WriteInt((int)Define.CtoS.ORDER_SUCCESS);
             pw.WriteInt(customerid);
+            pw.WriteInt(money);
         });
     }
 
@@ -406,6 +408,16 @@ public class NetworkManager
                         int customerId = reader.ReadInt();
                         Debug.Log($"[SERVER] {customerId}번 손님 떠남!");
                         OnCustomerLeave?.Invoke(customerId);
+                        break;
+                    }
+                case Define.StoC_Event.MONEY_UPDATE:
+                    {
+                        string player1name = reader.ReadString();
+                        int player1money = reader.ReadInt();
+                        string player2name = reader.ReadString();
+                        int player2money = reader.ReadInt();
+                        Debug.LogWarning($"[SERVER] {player1name} 소지금 : {player1money} , {player2name} 소지금 : {player2money}");
+                        OnMoneyUpdate?.Invoke(player1money, player2money);
                         break;
                     }
             }

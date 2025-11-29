@@ -160,7 +160,7 @@ public class Customer : MonoBehaviour, IInteractable
             // 손님 반응 애니메이션 재생
             spineController.isSuccess = true; // 주문 완료시에 반응 애니메이션 재생용
             spineController.UpdateSpine(Vector2.zero);
-            Managers.Network.OrderSuccess(customerid);
+            Managers.Network.OrderSuccess(customerid,20);
         }
     }
 
