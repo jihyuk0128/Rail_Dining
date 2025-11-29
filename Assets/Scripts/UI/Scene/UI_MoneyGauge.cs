@@ -28,7 +28,7 @@ public class UI_MoneyGauge : UI_Base
     private TextMeshProUGUI _txt75;
     private TextMeshProUGUI _txt100;
 
-    private int _goalMoney = 100;
+    private int _goalMoney = 0;
     private int _currentMoney = 0;
 
     public override void Init()
@@ -46,6 +46,7 @@ public class UI_MoneyGauge : UI_Base
         _txt100 = GetTextMeshProUGUI((int)Texts.MoneyText4);
 
         _importGauge.fillAmount = 0f;
+        Managers.Network.OnMoneyUpdate += OnMoneyUpdate;
     }
 
     private void Start()
@@ -76,5 +77,15 @@ public class UI_MoneyGauge : UI_Base
     {
         if (_playerImage != null)
             _playerImage.sprite = sprite;
+    }
+
+    public void OnMoneyUpdate(int player1Money, int player2Money)
+    {
+        UpdateMoney(player1Money);
+    }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnMoneyUpdate -= OnMoneyUpdate;
     }
 }
