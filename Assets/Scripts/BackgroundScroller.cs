@@ -3,49 +3,81 @@ using UnityEngine;
 public class BackgroundScroller : MonoBehaviour
 {
     public float speed = 2f;
-    public Vector2 moveDir = new Vector2(1f, 0.5f); // 아이소메트릭 방향
-    public Vector2 spriteSize = new Vector2(0f,0f); // 배경 1장의 크기 (X, Y)
+    public Vector2 moveDir = new Vector2(1f, 0.5f);
 
-    private Transform[] backgrounds;
+    [Header("세트별 타일 크기")]
+    public Vector2 tileSizeA;
+    public Vector2 tileSizeB;
 
-    void Start()
+    [Header("각 세트 오브젝트 (Tile1, Tile2 포함)")]
+    public Transform setA;
+    public Transform setB;
+
+    private bool usingA = true;
+
+    private float switchInterval = 10f;
+    private float timer = 0f;
+
+    private void Start()
     {
-        backgrounds = new Transform[transform.childCount];
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            backgrounds[i] = transform.GetChild(i);
-        }
+        usingA = true;
+        setA.gameObject.SetActive(true);
+        setB.gameObject.SetActive(false);
     }
 
-    void Update()
+    private void Update()
     {
-        Vector3 dir = (Vector3)moveDir.normalized;
+        timer += Time.deltaTime;
+
+        if (timer >= switchInterval)
+        {
+            timer = 0f;
+            SwitchBackgroundSet();
+        }
+
+        ScrollCurrentSet();
+    }
+
+    private void ScrollCurrentSet()
+    {
+        Transform currentSet = usingA ? setA : setB;
+        Vector2 tileSize = usingA ? tileSizeA : tileSizeB;
+
+        Vector3 dir = moveDir.normalized;
         Vector3 move = dir * speed * Time.deltaTime;
 
-        foreach (Transform bg in backgrounds)
+        for (int i = 0; i < currentSet.childCount; i++)
         {
-            bg.position += move;
+            Transform tile = currentSet.GetChild(i);
+            tile.position += move;
 
-            bool xPassed = moveDir.x < 0
-                ? bg.position.x < -spriteSize.x      // 왼쪽 이동
-                : bg.position.x > spriteSize.x;      // 오른쪽 이동
+            // 타일 범위 판정
+            bool xPassed = moveDir.x > 0
+                ? tile.position.x > tileSize.x
+                : tile.position.x < -tileSize.x;
 
-            bool yPassed = moveDir.y < 0
-                ? bg.position.y < -spriteSize.y * 0.5f // 아래 이동
-                : bg.position.y > spriteSize.y * 0.5f; // 위 이동
+            bool yPassed = moveDir.y > 0
+                ? tile.position.y > tileSize.y * 0.5f
+                : tile.position.y < -tileSize.y * 0.5f;
 
             if (xPassed && yPassed)
             {
                 Vector3 offset = new Vector3(
-                    spriteSize.x * backgrounds.Length * Mathf.Sign(-moveDir.x),
-                    spriteSize.y * backgrounds.Length * 0.5f * Mathf.Sign(-moveDir.y),
+                    tileSize.x * currentSet.childCount * -Mathf.Sign(moveDir.x),
+                    tileSize.y * currentSet.childCount * -Mathf.Sign(moveDir.y) * 0.5f,
                     0f
                 );
 
-                bg.position += offset;
+                tile.position += offset;
             }
         }
     }
+
+    private void SwitchBackgroundSet()
+    {
+        usingA = !usingA;
+
+        setA.gameObject.SetActive(usingA);
+        setB.gameObject.SetActive(!usingA);
+    }
 }
-
-
