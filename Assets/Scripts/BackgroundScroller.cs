@@ -1,83 +1,153 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+[System.Serializable]
+public class BackgroundTheme
+{
+    public GameObject[] tilePrefabs;   // 이 테마를 구성하는 타일(prefab)들
+}
 
 public class BackgroundScroller : MonoBehaviour
 {
     public float speed = 2f;
     public Vector2 moveDir = new Vector2(1f, 0.5f);
+    public float tileDistance = 20f;
 
-    [Header("세트별 타일 크기")]
-    public Vector2 tileSizeA;
-    public Vector2 tileSizeB;
+    [Header("Themes")]
+    public List<BackgroundTheme> themes;     // 여러 테마들
+    private int currentThemeIndex = 0;
 
-    [Header("각 세트 오브젝트 (Tile1, Tile2 포함)")]
-    public Transform setA;
-    public Transform setB;
+    private BackgroundTheme currentTheme;
+    private BackgroundTheme nextTheme;
 
-    private bool usingA = true;
+    private List<Transform> activeGroups = new List<Transform>();
+    private bool isTransitioning = false;
+    private int transitionCount = 0;
+    private int nextPrefabIndex = 0;
 
-    private float switchInterval = 10f;
-    private float timer = 0f;
+    [Header("Auto Theme Change")]
+    public float themeChangeInterval = 60f; // 1분(60초)
+    private float themeTimer = 0f;
 
-    private void Start()
+    void Start()
     {
-        usingA = true;
-        setA.gameObject.SetActive(true);
-        setB.gameObject.SetActive(false);
-    }
-
-    private void Update()
-    {
-        timer += Time.deltaTime;
-
-        if (timer >= switchInterval)
+        if (themes == null || themes.Count == 0)
         {
-            timer = 0f;
-            SwitchBackgroundSet();
+            Debug.LogError("[BackgroundScroller] Themes가 비어있습니다!");
+            return;
         }
 
-        ScrollCurrentSet();
+        currentThemeIndex = 0;
+        currentTheme = themes[currentThemeIndex];
+        nextTheme = currentTheme;
+
+        SpawnInitialGroups();
     }
 
-    private void ScrollCurrentSet()
+    void Update()
     {
-        Transform currentSet = usingA ? setA : setB;
-        Vector2 tileSize = usingA ? tileSizeA : tileSizeB;
+        ScrollBackground();
+        UpdateThemeTimer();
+    }
 
-        Vector3 dir = moveDir.normalized;
-        Vector3 move = dir * speed * Time.deltaTime;
+    // ===========================
+    //   배경 자동 교체 타이머
+    // ===========================
+    private void UpdateThemeTimer()
+    {
+        themeTimer += Time.deltaTime;
 
-        for (int i = 0; i < currentSet.childCount; i++)
+        if (themeTimer >= themeChangeInterval)
         {
-            Transform tile = currentSet.GetChild(i);
-            tile.position += move;
+            themeTimer = 0f;
 
-            // 타일 범위 판정
-            bool xPassed = moveDir.x > 0
-                ? tile.position.x > tileSize.x
-                : tile.position.x < -tileSize.x;
+            // 다음 테마 적용
+            currentThemeIndex = (currentThemeIndex + 1) % themes.Count;
+            nextTheme = themes[currentThemeIndex];
 
-            bool yPassed = moveDir.y > 0
-                ? tile.position.y > tileSize.y * 0.5f
-                : tile.position.y < -tileSize.y * 0.5f;
+            Debug.Log($"[BackgroundScroller] 테마 전환 시작 → {nextTheme}");
 
-            if (xPassed && yPassed)
+            StartThemeTransition(nextTheme);
+        }
+    }
+
+    // ===========================
+    //   배경 스크롤 처리
+    // ===========================
+    private void ScrollBackground()
+    {
+        Vector3 move = (Vector3)moveDir.normalized * speed * Time.deltaTime;
+
+        for (int i = 0; i < activeGroups.Count; i++)
+        {
+            Transform group = activeGroups[i];
+            group.position += move;
+
+            if (IsPassed(group))
             {
-                Vector3 offset = new Vector3(
-                    tileSize.x * currentSet.childCount * -Mathf.Sign(moveDir.x),
-                    tileSize.y * currentSet.childCount * -Mathf.Sign(moveDir.y) * 0.5f,
-                    0f
-                );
-
-                tile.position += offset;
+                ReplaceGroup(group);
             }
         }
     }
 
-    private void SwitchBackgroundSet()
+    // 초기 2개 그룹 생성
+    void SpawnInitialGroups()
     {
-        usingA = !usingA;
+        var g1 = Instantiate(currentTheme.tilePrefabs[0], transform);
+        var g2 = Instantiate(currentTheme.tilePrefabs[1], transform);
 
-        setA.gameObject.SetActive(usingA);
-        setB.gameObject.SetActive(!usingA);
+        g1.transform.localPosition = Vector3.zero;
+        g2.transform.localPosition = (Vector3)moveDir.normalized * -tileDistance;
+
+        activeGroups.Add(g1.transform);
+        activeGroups.Add(g2.transform);
+    }
+
+    bool IsPassed(Transform group)
+    {
+        return Vector3.Dot(group.localPosition, moveDir) > tileDistance;
+    }
+
+    void ReplaceGroup(Transform oldGroup)
+    {
+        oldGroup.localPosition -= (Vector3)moveDir.normalized * tileDistance * 2f;
+
+        if (isTransitioning)
+        {
+            Transform newGroup = SwapGroupPrefab(oldGroup);
+            transitionCount++;
+
+            if (transitionCount >= 2)
+            {
+                isTransitioning = false;
+                transitionCount = 0;
+                currentTheme = nextTheme;
+            }
+        }
+    }
+
+    Transform SwapGroupPrefab(Transform oldGroup)
+    {
+        int idx = nextPrefabIndex;
+        nextPrefabIndex = (nextPrefabIndex + 1) % nextTheme.tilePrefabs.Length;
+
+        Vector3 pos = oldGroup.position;
+        Destroy(oldGroup.gameObject);
+
+        GameObject newObj = Instantiate(nextTheme.tilePrefabs[idx], transform);
+        newObj.transform.position = pos;
+
+        int listIndex = activeGroups.IndexOf(oldGroup);
+        activeGroups[listIndex] = newObj.transform;
+
+        return newObj.transform;
+    }
+
+    public void StartThemeTransition(BackgroundTheme newTheme)
+    {
+        nextTheme = newTheme;
+        isTransitioning = true;
+        nextPrefabIndex = 0;
     }
 }
