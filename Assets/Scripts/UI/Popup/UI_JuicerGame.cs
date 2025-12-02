@@ -124,8 +124,10 @@ public class UI_JuicerGame : UI_Popup, IHasMiniGameEnd
         // 현재 애니메이션이 한 사이클 끝날 때까지 기다렸다가 멈춤
         if (juicerSpine != null)
             juicerSpine.AnimationState.SetAnimation(0, "animation", false);
-
-        OnMiniGameEnd?.Invoke(isSuccess);
+        juicerSpine.AnimationState.Complete += (trackEntry) =>
+        {
+            OnMiniGameEnd?.Invoke(isSuccess);
+        };
     }
 
     private void OnSpineAnimationComplete(TrackEntry entry)

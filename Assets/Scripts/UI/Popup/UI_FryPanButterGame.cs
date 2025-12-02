@@ -169,11 +169,7 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         if (isDragging)
         {
             Vector3 targetPos = Input.mousePosition;
-            _butterIcon.transform.position = Vector3.Lerp(
-                _butterIcon.transform.position,
-                targetPos,
-                Time.deltaTime * moveSmooth
-            );
+            _butterIcon.transform.position = Input.mousePosition;
 
             Vector2 localPos;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(

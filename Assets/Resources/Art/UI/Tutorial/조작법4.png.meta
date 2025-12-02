@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: 197bc5cf47fe14c4b803332f55be024a
+guid: 41d887277298cf647884d2a6bfcd7f26
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7845612430038864226
-    second: Juicer_0
-  - first:
-      213: -8933737675200662675
-    second: Juicer_1
-  - first:
-      213: 8504988145145222696
-    second: Juicer_2
+      213: 1920482210433331349
+    second: "\uC870\uC791\uBC954_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 0
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -61,7 +55,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 0
+  alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
@@ -106,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Juicer_0
+      name: "\uC870\uC791\uBC954_0"
       rect:
         serializedVersion: 2
-        x: 2
-        y: 37
-        width: 11
-        height: 25
+        x: 302
+        y: 268
+        width: 1991
+        height: 1130
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,52 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2611bd1ffe631ec60800000000000000
-      internalID: 7845612430038864226
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Juicer_1
-      rect:
-        serializedVersion: 2
-        x: 1
-        y: 21
-        width: 52
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d63f329daecf40480800000000000000
-      internalID: -8933737675200662675
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Juicer_2
-      rect:
-        serializedVersion: 2
-        x: 1
-        y: 6
-        width: 52
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 8261a4a18a9c70670800000000000000
-      internalID: 8504988145145222696
+      spriteID: 590f55e256ce6aa10800000000000000
+      internalID: 1920482210433331349
       vertices: []
       indices: 
       edges: []
@@ -185,9 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Juicer_0: 7845612430038864226
-      Juicer_1: -8933737675200662675
-      Juicer_2: 8504988145145222696
+      "\uC870\uC791\uBC954_0": 1920482210433331349
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

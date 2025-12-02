@@ -104,7 +104,7 @@ public class UI_Settings : UI_Popup
     private void OnMain()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("TitleScene");
+        SceneManager.LoadScene("NewTitleScene");
     }
 
     private void OnClose()

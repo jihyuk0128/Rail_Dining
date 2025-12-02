@@ -1,16 +1,19 @@
 fileFormatVersion: 2
-guid: 197bc5cf47fe14c4b803332f55be024a
+guid: 0dc2ba7900d96bc42968e51e9532cc9b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7845612430038864226
-    second: Juicer_0
+      213: 3028845218503774932
+    second: STOP_marking 1_0
   - first:
-      213: -8933737675200662675
-    second: Juicer_1
+      213: 7923982788636294568
+    second: STOP_marking 1_1
   - first:
-      213: 8504988145145222696
-    second: Juicer_2
+      213: -1990659497422398910
+    second: STOP_marking 1_2
+  - first:
+      213: 8647894835962060817
+    second: STOP_marking 1_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +55,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 0
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -61,7 +64,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 0
+  alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
@@ -106,34 +109,34 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Juicer_0
+      name: STOP_marking 1_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 37
+        x: 0
+        y: 0
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d2de80cdae980a20800000000000000
+      internalID: 3028845218503774932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: STOP_marking 1_1
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 0
         width: 11
-        height: 25
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2611bd1ffe631ec60800000000000000
-      internalID: 7845612430038864226
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Juicer_1
-      rect:
-        serializedVersion: 2
-        x: 1
-        y: 21
-        width: 52
         height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -143,19 +146,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d63f329daecf40480800000000000000
-      internalID: -8933737675200662675
+      spriteID: 8adb9fafc54a7fd60800000000000000
+      internalID: 7923982788636294568
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Juicer_2
+      name: STOP_marking 1_2
       rect:
         serializedVersion: 2
-        x: 1
-        y: 6
-        width: 52
+        x: 23
+        y: 0
+        width: 11
         height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -165,8 +168,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8261a4a18a9c70670800000000000000
-      internalID: 8504988145145222696
+      spriteID: 24a516bebb1cf54e0800000000000000
+      internalID: -1990659497422398910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: STOP_marking 1_3
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 0
+        width: 22
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1102478e88e730870800000000000000
+      internalID: 8647894835962060817
       vertices: []
       indices: 
       edges: []
@@ -185,9 +210,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Juicer_0: 7845612430038864226
-      Juicer_1: -8933737675200662675
-      Juicer_2: 8504988145145222696
+      STOP_marking 1_0: 3028845218503774932
+      STOP_marking 1_1: 7923982788636294568
+      STOP_marking 1_2: -1990659497422398910
+      STOP_marking 1_3: 8647894835962060817
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
