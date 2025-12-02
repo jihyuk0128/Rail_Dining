@@ -203,8 +203,25 @@ public class NewSlotManager
     }
 
     private bool IsValid(List<ItemSlot> list, int index)
-{
-    return list != null && index >= 0 && index < list.Count;
-}
+    {
+        return list != null && index >= 0 && index < list.Count;
+    }
+
+    public bool RemoveItemAt(SLOTTYPE type, int index)
+    {
+        var list = GetSlotList(type);
+        if (!IsValid(list, index))
+        {
+            Debug.LogWarning("[SlotManager] RemoveItemAt: 잘못된 인덱스");
+            return false;
+        }
+
+        var slot = list[index];
+        if (slot.Item == null)
+            return false;
+
+        slot.Clear();
+        return true;
+    }
 
 }

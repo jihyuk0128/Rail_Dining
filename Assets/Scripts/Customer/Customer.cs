@@ -124,7 +124,7 @@ public class Customer : MonoBehaviour, IInteractable
             //uiScene.AddOrder(orderMenu); // 주문 UI 추가
             orderUI.ShowOrder(orderMenu, 0, 1);
             SoundManager.Instance.PlaySFX("OrderAccept_SFX");
-            waitCoroutine = StartCoroutine(WaitForDrink());
+            //waitCoroutine = StartCoroutine(WaitForDrink());
         });
     }
 

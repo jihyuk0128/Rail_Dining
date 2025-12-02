@@ -146,7 +146,7 @@ RectTransform:
   - {fileID: 7538291452880582733}
   - {fileID: 7706000379224142897}
   - {fileID: 2928265250163477941}
-  m_Father: {fileID: 5124474308396855543}
+  m_Father: {fileID: 8990242408916640407}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -872,7 +872,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1219369271017970195}
   m_Father: {fileID: 5124474308396855543}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -951,7 +952,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8990242408916640407}
-  - {fileID: 1219369271017970195}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1549,7 +1549,7 @@ GameObject:
   - component: {fileID: 1698489055672686710}
   - component: {fileID: 4506975826425682894}
   m_Layer: 5
-  m_Name: 'Player2Name '
+  m_Name: Player2Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

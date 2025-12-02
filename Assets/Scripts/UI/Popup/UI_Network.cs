@@ -86,6 +86,8 @@ public class UI_Network : UI_Popup
 
         if (p2 != null)
             p2.text = player2name;
+
+        Debug.LogWarning($"{_pendingPlayer1Name},{_pendingPlayer2Name}");
     }
 
     public void InitName(string player1name, string player2name)
@@ -135,7 +137,12 @@ public class UI_Network : UI_Popup
     {
         Managers.MainThread.Enqueue(() =>
         {
-            GetTextMeshProUGUI((int)TextMeshProUGUIS.Player2Name);
+            var p2 = GetTextMeshProUGUI((int)TextMeshProUGUIS.Player2Name);
+
+            if (p2 != null)
+                p2.text = name;
+
+            Debug.LogWarning($"{_pendingPlayer1Name},{_pendingPlayer2Name}");
         });
     }
 }

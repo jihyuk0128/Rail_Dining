@@ -47,6 +47,15 @@ public class UdpGameServer
             IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
             byte[] data = _udp.EndReceive(ar, ref remoteEP);
 
+            // 먼저 문자열인지 체크
+            string text = Encoding.UTF8.GetString(data);
+            if (text == "WELCOME_UDP_CLIENT")
+            {
+                Debug.Log("[UDP] 서버 응답 수신: WELCOME_UDP_CLIENT");
+                _udp.BeginReceive(OnReceive, null);
+                return;
+            }
+
             using (var reader = new PacketReader(data))
             {
                 int pid = reader.ReadInt();
