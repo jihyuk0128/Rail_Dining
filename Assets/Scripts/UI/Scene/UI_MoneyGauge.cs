@@ -81,7 +81,11 @@ public class UI_MoneyGauge : UI_Base
 
     public void OnMoneyUpdate(int player1Money, int player2Money)
     {
-        UpdateMoney(player1Money);
+        Managers.MainThread.Enqueue(() =>
+        {
+            Debug.LogWarning($"1번 {player1Money} 얼마 가졌음");
+            UpdateMoney(player1Money);
+        });
     }
 
     private void OnDestroy()

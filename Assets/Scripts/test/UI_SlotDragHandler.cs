@@ -68,8 +68,19 @@ public class UI_SlotDragHandler : UI_ParentSlot
 
         if (targetSlot != null)
         {
-            HandleItemTransfer(targetSlot);
+            if (targetSlot is UI_Trash)
+            {
+                // 쓰레기통이면 sourceSlot(this) 기준으로 삭제
+                targetSlot.HandleItemTransfer(this);
+            }
+            else
+            {
+                // 일반 슬롯 이동
+                HandleItemTransfer(targetSlot);
+            }
         }
+
+
 
         Managers.Slot.ClearDragSource();
     }

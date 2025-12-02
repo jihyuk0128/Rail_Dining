@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -11,6 +12,8 @@ public class NetworkManager
     private TcpClient _tcp;
     private NetworkStream _stream;
     private byte[] _recvBuffer = new byte[4096];
+    private List<byte> _packetBuffer = new List<byte>(8192);
+    private byte[] _recvTemp = new byte[4096];
     public bool IsConnected => _tcp != null && _tcp.Connected;
 
     public string ConnectedIp { get; private set; }
@@ -28,6 +31,8 @@ public class NetworkManager
         _udpGame = new UdpGameServer();
         _udpGame.Start(ip, Define.UDP_GAME_PORT);
     }
+
+
 
     // 이벤트 (다른 매니저가 구독 가능)
     public event Action<string> OnLoginSuccess;
@@ -222,7 +227,7 @@ public class NetworkManager
     // ===================================================
     private void StartReceive()
     {
-        _stream.BeginRead(_recvBuffer, 0, _recvBuffer.Length, OnReceive, null);
+        _stream.BeginRead(_recvTemp, 0, _recvTemp.Length, OnReceive, null);
     }
 
     private void OnReceive(IAsyncResult ar)
@@ -232,29 +237,41 @@ public class NetworkManager
             int bytes = _stream.EndRead(ar);
             if (bytes <= 0) return;
 
-            byte[] data = new byte[bytes];
-            Array.Copy(_recvBuffer, data, bytes);
+            // 새로 수신된 데이터를 buffer에 누적
+            for (int i = 0; i < bytes; i++)
+                _packetBuffer.Add(_recvTemp[i]);
 
-            using (var reader = new BinaryReader(new MemoryStream(data)))
+            // 여러 패킷이 한번에 올 수 있으므로 while로 계속 해석
+            while (true)
             {
-                int len = reader.ReadInt32();
-                byte[] body = reader.ReadBytes(len);
+                if (_packetBuffer.Count < 4)
+                    break; // 패킷 길이조차 없음
 
-                using (var pr = new PacketReader(body))
+                int packetLen = BitConverter.ToInt32(_packetBuffer.ToArray(), 0);
+                if (_packetBuffer.Count < 4 + packetLen)
+                    break; // 아직 다 안 왔음
+
+                // 완성된 패킷 추출
+                byte[] packet = new byte[packetLen];
+                _packetBuffer.CopyTo(4, packet, 0, packetLen);
+                _packetBuffer.RemoveRange(0, 4 + packetLen);
+
+                // 패킷 처리
+                using (var pr = new PacketReader(packet))
                 {
                     int id = pr.ReadInt();
                     HandlePacket(id, pr);
                 }
             }
 
-            StartReceive();
+            // 다음 수신 시작
+            _stream.BeginRead(_recvTemp, 0, _recvTemp.Length, OnReceive, null);
         }
         catch (Exception e)
         {
-            OnError?.Invoke($"데이터 수신 실패: {e.Message}");
+            Debug.LogError($"TCP 수신 오류: {e.Message}");
         }
     }
-
     private void HandlePacket(int id, PacketReader reader)
     {
         // ------------------------------

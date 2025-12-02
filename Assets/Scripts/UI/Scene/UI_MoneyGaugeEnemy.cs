@@ -59,6 +59,7 @@ public class UI_MoneyGaugeEnemy : UI_Base
     private void Start()
     {
         Init();
+        SetGoalMoney(200); // 목표 수익 정하기
     }
 
     // 수익 추가하기
@@ -88,7 +89,11 @@ public class UI_MoneyGaugeEnemy : UI_Base
 
     public void OnMoneyUpdate(int player1Money, int player2Money)
     {
-        UpdateMoney(player2Money);
+        Managers.MainThread.Enqueue(() =>
+        {
+            Debug.LogWarning($"2번 {player2Money} 얼마 가졌음");
+            UpdateMoney(player2Money);
+        });
     }
 
     private void OnDestroy()
