@@ -31,8 +31,8 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
     [SerializeField] private float moveSmooth = 10f;        // 마우스 따라다니기 속도
     [SerializeField] private float fillThreshold = 0.85f;   // 85% 이상 채우면 성공
 
-    [SerializeField] private float leftX = 200f;     // 왼쪽 끝
-    [SerializeField] private float rightX = 300f;     // 오른쪽 끝
+    [SerializeField] private float leftX = 100f;     // 왼쪽 끝
+    [SerializeField] private float rightX = 200f;     // 오른쪽 끝
     [SerializeField] private float speed = 150f;
 
     private RenderTexture _maskRT;

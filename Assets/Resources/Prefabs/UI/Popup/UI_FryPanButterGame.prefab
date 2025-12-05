@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 308, y: -60}
+  m_AnchoredPosition: {x: 200, y: 396}
   m_SizeDelta: {x: 150, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7289451084394960455
@@ -543,8 +543,8 @@ MonoBehaviour:
   brushTexture: {fileID: 0}
   moveSmooth: 20
   fillThreshold: 0.85
-  leftX: 200
-  rightX: 300
+  leftX: 100
+  rightX: 200
   speed: 150
 --- !u!1 &6209447751166782534
 GameObject:
@@ -716,7 +716,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 402, y: 146}
+  m_AnchoredPosition: {x: 112, y: 312}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2587186670526889111

@@ -109,7 +109,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 11, y: 223}
+  m_AnchoredPosition: {x: 0, y: 223}
   m_SizeDelta: {x: 70, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7092928195224726061
@@ -516,7 +516,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 288, y: -232}
+  m_AnchoredPosition: {x: 288, y: -60}
   m_SizeDelta: {x: 150, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &506278355295945491
@@ -590,8 +590,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3829189317704446027}
-  - {fileID: 6263203321897052890}
   - {fileID: 4397813999060337815}
+  - {fileID: 6263203321897052890}
   - {fileID: 7041250722897779095}
   - {fileID: 1668047451467871654}
   - {fileID: 5896856851028014053}
@@ -681,10 +681,9 @@ MonoBehaviour:
   stirProgress: 0.05
   dragSensitivity: 1
   returnSpeed: 5
-  spaceBarFrames:
-  - {fileID: -3285761365138278855, guid: 4962586c23d7c234fb0f0d2f15fdd81f, type: 3}
-  - {fileID: 9189022114276772246, guid: 0945a6116b2073d469906f598b3a68d3, type: 3}
-  frameInterval: 0.2
+  leftX: 200
+  rightX: 300
+  speed: 150
   reachedRight: 0
   reachedLeft: 0
 --- !u!1 &7239693120789039073
