@@ -31,12 +31,30 @@ public class UI_TitleScene : UI_Scene
 
     public void OnStartGame(PointerEventData data)
     {
+        if (Managers.Network.IsLoggedIn)
+        {
+            Debug.Log("[Network] 이미 로그인되어 있어 Login 요청을 무시합니다.");
+
+            Managers.UI.ShowPopupUI<UI_HostPanel>();
+
+            return;
+        }
+
         var popup = Managers.UI.ShowPopupUI<UI_InputNameField>();
         popup.IsNewGame(true);
     }
 
     public void OnButtonContinue(PointerEventData data)
     {
+        if (Managers.Network.IsLoggedIn)
+        {
+            Debug.Log("[Network] 이미 로그인되어 있어 Login 요청을 무시합니다.");
+
+            Managers.UI.ShowPopupUI<UI_GuestPanel>();
+
+            return;
+        }
+
         var popup = Managers.UI.ShowPopupUI<UI_InputNameField>();
         popup.IsNewGame(false);
     }

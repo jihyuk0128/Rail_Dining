@@ -39,7 +39,8 @@ public class Utils
         }
         else
         {
-            foreach (T component in go.GetComponentsInChildren<T>())
+            // inactive까지 검색하도록 true 추가
+            foreach (T component in go.GetComponentsInChildren<T>(true))
             {
                 if (string.IsNullOrEmpty(name) || component.name == name)
                     return component;

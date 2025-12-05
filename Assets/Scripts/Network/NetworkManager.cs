@@ -15,6 +15,7 @@ public class NetworkManager
     private List<byte> _packetBuffer = new List<byte>(8192);
     private byte[] _recvTemp = new byte[4096];
     public bool IsConnected => _tcp != null && _tcp.Connected;
+    public bool IsLoggedIn { get; private set; } = false;
 
     public string ConnectedIp { get; private set; }
     public ClientPlayer player { get; private set; }
@@ -48,8 +49,10 @@ public class NetworkManager
     public event Action<int,int,float> OnOrderMenu;
     public event Action<int> OnCustomerLeave;
     public event Action<string> OnRoomJoinEvent;
-    public event Action<string> OnRoomList;
+    public event Action<string,bool> OnRoomList;
     public event Action<int,int> OnMoneyUpdate;
+    public event Action<string> OnReadyUpdate;
+    public event Action<string> OnPlayerLeft;
 
 
 
@@ -58,6 +61,12 @@ public class NetworkManager
     // ===================================================
     public async void Login(string name)
     {
+        if (IsLoggedIn)
+        {
+            Debug.Log("[Network] 이미 로그인되어 있어 Login 요청을 무시합니다.");
+            return;
+        }
+
         try
         {
             if (!IsConnected)
@@ -113,7 +122,7 @@ public class NetworkManager
 
     public void JoinRoom(int roomId)
     {
-        if (!IsConnected || roomData != null)
+        if (!IsConnected)
         {
             Debug.LogWarning("[Network] 서버와 연결되지 않거나 이미 방이있음");
             return;
@@ -129,7 +138,7 @@ public class NetworkManager
 
     public void LeaveRoom()
     {
-        if (!IsConnected || roomData != null)
+        if (!IsConnected)
         {
             Debug.LogWarning("[Network] 서버와 연결되지 않음");
             return;
@@ -137,6 +146,7 @@ public class NetworkManager
 
         Debug.Log("[Network] 방 나가기 요청");
         Send(pw => pw.WriteInt((int)Define.CtoS.LEAVE_ROOM));
+        player.IsHost = false;
     }
 
     public void StartGame()
@@ -153,6 +163,23 @@ public class NetworkManager
             pw.WriteInt((int)Define.CtoS.START_GAME);
         });
     }
+
+    public void ReadyGame()
+    {
+        if (!IsConnected)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않음");
+            return;
+        }
+
+        Debug.Log("[Network] 레디 요청");
+        Send(pw =>
+        {
+            pw.WriteInt((int)Define.CtoS.READY_GAME);
+        });
+
+    }
+
 
     public void TutorialEnd()
     {
@@ -285,6 +312,7 @@ public class NetworkManager
                     player.Username = reader.ReadString();
                     OnLoginSuccess?.Invoke(player.Username);
                     Debug.Log("[Network] Login 성공!");
+                    IsLoggedIn = true;
                     return;
 
                 case Define.StoC_Response.ROOM_CEATE_OK:
@@ -314,6 +342,7 @@ public class NetworkManager
                     {
                         string msg = reader.ReadString();
                         roomData.IsHost = true;
+                        player.IsHost = true;
                         Debug.Log($"[Network] {msg}");
                         OnHostAssigned?.Invoke(msg);
                         return;
@@ -337,8 +366,9 @@ public class NetworkManager
                 case Define.StoC_Response.ROOM_LIST:
                     {
                         string name = reader.ReadString();
+                        bool ready = reader.ReadBool();
                         Debug.Log($"[SERVER] 기존 방 접속유저 : {name}");
-                        OnRoomList?.Invoke(name);
+                        OnRoomList?.Invoke(name, ready);
                         return;
                     }
             }
@@ -375,7 +405,7 @@ public class NetworkManager
                     string leftName = reader.ReadString();
                     roomData?.RemovePlayer(leftName);
                     Debug.Log($"[SERVER] 플레이어 퇴장: {leftName}");
-
+                    OnPlayerLeft?.Invoke(leftName);
                     //UnityMainThreadDispatcher.Instance?.Enqueue(() =>
                     //{
                     //    Managers.UI.UpdateRoomPlayerList(roomData.Players);
@@ -435,6 +465,13 @@ public class NetworkManager
                         int player2money = reader.ReadInt();
                         Debug.LogWarning($"[SERVER] {player1name} 소지금 : {player1money} , {player2name} 소지금 : {player2money}");
                         OnMoneyUpdate?.Invoke(player1money, player2money);
+                        break;
+                    }
+                case Define.StoC_Event.GAME_READY:
+                    {
+                        string playername = reader.ReadString();
+                        Debug.LogWarning($"[SERVER] {playername} 레디함");
+                        OnReadyUpdate?.Invoke(playername);
                         break;
                     }
             }

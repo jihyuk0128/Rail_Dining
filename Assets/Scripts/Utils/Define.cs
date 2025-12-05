@@ -25,6 +25,7 @@ public class Define
         JOIN_ROOM,
         LEAVE_ROOM,
         CHAT,
+        READY_GAME,
         START_GAME,
         TUTORIAL_END,
         TAKE_ORDER,
@@ -63,6 +64,7 @@ public class Define
         CUSTOMER_SPAWN, // 새로 추가
         CUSTOMER_LEAVE,
         MONEY_UPDATE,
+        GAME_READY,
 
     }
     // ================================

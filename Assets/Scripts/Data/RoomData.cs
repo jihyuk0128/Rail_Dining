@@ -27,6 +27,7 @@ public class RoomData
     public void RemovePlayer(string name)
     {
         Players.Remove(name);
+        CurrentPlayers--;
     }
 
     public void Clear()

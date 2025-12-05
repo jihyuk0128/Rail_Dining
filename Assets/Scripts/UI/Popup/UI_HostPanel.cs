@@ -47,7 +47,7 @@ public class UI_HostPanel: UI_Popup
         {
             Managers.UI.ClosePopupUI();
             var popup = Managers.UI.ShowPopupUI<UI_Network>();
-            popup.InitName(Managers.Network.player.Username, " ");
+            popup.InitName(Managers.Network.player.Username, " ", false);
         });
     }
 
