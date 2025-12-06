@@ -26,7 +26,7 @@ public class PlayerInteraction : MonoBehaviour
 
     public void Interacting(InputAction.CallbackContext context)
     {
-        if (context.started && !player.isEventActive && !player.IsFall && !train.IsEventActive())
+        if (context.started && !player.isEventActive && !player.IsFall && !train.IsEventActive() && !Managers.UI.IsPopupOpen())
         {
             Debug.Log("상호작용 키 누름");
             TryInteract();

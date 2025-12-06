@@ -89,6 +89,8 @@ public class UI_GameResult : UI_Popup
         
         _winImage.gameObject.SetActive(true);
         _loseImage.gameObject.SetActive(true);
+
+        SoundManager.Instance.PlaySFX("WorkStart_SFX");
     }
 
     private void OnClickRestart()

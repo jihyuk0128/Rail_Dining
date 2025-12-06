@@ -8,6 +8,8 @@ public class UI_CreateResult : UI_Popup
     enum Buttons { ResultTextSlot}
 
     private int _recipeId;
+    private bool _isSuccess;
+    private bool _claimed = false;
 
     public void Awake()
     {
@@ -23,7 +25,7 @@ public class UI_CreateResult : UI_Popup
     public void TryCraft(bool isSuccess , int recipeid)
     {
         _recipeId = recipeid;
-
+        _isSuccess = isSuccess;
 
         // --- 결과 아이템 표시 ---
         var recipe = Managers.Data.RecipeDict[_recipeId];
@@ -39,7 +41,8 @@ public class UI_CreateResult : UI_Popup
             GetImage((int)Images.Image).sprite = Resources.Load<Sprite>("Art/UI/Ingame_new_uI/IngameNew/cookbook/Food_Completion_fail_Window");
             GetImage((int)Images.ResultTextSlot).sprite = Resources.Load<Sprite>("Art/UI/Ingame_new_uI/IngameNew/cookbook/food_Failed_acquire_button");
             GetButton((int)Buttons.ResultTextSlot).gameObject.BindEvent((PointerEventData data) => {
-                Managers.Crafting.FailCraft(_recipeId);
+                //Managers.Crafting.FailCraft(_recipeId);
+                DoClaim(); // 실패 처리
                 Managers.UI.ClosePopupUI(); 
             });
 
@@ -54,12 +57,30 @@ public class UI_CreateResult : UI_Popup
         GetImage((int)Images.Image).sprite = Resources.Load<Sprite>("Art/UI/Ingame_new_uI/IngameNew/cookbook/Food_Completion_Perfact_Window");
         GetImage((int)Images.ResultTextSlot).sprite = Resources.Load<Sprite>("Art/UI/Ingame_new_uI/IngameNew/cookbook/food_acquisition_button");
         GetButton((int)Buttons.ResultTextSlot).gameObject.BindEvent((PointerEventData data) => 
-        { 
-            Managers.Crafting.SuccessCraft(_recipeId);
+        {
+            //Managers.Crafting.SuccessCraft(_recipeId);
+            DoClaim(); // 성공 처리
             Managers.UI.ClosePopupUI(); 
 
         });
         return;
 
+    }
+
+    private void DoClaim()
+    {
+        if (_claimed) return;
+        _claimed = true;
+
+        if (_isSuccess)
+            Managers.Crafting.SuccessCraft(_recipeId);
+        else
+            Managers.Crafting.FailCraft(_recipeId);
+    }
+
+    private void OnDestroy()
+    {
+        // ESC로 닫혀도 반드시 실행됨!
+        DoClaim();
     }
 }

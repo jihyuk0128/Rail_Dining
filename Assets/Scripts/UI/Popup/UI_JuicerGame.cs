@@ -8,7 +8,6 @@ public class UI_JuicerGame : UI_Popup, IHasMiniGameEnd
 {
     [Header("UI Elements")]
     [SerializeField] private SkeletonGraphic juicerSpine; // Spine 그래픽 (Juicer 애니메이션)
-    [SerializeField] private Button startButton;          // 시작 버튼
     [SerializeField] private Image progressBar;           // 완성도 표시 (fillAmount로 조절)
     [SerializeField] private Image _spaceBarIcon;
 
@@ -40,9 +39,6 @@ public class UI_JuicerGame : UI_Popup, IHasMiniGameEnd
     {
         base.Init();
 
-        if (startButton != null)
-            startButton.onClick.AddListener(StartMiniGame);
-
         if (progressBar != null)
             progressBar.fillAmount = 0f;
 
@@ -53,6 +49,8 @@ public class UI_JuicerGame : UI_Popup, IHasMiniGameEnd
             juicerSpine.AnimationState.Complete += OnSpineAnimationComplete;
         }
         _spaceBarIcon.gameObject.SetActive(false);
+
+        StartMiniGame();
     }
 
     private void Update()
@@ -98,14 +96,13 @@ public class UI_JuicerGame : UI_Popup, IHasMiniGameEnd
         // Spine의 "animation" 애니메이션을 한 번 재생
         juicerSpine.timeScale = animationSpeed;
         juicerSpine.AnimationState.SetAnimation(0, "animation", false);
+        SoundManager.Instance.PlaySFX("Squeeze_SFX");
     }
 
     public void StartMiniGame()
     {
-        if (startButton != null)
-            startButton.gameObject.SetActive(false);
-
         isPlaying = true;
+        GameManager.Instance.SetMiniPlaying(isPlaying);
         progress = 0f;
 
         if (progressBar != null)
@@ -127,6 +124,7 @@ public class UI_JuicerGame : UI_Popup, IHasMiniGameEnd
         juicerSpine.AnimationState.Complete += (trackEntry) =>
         {
             OnMiniGameEnd?.Invoke(isSuccess);
+            GameManager.Instance.SetMiniPlaying(isPlaying);
         };
     }
 

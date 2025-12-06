@@ -12,7 +12,6 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
     [SerializeField] private RectTransform perfectZone;
     [SerializeField] private RectTransform flipBar;
     [SerializeField] private SkeletonGraphic fryPanSpine;
-    [SerializeField] private Button startButton;
     [SerializeField] private Image _spaceBarIcon;
 
     [Header("Settings")]
@@ -48,8 +47,6 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
     public override void Init()
     {
         base.Init();
-        if (startButton != null)
-            startButton.onClick.AddListener(StartMiniGame);
 
         float halfWidth = flipBar.rect.width / 2f;
         minX = -halfWidth;
@@ -66,6 +63,8 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
         }
 
         _spaceBarIcon.gameObject.SetActive(false);
+
+        StartMiniGame();
     }
 
     private void Update()
@@ -216,10 +215,9 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
 
     public void StartMiniGame()
     {
-        if (startButton != null)
-            startButton.gameObject.SetActive(false);
 
         isPlaying = true;
+        GameManager.Instance.SetMiniPlaying(isPlaying);
         currentStage = 1;
         successCount = 0;
         moveSpeed = 300f;
@@ -252,6 +250,7 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
         isSuccess = success;
         isPlaying = false;
         OnMiniGameEnd?.Invoke(success);
+        GameManager.Instance.SetMiniPlaying(isPlaying);
         StopSpineSmoothly();
     }
 
