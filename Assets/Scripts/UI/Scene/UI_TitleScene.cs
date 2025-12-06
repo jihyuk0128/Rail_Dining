@@ -16,6 +16,7 @@ public class UI_TitleScene : UI_Scene
     void Start()
     {
         Init();
+        SoundManager.Instance.StopAllBGM();
         SoundManager.Instance?.PlayBGM("BackGround_BGM"); // bgm Àç»ý
     }
     public override void Init()

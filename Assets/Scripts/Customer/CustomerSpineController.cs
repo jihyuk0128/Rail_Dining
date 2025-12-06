@@ -53,17 +53,17 @@ public class CustomerSpineController : MonoBehaviour
             return;
         }
 
-        if (inputVector == Vector2.zero && isSiting)
-        {
-            ChangeAnimation(CustomerAnimState.Siting);
-            return;
-        }
-
         if (inputVector == Vector2.zero && isSuccess)
         {
             ChangeAnimation(CustomerAnimState.Happy);
             return;
         }
+
+        if (inputVector == Vector2.zero && isSiting)
+        {
+            ChangeAnimation(CustomerAnimState.Siting);
+            return;
+        } 
 
         // --- 앞/뒤 Spine 전환 ---
         if (inputVector.y > 0)

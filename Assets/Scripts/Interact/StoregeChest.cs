@@ -8,6 +8,7 @@ public class StoregeChest : MonoBehaviour, IInteractable
     public void Interact(GameObject player)
     {
         Managers.NewInventory.AddItem(ItemID);
+        SoundManager.Instance.PlaySFX("GetItem_SFX");
     }
 
     public Vector3 GetPosition() => transform.position;

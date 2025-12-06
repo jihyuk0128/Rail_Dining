@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class CustomerOrderUI : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class CustomerOrderUI : MonoBehaviour
     [Header("Wait Gauge")]
     public Slider waitSlider;                // 대기 게이지
 
+    [Header("Coin Effect")]
+    public Image coinIcon;                // 코인 아이콘
+    public float coinJumpHeight = 40f;    // 점프 높이
+    public float coinDuration = 1.5f;
+
     private float waitTime;       // 전체 대기 시간
     private float remainingTime;  // 남은 시간
     private bool timerActive = false;
@@ -25,6 +31,8 @@ public class CustomerOrderUI : MonoBehaviour
 
         if (waitSlider != null)
             waitSlider.gameObject.SetActive(false);
+        if (coinIcon != null)
+            coinIcon.gameObject.SetActive(false);
     }
 
     // 주문 대기 상태
@@ -41,8 +49,8 @@ public class CustomerOrderUI : MonoBehaviour
         menuPanel.SetActive(true);
         SetInteractionVisible(false);
 
-        // 아이콘 로드
-        Sprite icon = Managers.Resource.Load<Sprite>(item.iconPath);
+        // 아이콘 로드 테두리 있는 아이콘
+        Sprite icon = Managers.Resource.Load<Sprite>(item.iconPath+" 1");
         if (icon != null)
             menuIcon.sprite = icon;
         else
@@ -93,11 +101,48 @@ public class CustomerOrderUI : MonoBehaviour
     }
 
     // 주문 완료 → UI 숨김
+    [ContextMenu("테스트")]
     public void HideOrder()
     {
         questionPanel.SetActive(false);
         menuPanel.SetActive(false);
+        if (coinIcon != null)
+            StartCoroutine(CoinEffect());
     }
+
+    private IEnumerator CoinEffect()
+    {
+        coinIcon.gameObject.SetActive(true);
+
+        RectTransform rect = coinIcon.rectTransform;
+        Vector2 startPos = rect.anchoredPosition;
+        Vector2 endPos = startPos + Vector2.up * coinJumpHeight;
+
+        float t = 0f;
+        float duration = coinDuration;
+
+        Color startColor = coinIcon.color;
+        Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float lerp = t / duration;
+
+            // 위치 이동
+            rect.anchoredPosition = Vector2.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, lerp));
+
+            // 알파 감소
+            coinIcon.color = Color.Lerp(startColor, endColor, lerp);
+
+            yield return null;
+        }
+
+        coinIcon.gameObject.SetActive(false);
+        coinIcon.color = startColor;
+        rect.anchoredPosition = startPos;
+    }
+
 
     public void SetInteractionVisible(bool visible)
     {

@@ -11,14 +11,12 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         Cup,
         Spoon,
         ProgressBar,
-        StartButton,
         MouseIcon,
     }
 
     private Image _cup;
     private RectTransform _spoon;
     private Image _progressBar;
-    private Button _startButton;
     private Image _mouseIcon;
 
     [Header("Settings")]
@@ -61,28 +59,28 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         _cup = GetImage((int)Images.Cup);
         _spoon = GetImage((int)Images.Spoon).GetComponent<RectTransform>();
         _progressBar = GetImage((int)Images.ProgressBar);
-        _startButton = GetImage((int)Images.StartButton).GetComponent<Button>();
         _mouseIcon = GetImage((int)Images.MouseIcon);
 
         _progressBar.fillAmount = 0f;
         _spoon.gameObject.SetActive(false);
         _mouseIcon.gameObject.SetActive(false);
-        _startButton.onClick.AddListener(StartMiniGame);
 
         // 드래그 이벤트
         BindEvent(_spoon.gameObject, OnBeginDragSpoon, Define.UIEvent.BeginDrag);
         BindEvent(_spoon.gameObject, OnDragSpoon, Define.UIEvent.Drag);
         BindEvent(_spoon.gameObject, OnEndDragSpoon, Define.UIEvent.EndDrag);
+
+        StartMiniGame();
     }
 
     private void StartMiniGame()
     {
-        _startButton.gameObject.SetActive(false);
         _spoon.gameObject.SetActive(true);
         _mouseIcon.gameObject.SetActive(true);
         _progressBar.fillAmount = 0f;
         progress = 0f;
         isPlaying = true;
+        GameManager.Instance.SetMiniPlaying(isPlaying);
 
         StartCoroutine(MoveLoop());
 
@@ -177,6 +175,8 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         progress = Mathf.Clamp01(progress + stirProgress);
         _progressBar.fillAmount = progress;
 
+        SoundManager.Instance.PlaySFX("Mixglass_SFX");
+
         // 디버그 확인용
         Debug.Log($"[Stir] Progress = {progress * 100f:F1}%");
     }
@@ -188,6 +188,7 @@ public class UI_StirDrinkGame : UI_Popup, IHasMiniGameEnd
         _progressBar.fillAmount = 1f;
         yield return new WaitForSeconds(0.3f);
         OnMiniGameEnd?.Invoke(isSuccess);
+        GameManager.Instance.SetMiniPlaying(isPlaying);
         // 살짝 텀을 두고 UI 닫기
         //Invoke(nameof(RequestClosePopup), 0.5f);
     }

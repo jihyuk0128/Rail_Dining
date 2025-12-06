@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 238010575201915920}
   - component: {fileID: 3140203386954519014}
   - component: {fileID: 2769611294515687621}
+  - component: {fileID: 3910489784094774996}
   m_Layer: 0
   m_Name: Player_Remote_F
   m_TagString: Remote
@@ -143,6 +144,19 @@ MonoBehaviour:
   backSpine: {fileID: 567672058934957734}
   spinePivot: {fileID: 4546353428644520375}
   spineOffset: {x: -0.36, y: 1.25, z: 0}
+--- !u!114 &3910489784094774996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 616842407056823696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97f7981364986774e8667818385f378f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ignoreDelay: 3
 --- !u!1 &3718898537442760788
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,7 +541,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 22ec3bcb6d175e34dad9db93f5dda5b9, type: 2}
+  - {fileID: 2100000, guid: b24192b9e4656a94faca672520b2ee8c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -18,6 +18,8 @@ public class PlayerInteractionCollider : MonoBehaviour
 
     void Update()
     {
+        if (Managers.UI.IsPopupOpen() || !GameManager.Instance.IsPlaying() || player.IsFall || player.isEventActive) return;
+
         inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
         if (inputDirection != Vector2.zero && !player.isEventActive)

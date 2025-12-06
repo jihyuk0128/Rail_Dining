@@ -11,18 +11,22 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioMixerGroup bgmGroup;
     [SerializeField] private AudioMixerGroup sfxGroup;
 
-    private AudioSource bgmSource;
-    private AudioSource sfxSource;
+    // BGM 여러개 지원
+    private List<AudioSource> bgmSources = new List<AudioSource>();
+    private int bgmChannelCount = 2; // 동시에 2개의 BGM 재생 가능
+
+    // SFX 풀 
+    private List<AudioSource> sfxSources = new List<AudioSource>();
+    private int sfxPoolSize = 10; // 동시에 10개의 SFX 재생 가능
 
     private float bgmVolume = 0.5f;
     private float sfxVolume = 0.5f;
 
-
     private Dictionary<string, AudioClip> clipCache = new Dictionary<string, AudioClip>();
+
 
     private void Awake()
     {
-        // 싱글톤 유지
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -32,49 +36,84 @@ public class SoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        if (bgmSource == null)
-        {
-            bgmSource = gameObject.AddComponent<AudioSource>();
-            bgmSource.playOnAwake = false;
-            bgmSource.loop = true;
-        }
-
-        if (sfxSource == null)
-        {
-            sfxSource = gameObject.AddComponent<AudioSource>();
-            sfxSource.playOnAwake = false;
-        }
-
-        // 오디오 소스 구성
-        if (bgmSource != null && bgmGroup != null)
-            bgmSource.outputAudioMixerGroup = bgmGroup;
-
-        if (sfxSource != null && sfxGroup != null)
-            sfxSource.outputAudioMixerGroup = sfxGroup;
+        CreateBGMSources();
+        CreateSFXPool();
     }
 
-    // BGM 재생
-    public void PlayBGM(string clipName, float fadeTime = 1f)
+    //  BGM 초기화 (복수 채널)
+    private void CreateBGMSources()
+    {
+        for (int i = 0; i < bgmChannelCount; i++)
+        {
+            AudioSource src = gameObject.AddComponent<AudioSource>();
+            src.playOnAwake = false;
+            src.loop = true;
+            src.outputAudioMixerGroup = bgmGroup;
+            bgmSources.Add(src);
+        }
+    }
+
+
+    //  SFX 풀 생성
+    private void CreateSFXPool()
+    {
+        for (int i = 0; i < sfxPoolSize; i++)
+        {
+            AudioSource src = gameObject.AddComponent<AudioSource>();
+            src.playOnAwake = false;
+            src.loop = false;
+            src.outputAudioMixerGroup = sfxGroup;
+            sfxSources.Add(src);
+        }
+    }
+
+    //  BGM 재생 (어떤 채널에서든 재생 가능)
+    public void PlayBGM(string clipName, int channel = 0)
     {
         AudioClip clip = LoadClip(clipName);
         if (clip == null) return;
 
-        if (bgmSource.isPlaying)
-            StartCoroutine(FadeOutIn(bgmSource, clip, fadeTime));
-        else
+        if (channel < 0 || channel >= bgmSources.Count)
         {
-            bgmSource.clip = clip;
-            bgmSource.Play();
+            Debug.LogWarning("[SoundManager] BGM 채널 번호 오류");
+            return;
         }
+
+        AudioSource src = bgmSources[channel];
+        src.clip = clip;
+        src.Play();
     }
 
-    // SFX 재생
+    //  특정 BGM 채널 정지
+    public void StopBGM(int channel = 0)
+    {
+        if (channel < 0 || channel >= bgmSources.Count) return;
+        bgmSources[channel].Stop();
+    }
+
+
+    //  모든 BGM 정지
+    public void StopAllBGM()
+    {
+        foreach (var src in bgmSources)
+            src.Stop();
+    }
+
+    //  SFX 재생 (풀에서 빈 AudioSource 사용)
     public void PlaySFX(string clipName)
     {
         AudioClip clip = LoadClip(clipName);
         if (clip == null) return;
 
-        sfxSource.PlayOneShot(clip);
+        AudioSource freeSrc = sfxSources.Find(s => !s.isPlaying);
+
+        if (freeSrc == null)
+        {
+            // 전부 재생중이면 첫번째 것을 덮어씌움
+            freeSrc = sfxSources[0];
+        }
+
+        freeSrc.PlayOneShot(clip);
     }
 
     // 볼륨 설정
@@ -83,8 +122,6 @@ public class SoundManager : MonoBehaviour
         bgmVolume = volume;
         if (audioMixer != null)
             audioMixer.SetFloat("BGM", Mathf.Log10(Mathf.Clamp(volume, 0.001f, 1f)) * 20);
-        else
-            bgmSource.volume = volume;
     }
 
     public void SetSFXVolume(float volume)
@@ -92,33 +129,6 @@ public class SoundManager : MonoBehaviour
         sfxVolume = volume;
         if (audioMixer != null)
             audioMixer.SetFloat("SFX", Mathf.Log10(Mathf.Clamp(volume, 0.001f, 1f)) * 20);
-        else
-            sfxSource.volume = volume;
-    }
-
-    // 페이드 전환
-    private System.Collections.IEnumerator FadeOutIn(AudioSource source, AudioClip newClip, float time)
-    {
-        float startVol = source.volume;
-        float t = 0f;
-        while (t < time)
-        {
-            source.volume = Mathf.Lerp(startVol, 0f, t / time);
-            t += Time.deltaTime;
-            yield return null;
-        }
-
-        source.Stop();
-        source.clip = newClip;
-        source.Play();
-
-        t = 0f;
-        while (t < time)
-        {
-            source.volume = Mathf.Lerp(0f, startVol, t / time);
-            t += Time.deltaTime;
-            yield return null;
-        }
     }
 
     // 클립 로드 (캐싱)
@@ -130,19 +140,12 @@ public class SoundManager : MonoBehaviour
         AudioClip clip = Resources.Load<AudioClip>($"Sound/{clipName}");
         if (clip == null)
         {
-            Debug.LogWarning($"[SoundManager] 사운드 파일을 찾을 수 없습니다: {clipName}");
+            Debug.LogWarning($"[SoundManager] 사운드 파일 없음: {clipName}");
             return null;
         }
 
         clipCache.Add(clipName, clip);
         return clip;
-    }
-
-    public void StopBGM()
-    {
-        Debug.Log("bgmoff");
-        if (bgmSource != null)
-            bgmSource.Stop();
     }
 
     public float GetBGMVolume() => bgmVolume;

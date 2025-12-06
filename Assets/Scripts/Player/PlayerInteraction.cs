@@ -11,6 +11,8 @@ public class PlayerInteraction : MonoBehaviour
 
     private IInteractable currentTarget; // 현재 가장 가까운 상호작용 대상 캐싱
 
+    private bool interactActive = true;
+
     private void Awake()
     {
         player = GetComponent<PlayerController>();
@@ -24,7 +26,7 @@ public class PlayerInteraction : MonoBehaviour
 
     public void Interacting(InputAction.CallbackContext context)
     {
-        if (context.started && !player.isEventActive && !player.IsFall && !train.IsEventActive())
+        if (context.started && !player.isEventActive && !player.IsFall && !train.IsEventActive() && !Managers.UI.IsPopupOpen())
         {
             Debug.Log("상호작용 키 누름");
             TryInteract();
@@ -45,6 +47,13 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
+        // 상호작용 불가능한 동안 상호작용 아이콘 끄기
+        if (player.isEventActive || player.IsFall || train.IsEventActive())
+        {
+            ClearHighlight(false);
+            return;
+        }
+
         // 우선순위 및 거리 기준으로 가장 가까운 상호작용 대상 찾기
         var best = interactables
             .OrderBy(i => i.GetPriority(gameObject))
@@ -62,7 +71,7 @@ public class PlayerInteraction : MonoBehaviour
             if (currentTarget is Customer customer)
             {
                 var ui = customer.GetComponentInChildren<CustomerOrderUI>();
-                if (ui != null)
+                if (ui != null && !player.isEventActive && !player.IsFall && !train.IsEventActive())
                     ui.SetInteractionVisible(true);
             }
             else if (currentTarget is TutorialNPC Npc)
@@ -75,13 +84,31 @@ public class PlayerInteraction : MonoBehaviour
             {
                 // 일반 오브젝트의 InteractionUI 표시
                 var ui = (currentTarget as MonoBehaviour)?.GetComponentInChildren<InteractionUI>();
-                if (ui != null)
+                if (ui != null && !player.isEventActive && !player.IsFall && !train.IsEventActive())
                     ui.SetVisible(true);
             }
         }
+        else if (!interactActive)
+        {
+            // 손님이라면 UI 활성화
+            if (currentTarget is Customer customer)
+            {
+                var ui = customer.GetComponentInChildren<CustomerOrderUI>();
+                if (ui != null && !player.isEventActive && !player.IsFall && !train.IsEventActive())
+                    ui.SetInteractionVisible(true);
+            }
+            else
+            {
+                // 일반 오브젝트의 InteractionUI 표시
+                var ui = (currentTarget as MonoBehaviour)?.GetComponentInChildren<InteractionUI>();
+                if (ui != null && !player.isEventActive && !player.IsFall && !train.IsEventActive())
+                    ui.SetVisible(true);
+            }
+            interactActive = true;
+        }
     }
 
-    private void ClearHighlight()
+    private void ClearHighlight(bool clear = true)
     {
         if (currentTarget != null)
         {
@@ -103,8 +130,10 @@ public class PlayerInteraction : MonoBehaviour
                 if (ui != null)
                     ui.SetVisible(false);
             }
-
-            currentTarget = null;
+            if (clear)
+                currentTarget = null;
+            else
+                interactActive = false;
         }
     }
 

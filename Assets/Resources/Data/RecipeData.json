@@ -44,7 +44,7 @@
     },
     {
       "recipeId": 7,
-      "ingredients": [ 102, 104, 0, 0 ],
+      "ingredients": [ 103, 104, 0, 0 ],
       "resultId": 401,
       "resultAmount": 1,
       "gridSize": 4

@@ -14,15 +14,9 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         MouseIcon,
     }
 
-    private enum Buttons
-    {
-        StartButton,
-    }
-
     private RawImage _maskImage;
     private Image _butterIcon;
     private Image _progressBar;
-    private Button _startButton;
     private Image _mouseIcon;
 
     [Header("Settings")]
@@ -31,8 +25,8 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
     [SerializeField] private float moveSmooth = 10f;        // 마우스 따라다니기 속도
     [SerializeField] private float fillThreshold = 0.85f;   // 85% 이상 채우면 성공
 
-    [SerializeField] private float leftX = 200f;     // 왼쪽 끝
-    [SerializeField] private float rightX = 300f;     // 오른쪽 끝
+    [SerializeField] private float leftX = 100f;     // 왼쪽 끝
+    [SerializeField] private float rightX = 200f;     // 오른쪽 끝
     [SerializeField] private float speed = 150f;
 
     private RenderTexture _maskRT;
@@ -42,6 +36,8 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
     private float progress = 0f;
     private Material _drawMat;
     private Texture2D butterAlphaMask;
+
+    private bool IsSoundPlay = false;
 
     public event Action<bool> OnMiniGameEnd;
 
@@ -58,17 +54,12 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
 
         // 바인드
         Bind<Image>(typeof(Images));
-        Bind<Button>(typeof(Buttons));
 
         // 참조 캐싱
         _maskImage = GetImage((int)Images.FryPan_Empty).GetComponentInChildren<RawImage>();
         _butterIcon = GetImage((int)Images.ButterIcon);
         _progressBar = GetImage((int)Images.ProgressBar);
-        _startButton = GetButton((int)Buttons.StartButton);
         _mouseIcon = GetImage((int)Images.MouseIcon);
-
-        // 이벤트 등록
-        _startButton.onClick.AddListener(StartMiniGame);
 
         BindEvent(_butterIcon.gameObject, OnButterBeginDrag, Define.UIEvent.BeginDrag);
         BindEvent(_butterIcon.gameObject, OnButterDrag, Define.UIEvent.Drag);
@@ -83,6 +74,7 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         _mouseIcon.gameObject.SetActive(false);
 
         CreateRenderTexture();
+        StartMiniGame();
     }
 
 
@@ -144,13 +136,13 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         }
 
         // 버튼 숨기고 버터 활성화
-        _startButton.gameObject.SetActive(false);
         _butterIcon.gameObject.SetActive(true);
         _mouseIcon.gameObject.SetActive(true);
         StartCoroutine(MoveLoop());
 
         // 진행 상태1 초기화
         isPlaying = true;
+        GameManager.Instance.SetMiniPlaying(isPlaying);
         progress = 0f;
         _progressBar.fillAmount = 0f;
 
@@ -169,11 +161,7 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         if (isDragging)
         {
             Vector3 targetPos = Input.mousePosition;
-            _butterIcon.transform.position = Vector3.Lerp(
-                _butterIcon.transform.position,
-                targetPos,
-                Time.deltaTime * moveSmooth
-            );
+            _butterIcon.transform.position = Input.mousePosition;
 
             Vector2 localPos;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -189,6 +177,12 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
     private void DrawBrush(Vector2 localPos)
     {
         if (_maskRT == null) return;
+
+        if (!IsSoundPlay)
+        {
+            IsSoundPlay = true;
+            SoundManager.Instance.PlaySFX("Butter_SFX");
+        }
 
         Rect rect = _maskImage.rectTransform.rect;
         float u = Mathf.InverseLerp(rect.xMin, rect.xMax, localPos.x);
@@ -268,7 +262,7 @@ public class UI_FryPanButterGame : UI_Popup, IHasMiniGameEnd
         isSuccess = true;
         if (!isPlaying) return;
         isPlaying = false;
-
+        GameManager.Instance.SetMiniPlaying(isPlaying);
         // 게이지를 100%로 채우는 보정 
         StartCoroutine(FillGaugeToFull());
     }

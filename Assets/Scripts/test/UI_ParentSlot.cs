@@ -61,6 +61,15 @@ public class UI_ParentSlot : UI_Base
             Debug.LogWarning($"[UI_ParentSlot] 스프라이트 로드 실패: {slotData.Item.iconPath}");
         }
 
+        if (slotData.Item.id == 103)
+        {
+            
+            RectTransform rt = itemIcon.rectTransform;
+
+            rt.sizeDelta = new Vector2(30f, 30f);
+            return;
+        }
+
         itemIcon.SetNativeSize();
     }
 

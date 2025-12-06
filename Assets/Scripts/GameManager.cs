@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     private bool isPlaying = false;
     private int quota = 1;
     private bool resultClosed = false;
+    private bool isMiniPlaying = false;
 
     // 임시 랜덤 테이블
     //public List<int> availableItemIDs = new() { 103, 104, 106, 108, 112, 113, 114, 116, 119, 120, 304 };
@@ -56,6 +57,7 @@ public class GameManager : MonoBehaviour
     // 영업 시작
     private IEnumerator StartDay()
     {
+        SoundManager.Instance?.StopAllBGM();
         var popup = Managers.UI.ShowPopupUI<UI_CountDown>();
 
         // 3, 2, 1, 0 (START)
@@ -69,7 +71,8 @@ public class GameManager : MonoBehaviour
         isPlaying = true;
 
         // bgm 시작과 같이
-        SoundManager.Instance?.PlayBGM("BackGround_BGM");
+        SoundManager.Instance?.PlayBGM("4min_BGM", 0);
+        SoundManager.Instance?.PlayBGM("Train_BGM", 1);
 
         // 시작 사운드 사운드
         SoundManager.Instance?.PlaySFX("WorkStart_SFX");
@@ -157,6 +160,9 @@ public class GameManager : MonoBehaviour
     }
 
     public bool IsPlaying() => isPlaying;
+
+    public bool IsMiniPlaying() => isMiniPlaying;
+    public void SetMiniPlaying(bool set) => isMiniPlaying = set;
 
     public ItemData Getorder(int recipeId)
     {

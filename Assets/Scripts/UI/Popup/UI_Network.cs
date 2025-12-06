@@ -146,7 +146,7 @@ public class UI_Network : UI_Popup
 
     private void OnStartTutorial(PointerEventData data)
     {
-
+        Managers.UI.ShowPopupUI<UI_ControlGuide>();
     }
 
     private void OnStartGame(PointerEventData data)

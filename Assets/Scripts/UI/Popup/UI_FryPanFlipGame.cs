@@ -9,9 +9,9 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
     [Header("UI Elements")]
     [SerializeField] private RectTransform cursor;
     [SerializeField] private RectTransform successZone;
+    [SerializeField] private RectTransform perfectZone;
     [SerializeField] private RectTransform flipBar;
     [SerializeField] private SkeletonGraphic fryPanSpine;
-    [SerializeField] private Button startButton;
     [SerializeField] private Image _spaceBarIcon;
 
     [Header("Settings")]
@@ -47,8 +47,6 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
     public override void Init()
     {
         base.Init();
-        if (startButton != null)
-            startButton.onClick.AddListener(StartMiniGame);
 
         float halfWidth = flipBar.rect.width / 2f;
         minX = -halfWidth;
@@ -65,6 +63,8 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
         }
 
         _spaceBarIcon.gameObject.SetActive(false);
+
+        StartMiniGame();
     }
 
     private void Update()
@@ -111,13 +111,29 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
     private void CheckSuccess()
     {
         float cursorX = cursor.anchoredPosition.x;
-        float zoneMin = successZone.anchoredPosition.x - successZone.rect.width / 2f;
-        float zoneMax = successZone.anchoredPosition.x + successZone.rect.width / 2f;
 
-        if (cursorX >= zoneMin && cursorX <= zoneMax)
+        // --- Perfect 판정 ---
+        float pMin = perfectZone.anchoredPosition.x - perfectZone.rect.width / 2f;
+        float pMax = perfectZone.anchoredPosition.x + perfectZone.rect.width / 2f;
+
+        if (cursorX >= pMin && cursorX <= pMax)
+        {
+            OnFlipPerfect();
+            return;
+        }
+
+        // --- Success 판정 ---
+        float sMin = successZone.anchoredPosition.x - successZone.rect.width / 2f;
+        float sMax = successZone.anchoredPosition.x + successZone.rect.width / 2f;
+
+        if (cursorX >= sMin && cursorX <= sMax)
+        {
             OnFlipSuccess();
-        else
-            OnFlipFail();
+            return;
+        }
+
+        // --- Fail ---
+        OnFlipFail();
     }
 
     private void OnFlipSuccess()
@@ -133,6 +149,25 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
         else
         {
             ResetSuccessZone();
+        }
+    }
+
+    private void OnFlipPerfect()
+    {
+        Debug.Log("퍼펙트!");
+
+        successCount++;
+        currentStage++;
+        moveSpeed *= speedUpRate;
+
+        if (successCount >= maxStage)
+        {
+            EndGame(true);  // 성공 판정
+        }
+        else
+        {
+            ResetSuccessZone();
+            ResetPerfectZone(); // 퍼펙트도 재배치
         }
     }
 
@@ -162,14 +197,27 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
 
         float randomX = UnityEngine.Random.Range(rangeMin, rangeMax);
         successZone.anchoredPosition = new Vector2(randomX, successZone.anchoredPosition.y);
+
+        // SuccessZone이 움직일 때 PerfectZone도 같이 이동시키기
+        ResetPerfectZone();
+    }
+
+    private void ResetPerfectZone()
+    {
+        if (perfectZone == null || successZone == null) return;
+
+        // SuccessZone과 같은 X 위치에 배치
+        perfectZone.anchoredPosition = new Vector2(
+            successZone.anchoredPosition.x,
+            perfectZone.anchoredPosition.y
+        );
     }
 
     public void StartMiniGame()
     {
-        if (startButton != null)
-            startButton.gameObject.SetActive(false);
 
         isPlaying = true;
+        GameManager.Instance.SetMiniPlaying(isPlaying);
         currentStage = 1;
         successCount = 0;
         moveSpeed = 300f;
@@ -202,6 +250,7 @@ public class UI_FryPanFlipGame : UI_Popup, IHasMiniGameEnd
         isSuccess = success;
         isPlaying = false;
         OnMiniGameEnd?.Invoke(success);
+        GameManager.Instance.SetMiniPlaying(isPlaying);
         StopSpineSmoothly();
     }
 

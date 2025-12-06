@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: fa7249fb5ab27a94b9030566df4e9400
+guid: 85593a6a00dad5b4bb55ad3ebe06cd24
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4850766266860544530
-    second: food_acquisition_button_0
-  - first:
-      213: 7266434091696263978
-    second: food_acquisition_button_1
-  - first:
-      213: -7255936191219404327
-    second: food_acquisition_button_2
-  - first:
-      213: -6340964012483068511
-    second: food_acquisition_button_3
+      213: 7425802031658927195
+    second: food_acquisition_button 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -55,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -84,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -105,106 +96,27 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: food_acquisition_button_0
+      name: food_acquisition_button 1_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 7
-        width: 15
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 854ccfd133b31ab428f84b0c0baface5
-      internalID: -290273447
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: food_acquisition_button_1
-      rect:
-        serializedVersion: 2
-        x: 3
         y: 0
-        width: 16
-        height: 20
+        width: 61
+        height: 33
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: ed97759c12fd6364fa3b53841836d050
-      internalID: 1508598405
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: food_acquisition_button_2
-      rect:
-        serializedVersion: 2
-        x: 27
-        y: 13
-        width: 16
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a97d2e22954c4374a9619809442378b5
-      internalID: 1898355925
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: food_acquisition_button_3
-      rect:
-        serializedVersion: 2
-        x: 25
-        y: 0
-        width: 20
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8bb4b2148942dec4b94790471cdafac0
-      internalID: -1718369314
+      spriteID: b54876daa9fbd0760800000000000000
+      internalID: 7425802031658927195
       vertices: []
       indices: 
       edges: []
@@ -213,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 194df9693c2d0304cb0d7c00e988f0bc
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -223,10 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      food_acquisition_button_0: -290273447
-      food_acquisition_button_1: 1508598405
-      food_acquisition_button_2: 1898355925
-      food_acquisition_button_3: -1718369314
+      food_acquisition_button 1_0: 7425802031658927195
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
