@@ -529,7 +529,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   juicerSpine: {fileID: 8764828092042409907}
-  startButton: {fileID: 0}
   progressBar: {fileID: 5793124810592169726}
   _spaceBarIcon: {fileID: 5291435174375384163}
   addPerPress: 5
