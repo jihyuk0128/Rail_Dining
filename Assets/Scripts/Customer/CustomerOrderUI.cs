@@ -106,7 +106,11 @@ public class CustomerOrderUI : MonoBehaviour
     {
         questionPanel.SetActive(false);
         menuPanel.SetActive(false);
-        if (coinIcon != null)
+    }
+
+    public void ShowCoinEffect()
+    {
+        if (coinIcon == null) return;
             StartCoroutine(CoinEffect());
     }
 

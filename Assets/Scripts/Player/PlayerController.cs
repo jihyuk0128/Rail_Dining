@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(IsFall || isEventActive) return;
+        if(IsFall || isEventActive || Managers.UI.IsPopupOpen()) return;
 
         float currentSpeed = IsRunning ? runSpeed : moveSpeed;
         Vector2 movement;
