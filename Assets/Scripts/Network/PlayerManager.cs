@@ -4,9 +4,21 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     //public GameObject localPlayerPrefab;   // 로컬용
-    public GameObject remotePlayerPrefab;  // 원격용
+    [SerializeField] private GameObject malePrefab;
+    [SerializeField] private GameObject femalePrefab;
 
     private Dictionary<string, GameObject> players = new();
+
+    private GameObject LoadPrefab(string prefabName)
+    {
+        GameObject prefab = Resources.Load<GameObject>($"Characters/{prefabName}");
+        if (prefab == null)
+        {
+            Debug.LogError($"[PlayerManager] 프리팹을 찾을 수 없음: {prefabName}");
+        }
+        return prefab;
+    }
+
 
     public void UpdatePlayer(string name, Vector3 pos)
     {
@@ -16,8 +28,15 @@ public class PlayerManager : MonoBehaviour
 
         if (!players.ContainsKey(name))
         {
+            GameObject prefab;
+
+            if (Managers.Network.player.IsHost == false)
+                prefab = malePrefab;     
+            else
+                prefab = femalePrefab;
+
             // 원격 플레이어 프리팹 생성
-            GameObject newPlayer = Instantiate(remotePlayerPrefab, pos, Quaternion.identity);
+            GameObject newPlayer = Instantiate(prefab, pos, Quaternion.identity);
             newPlayer.name = name;
 
             // PlayerNetworkSync 추가
@@ -58,7 +77,15 @@ public class PlayerManager : MonoBehaviour
         // --- 플레이어 생성 ---
         if (!players.ContainsKey(name))
         {
-            GameObject newPlayer = Instantiate(remotePlayerPrefab, pos, Quaternion.identity);
+            GameObject prefab;
+
+            Debug.LogWarning($"상대 캐릭터 설정중 {Managers.Network.player.IsHost}가 true라면 상대는 여캐.");
+            if (Managers.Network.player.IsHost == false)
+                prefab = malePrefab;
+            else
+                prefab = femalePrefab;
+
+            GameObject newPlayer = Instantiate(prefab, pos, Quaternion.identity);
             newPlayer.name = name;
 
             // 네트워크 동기화용 컴포넌트 추가

@@ -3,11 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    public Transform playerSpawnPoint;
+
+    [SerializeField] private GameObject playerPrefabM;
+    [SerializeField] private GameObject playerPrefabF;
 
     [Header("게임 설정")]
     [Tooltip("영업 플레이 시간 (초 단위)")]
@@ -22,11 +28,6 @@ public class GameManager : MonoBehaviour
     private int quota = 1;
     private bool resultClosed = false;
     private bool isMiniPlaying = false;
-
-    public Transform playerSpawnPoint;
-
-    [SerializeField] private GameObject playerPrefabM;
-    [SerializeField] private GameObject playerPrefabF;
 
     // 임시 랜덤 테이블
     //public List<int> availableItemIDs = new() { 103, 104, 106, 108, 112, 113, 114, 116, 119, 120, 304 };
@@ -44,7 +45,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SpawnPlayer(false);
         StartCoroutine(GameLoop());
         Managers.Network.OnGameRestart += OnGameRestart;
         Managers.Network.OnGameOver += EndDay;
@@ -92,6 +92,8 @@ public class GameManager : MonoBehaviour
         // 손님 스폰 시작
         customerSpawner?.StartSpawning();
 
+        SpawnPlayer(!Managers.Network.roomData.IsHost);
+
         yield return null;
     }
 
@@ -114,7 +116,7 @@ public class GameManager : MonoBehaviour
     }
 
     // 영업 종료
-    public void EndDay(string name)
+    public void EndDay(string name )
     {
         Managers.MainThread.Enqueue(() =>
         {
@@ -135,22 +137,34 @@ public class GameManager : MonoBehaviour
                 GameManager.Instance.RestartGame();
             };
 
+            Debug.LogWarning($"이긴사람이름{name}, 내이름이름{Managers.Network.player.Username}");
 
-            if (name == Managers.Network.player.Username)
+            if (Managers.Network.player.Username == name)
             {
-                if (Managers.Network.player.IsHost == true)
+                if (Managers.Network.roomData.IsHost == true)
                 {
                     resultUI.ShowResult(true);
+                    Debug.LogWarning($"방장승");
                 }
-                resultUI.ShowResult(false);
+                else
+                {
+                    resultUI.ShowResult(false);
+                    Debug.LogWarning($"손님승");
+                }
             }
             else
             {
-                if (Managers.Network.player.IsHost == true)
+                if (Managers.Network.roomData.IsHost == true)
                 {
                     resultUI.ShowResult(false);
+                    Debug.LogWarning($"손님승");
                 }
-                resultUI.ShowResult(true);
+                else
+                {
+                    resultUI.ShowResult(true);
+                    Debug.LogWarning($"방장승");
+                }
+
             }
         });
     }
@@ -213,6 +227,7 @@ public class GameManager : MonoBehaviour
             StopAllCoroutines();      // 기존 루프 중단
             resultClosed = false;
             isPlaying = false;
+            Managers.UI.PopupInit(); // 팝업스택 0으로 초기화
 
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             StartCoroutine(RestartRoutine());

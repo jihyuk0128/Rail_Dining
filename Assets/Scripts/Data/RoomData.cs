@@ -8,6 +8,8 @@ public class RoomData
     public List<string> Players { get; private set; } = new();
     public int CurrentPlayers = 0;
     public int MaxPlayers;
+    public float BroadcastTimer = 0;
+    public float MaxTimer = 0;
 
     public RoomData(int roomId, bool isHost)
     {
@@ -27,6 +29,7 @@ public class RoomData
     public void RemovePlayer(string name)
     {
         Players.Remove(name);
+        CurrentPlayers--;
     }
 
     public void Clear()

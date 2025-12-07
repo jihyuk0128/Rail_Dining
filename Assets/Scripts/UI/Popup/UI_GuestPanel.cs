@@ -58,14 +58,16 @@ public class UI_GuestPanel : UI_Popup
         Managers.UI.ClosePopupUI();
     }
 
-    private void OnRoomlist(string name)
+    private void OnRoomlist(string name , bool ready)
     {
         Managers.MainThread.Enqueue(() =>
         {
             Managers.UI.ClosePopupUI();
-            
+
+            Debug.LogWarning($"ready : {ready}");
+
             var popup = Managers.UI.ShowPopupUI<UI_Network>();
-            popup.InitName(Managers.Network.player.Username, name);
+            popup.InitName(name,Managers.Network.player.Username, ready);
         });
     }
 

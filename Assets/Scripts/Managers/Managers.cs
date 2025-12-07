@@ -101,11 +101,6 @@ public class Managers : MonoBehaviour
         //s_instance._newChest.Init(8);        //  Chest 초기화
         s_instance._newInventory.Init(4); //  필요하면 여기서 초기화
         s_instance._newChest.Init(8);
-        // 테스트용 아이템 몇 개 추가
-        s_instance._newInventory.AddItem(105);
-        s_instance._newInventory.AddItem(105);
-        s_instance._newInventory.AddItem(102);
-        s_instance._newInventory.AddItem(104);
         // s_instance._newCrafting.Init();   //  필요하면 추가
     }
 

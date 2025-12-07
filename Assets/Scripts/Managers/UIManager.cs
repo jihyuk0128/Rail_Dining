@@ -157,6 +157,11 @@ public class UIManager
     {
         return _popupStack.Count > 0; // 팝업 UI가 하나라도 열려 있다면 true
     }
+
+    public void PopupInit()
+    {
+        _popupStack.Clear();
+    }
 }
 
 

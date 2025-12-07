@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEngine.SceneManagement;
 
 public class UI_Clock : UI_Base
 {
@@ -18,24 +19,37 @@ public class UI_Clock : UI_Base
         base.Init();
         Debug.Log($"UI_Clock Init 실행 대상: {gameObject.name}");
         Bind<TextMeshProUGUI>(typeof(Texts));
-        UpdateTime();
+
+        GetTextMeshProUGUI((int)Texts.ClockText).text = FormatTime(Managers.Network.roomData.MaxTimer);
+        Managers.Network.OnTimerUpdate += UpdateTime;
     }
 
-    void UpdateTime()
+    void UpdateTime(float time)
     {
-        var clockText = GetTextMeshProUGUI((int)Texts.ClockText);
-        if (clockText == null)
+        Managers.MainThread.Enqueue(() =>
         {
-        Debug.Log("못찾았어");
-        return;  // 아직 못 찾으면 그냥 리턴
-        } 
+            var clockText = GetTextMeshProUGUI((int)Texts.ClockText);
+            if (clockText == null)
+            {
+                Debug.Log("못찾았어");
+                return;  // 아직 못 찾으면 그냥 리턴
+            }
 
-        clockText.text = DateTime.Now.ToString("HH:mm");
+            clockText.text = FormatTime(Managers.Network.roomData.MaxTimer);
+        });
+
     }
 
-    void Update()
+    public static string FormatTime(float time)
     {
-        // 매 프레임 현재 시간 갱신
-        UpdateTime();
+        int minutes = (int)(time / 60);
+        int seconds = (int)(time % 60);
+
+        return $"{minutes:00}:{seconds:00}";
+    }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnTimerUpdate -= UpdateTime;
     }
 }

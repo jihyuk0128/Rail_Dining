@@ -28,6 +28,7 @@ public class TrainEventManager : MonoBehaviour
         }
 
         Instance = this;
+        //DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
