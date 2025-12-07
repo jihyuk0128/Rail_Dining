@@ -322,7 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   interactionCollider: {fileID: 0}
-  offset: 0.5
+  offset: 0.75
   holdDiagonalTime: 0.05
 --- !u!1 &4600667690227276252
 GameObject:
@@ -745,7 +745,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d56ad485eecd1d3478bd9e0ad51ac81a, type: 2}
+  - {fileID: 2100000, guid: fdcd0a099c00ebb42876191833deba44, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

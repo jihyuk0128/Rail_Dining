@@ -12,8 +12,6 @@ public class SettingUIPopUp : MonoBehaviour
         // 기본 UI 띄우기
         basicSceneUI = Managers.UI.ShowSceneUI<UI_BasicScene>();   // 항상 켜지는 인벤토리
 
-        settingsUI = Managers.UI.ShowPopupUI<UI_Settings>();
-        Managers.UI.ClosePopupUI();
         settingsUI = null;
     }
 

@@ -24,8 +24,6 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        if (player == null)
-            player = GameObject.FindWithTag("Player");
 
         if (train != null && train.IsEventActive()) 
         {
