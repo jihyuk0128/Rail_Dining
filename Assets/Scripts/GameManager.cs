@@ -10,6 +10,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public Transform playerSpawnPoint;
+
+    [SerializeField] private GameObject playerPrefabM;
+    [SerializeField] private GameObject playerPrefabF;
+
     [Header("게임 설정")]
     [Tooltip("영업 플레이 시간 (초 단위)")]
     public float playTime = 60f; // 에디터에서 자유롭게 수정 가능
@@ -36,7 +41,6 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -87,6 +91,8 @@ public class GameManager : MonoBehaviour
 
         // 손님 스폰 시작
         customerSpawner?.StartSpawning();
+
+        SpawnPlayer(!Managers.Network.roomData.IsHost);
 
         yield return null;
     }
@@ -231,5 +237,28 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         Managers.Network.OnGameRestart -= OnGameRestart;
+    }
+
+    public void SpawnPlayer(bool gender)
+    {
+        // gender == false 남자, gender == true 여자
+        GameObject prefab = gender ? playerPrefabF : playerPrefabM;
+
+        if (prefab == null)
+        {
+            Debug.LogError("플레이어 프리팹이 설정되지 않았습니다!");
+            return;
+        }
+
+        // 생성 위치는 playerSpawnPoint 기준
+        Vector3 spawnPos = playerSpawnPoint != null ? playerSpawnPoint.position : Vector3.zero;
+
+        GameObject player = Instantiate(prefab, spawnPos, Quaternion.identity, playerSpawnPoint);
+
+        TrainEventManager.Instance.player = player.GetComponent<PlayerController>();
+        TrainEventManager.Instance.SetIndicationUI();
+
+        Debug.Log($"플레이어 스폰 완료! gender={gender}");
+
     }
 }
