@@ -159,6 +159,8 @@ public class UI_Network : UI_Popup
     {
         Managers.MainThread.Enqueue(() =>
         {
+            Managers.UI.ClosePopupUI();
+            Managers.UI.PopupInit();
             SceneManager.LoadScene("TestSceneNew");
         });
     }
@@ -171,7 +173,6 @@ public class UI_Network : UI_Popup
 
     private void OnDestroy()
     {
-        Managers.Network.LeaveRoom();
         Managers.Network.OnGameStart -= OnStartGameNetwork;
         Managers.Network.OnRoomJoinEvent -= OnRoomJoinEvent;
         //Managers.Network.OnHostAssigned -= OnHostAssignedEvent;

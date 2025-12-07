@@ -1,6 +1,9 @@
+using Spine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -39,6 +42,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(GameLoop());
+        Managers.Network.OnGameRestart += OnGameRestart;
+        Managers.Network.OnGameOver += EndDay;
     }
 
     private IEnumerator GameLoop()
@@ -47,7 +52,7 @@ public class GameManager : MonoBehaviour
         {
             yield return StartCoroutine(StartDay());
             yield return StartCoroutine(PlayDay());
-            yield return StartCoroutine(EndDay());
+
 
             yield return new WaitUntil(() => resultClosed);
             resultClosed = false;
@@ -89,7 +94,7 @@ public class GameManager : MonoBehaviour
     // 영업 진행
     private IEnumerator PlayDay()
     {
-        float timer = playTime;
+        float timer = 360f;
         while (timer > 0f)
         {
             timer -= Time.deltaTime;
@@ -105,27 +110,57 @@ public class GameManager : MonoBehaviour
     }
 
     // 영업 종료
-    private IEnumerator EndDay()
+    public void EndDay(string name )
     {
-        Debug.Log($"=== Day {currentDay} End ===");
-        /*
-        // 결과 데이터
-        int totalOrders = customerSpawner?.spawnedCount ?? 0;
-        int successOrders = customerSpawner?.SuccessCount ?? 0;
-        int earnedMoney = moneyManager?.GetMoney() ?? 0;
-
-        // Managers.UI 로 결과창 표시
-        UI_ResultSummary resultUI = Managers.UI.ShowPopupUI<UI_ResultSummary>();
-        resultUI.SetResultData(currentDay, "1플레이어", "2플레이어", totalOrders, successOrders, earnedMoney, earnedMoney, quota, onClose: OnResultClosed);
-        */
-        var resultUI = Managers.UI.ShowPopupUI<UI_GameResult>();
-        resultUI.OnRetryClicked += () =>
+        Managers.MainThread.Enqueue(() =>
         {
-            GameManager.Instance.RestartGame();
-        };
-        resultUI.ShowResult(true);
+            Debug.Log($"=== Day {currentDay} End ===");
+            /*
+            // 결과 데이터
+            int totalOrders = customerSpawner?.spawnedCount ?? 0;
+            int successOrders = customerSpawner?.SuccessCount ?? 0;
+            int earnedMoney = moneyManager?.GetMoney() ?? 0;
 
-        yield break;
+            // Managers.UI 로 결과창 표시
+            UI_ResultSummary resultUI = Managers.UI.ShowPopupUI<UI_ResultSummary>();
+            resultUI.SetResultData(currentDay, "1플레이어", "2플레이어", totalOrders, successOrders, earnedMoney, earnedMoney, quota, onClose: OnResultClosed);
+            */
+            var resultUI = Managers.UI.ShowPopupUI<UI_GameResult>();
+            resultUI.OnRetryClicked += () =>
+            {
+                GameManager.Instance.RestartGame();
+            };
+
+            Debug.LogWarning($"이긴사람이름{name}, 내이름이름{Managers.Network.player.Username}");
+
+            if (Managers.Network.player.Username == name)
+            {
+                if (Managers.Network.roomData.IsHost == true)
+                {
+                    resultUI.ShowResult(true);
+                    Debug.LogWarning($"방장승");
+                }
+                else
+                {
+                    resultUI.ShowResult(false);
+                    Debug.LogWarning($"손님승");
+                }
+            }
+            else
+            {
+                if (Managers.Network.roomData.IsHost == true)
+                {
+                    resultUI.ShowResult(false);
+                    Debug.LogWarning($"손님승");
+                }
+                else
+                {
+                    resultUI.ShowResult(true);
+                    Debug.LogWarning($"방장승");
+                }
+
+            }
+        });
     }
 
     private void OnResultClosed()
@@ -139,14 +174,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-        Debug.Log("게임 재시작!");
-
-        StopAllCoroutines();      // 기존 루프 중단
-        resultClosed = false;
-        isPlaying = false;
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        StartCoroutine(RestartRoutine());
+        Managers.Network.RestartGame();
     }
 
     private IEnumerator RestartRoutine()
@@ -183,5 +211,25 @@ public class GameManager : MonoBehaviour
         Debug.LogWarning($"결과 아이템 ID {resultId}를 ItemDict에서 찾을 수 없습니다!");
         return null;
     }
-  
+
+    public void OnGameRestart(string msg)
+    {
+        Managers.MainThread.Enqueue(() =>
+        {
+            Debug.Log("게임 재시작!");
+
+            StopAllCoroutines();      // 기존 루프 중단
+            resultClosed = false;
+            isPlaying = false;
+            Managers.UI.PopupInit(); // 팝업스택 0으로 초기화
+
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            StartCoroutine(RestartRoutine());
+        });
+    }
+
+    private void OnDestroy()
+    {
+        Managers.Network.OnGameRestart -= OnGameRestart;
+    }
 }

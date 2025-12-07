@@ -8,12 +8,10 @@ public class UI_HostPanel: UI_Popup
 {
     enum Buttons
     {
-        ExitButton
     }
 
     enum TextMeshProUGUIS
     {
-        RoomCode,
     }
 
     private void Start()
@@ -26,8 +24,6 @@ public class UI_HostPanel: UI_Popup
 
         Bind<Button>(typeof(Buttons));
         Bind<TextMeshProUGUI>(typeof(TextMeshProUGUIS));
-
-        GetButton((int)Buttons.ExitButton).gameObject.BindEvent(OnClose);
         Managers.Network.CreateRoom();
 
         Managers.Network.OnRoomCreate += OnHostNetwork;
@@ -49,20 +45,6 @@ public class UI_HostPanel: UI_Popup
             var popup = Managers.UI.ShowPopupUI<UI_Network>();
             popup.InitName(Managers.Network.player.Username, " ", false);
         });
-    }
-
-    void OnSubmitCode(string text)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            Debug.Log("코드를 입력하세요!");
-            return;
-        }
-
-        Debug.Log($"입력된 코드: {text}");
-
-        // 서버 방생성요청(추후코드번호 설정할수있게끔할예정)
-        Managers.Network.CreateRoom();
     }
 
     void OnClose(PointerEventData data)

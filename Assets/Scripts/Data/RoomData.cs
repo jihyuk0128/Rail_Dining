@@ -8,6 +8,8 @@ public class RoomData
     public List<string> Players { get; private set; } = new();
     public int CurrentPlayers = 0;
     public int MaxPlayers;
+    public float BroadcastTimer = 0;
+    public float MaxTimer = 0;
 
     public RoomData(int roomId, bool isHost)
     {

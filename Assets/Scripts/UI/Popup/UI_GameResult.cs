@@ -63,6 +63,8 @@ public class UI_GameResult : UI_Popup
         // ±âº»ÀûÀ¸·Î ¼û°ÜµÒ
         _winImage.gameObject.SetActive(false);
         _loseImage.gameObject.SetActive(false);
+
+      
     }
 
     public void ShowResult(bool isWin)
@@ -106,5 +108,6 @@ public class UI_GameResult : UI_Popup
         SoundManager.Instance.StopBGM();
         Managers.UI.ClosePopupUI();
         SceneManager.LoadScene("CinematicScene");
+        Managers.Network.LeaveRoom();
     }
 }

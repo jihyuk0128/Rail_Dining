@@ -104,6 +104,7 @@ public class UI_Settings : UI_Popup
     private void OnMain()
     {
         Time.timeScale = 1f;
+        Managers.Network.LeaveRoom();
         SceneManager.LoadScene("NewTitleScene");
     }
 

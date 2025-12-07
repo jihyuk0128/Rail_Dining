@@ -53,6 +53,10 @@ public class NetworkManager
     public event Action<int,int> OnMoneyUpdate;
     public event Action<string> OnReadyUpdate;
     public event Action<string> OnPlayerLeft;
+    public event Action<float> OnTimerUpdate;
+    public event Action<string> OnGameOver;
+    public event Action<string> OnGameRestart;
+
 
 
 
@@ -226,6 +230,21 @@ public class NetworkManager
             pw.WriteInt((int)Define.CtoS.ORDER_SUCCESS);
             pw.WriteInt(customerid);
             pw.WriteInt(money);
+        });
+    }
+
+    public void RestartGame()
+    {
+        if (!IsConnected)
+        {
+            Debug.LogWarning("[Network] 서버와 연결되지 않음");
+            return;
+        }
+
+        Debug.Log($"[Network] 재시작 요청 완료!");
+        Send(pw =>
+        {
+            pw.WriteInt((int)Define.CtoS.RESTART_GAME);
         });
     }
 
@@ -445,9 +464,9 @@ public class NetworkManager
                 case Define.StoC_Event.GAME_START_DAY:
                     {
                         int day = reader.ReadInt();
+                        roomData.MaxTimer = reader.ReadFloat();
                         Debug.Log($"[SERVER] {day} 일차 시작!");
                         OnGameStartDay?.Invoke(day);
-
                         break;
                     }
                 case Define.StoC_Event.CUSTOMER_LEAVE:
@@ -472,6 +491,32 @@ public class NetworkManager
                         string playername = reader.ReadString();
                         Debug.LogWarning($"[SERVER] {playername} 레디함");
                         OnReadyUpdate?.Invoke(playername);
+                        break;
+                    }
+                case Define.StoC_Event.GAME_OVER:
+                    {
+                        string winplayername = reader.ReadString();
+                        Debug.LogWarning($"[SERVER] {winplayername}가 이겼습니다!");
+                        OnGameOver?.Invoke(winplayername);
+                        break;
+                    }
+                case Define.StoC_Event.GAME_TIMER:
+                    {
+                        float timer = reader.ReadFloat();
+                        roomData.MaxTimer = timer;
+                        Debug.LogWarning($"[SERVER] {roomData.MaxTimer}현재 시간");
+                        OnTimerUpdate?.Invoke(timer);
+                        break;
+                    }
+                case Define.StoC_Event.GAME_RESTART:
+                    {
+                        string msg = reader.ReadString();
+                        float x = reader.ReadFloat();
+                        float y = reader.ReadFloat();
+                        float z = reader.ReadFloat();
+
+                        Managers.Network.pendingSpawnPos = new Vector3(x, y, z);
+                        OnGameRestart?.Invoke(msg);
                         break;
                     }
             }

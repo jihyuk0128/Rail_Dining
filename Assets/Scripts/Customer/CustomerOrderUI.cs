@@ -43,7 +43,7 @@ public class CustomerOrderUI : MonoBehaviour
     }
 
     // 주문 표시 (메뉴 아이콘 + 카운트)
-    public void ShowOrder(ItemData item, int current, int required, float totalWaitTime = 30f)
+    public void ShowOrder(ItemData item, int current, int required, float totalWaitTime = 40f)
     {
         questionPanel.SetActive(false);
         menuPanel.SetActive(true);

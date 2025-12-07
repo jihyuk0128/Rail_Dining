@@ -30,6 +30,7 @@ public class Define
         TUTORIAL_END,
         TAKE_ORDER,
         ORDER_SUCCESS,
+        RESTART_GAME,
     }
 
     // ================================
@@ -65,6 +66,9 @@ public class Define
         CUSTOMER_LEAVE,
         MONEY_UPDATE,
         GAME_READY,
+        GAME_OVER,
+        GAME_TIMER,
+        GAME_RESTART
 
     }
     // ================================
