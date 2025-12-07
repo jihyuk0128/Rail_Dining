@@ -1047,6 +1047,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8174199115759939406}
+  - component: {fileID: 1932176068485762833}
   m_Layer: 0
   m_Name: AutumnTile2
   m_TagString: Untagged
@@ -1076,6 +1077,20 @@ Transform:
   - {fileID: 2133933537074358300}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1932176068485762833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6016828925009380474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad566e6a779964340b923940a3d80872, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockedTile: 0
+  treeObject: {fileID: 0}
 --- !u!1 &6224471232385021192
 GameObject:
   m_ObjectHideFlags: 0
