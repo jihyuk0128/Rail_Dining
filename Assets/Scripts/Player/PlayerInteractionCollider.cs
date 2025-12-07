@@ -12,7 +12,7 @@ public class PlayerInteractionCollider : MonoBehaviour
 
     private void Awake()
     {
-        player = GameObject.Find("Player").GetComponent<PlayerController>();
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         interactionCollider = transform;
     }
 

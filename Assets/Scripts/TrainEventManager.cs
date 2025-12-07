@@ -5,6 +5,8 @@ using UnityEngine.InputSystem.LowLevel;
 
 public class TrainEventManager : MonoBehaviour
 {
+    public static TrainEventManager Instance { get; private set; }
+
     [Header("Event Settings")]
     public float eventInterval = 10f; // 10초마다 덜컹거림 체크
     public float fallTime = 1.5f;     // 넘어지는 시간
@@ -17,23 +19,20 @@ public class TrainEventManager : MonoBehaviour
     private UI_ShakeTrainEvent shakeUI = null;
     private GameObject indicationUI;
 
-    private void Start()
+    private void Awake()
     {
-        GameObject go = GameObject.FindWithTag("Player");
-        player = go.GetComponent<PlayerController>();
-
-        Transform ui = go.transform.Find("UI");
-        if (ui != null)
+        if (Instance != null)
         {
-            indicationUI = ui.Find("indication")?.gameObject;
+            Destroy(gameObject);
+            return;
         }
 
-        if (indicationUI == null)
-            Debug.LogWarning("[TrainEventManager] indication UI를 찾을 수 없습니다!");
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
-        else
-            indicationUI.SetActive(false);
-
+    private void Start()
+    {
         StartCoroutine(EventRoutine());
     }
 
@@ -112,4 +111,22 @@ public class TrainEventManager : MonoBehaviour
     }
 
     public bool IsEventActive() => isEventActive;
+
+    public void SetIndicationUI()
+    {
+        GameObject go = GameObject.FindWithTag("Player");
+        player = go?.GetComponent<PlayerController>();
+
+        Transform ui = go.transform.Find("UI");
+        if (ui != null)
+        {
+            indicationUI = ui.Find("indication")?.gameObject;
+        }
+
+        if (indicationUI == null)
+            Debug.LogWarning("[TrainEventManager] indication UI를 찾을 수 없습니다!");
+
+        else
+            indicationUI.SetActive(false);
+    }
 }

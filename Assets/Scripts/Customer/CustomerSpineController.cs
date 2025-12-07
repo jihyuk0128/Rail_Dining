@@ -107,7 +107,10 @@ public class CustomerSpineController : MonoBehaviour
     // 상태 기반 애니메이션 변경
     private void ChangeAnimation(CustomerAnimState newState)
     {
-        activeSpine.transform.localPosition = spineOffset;
+        if(newState != CustomerAnimState.Happy)
+            activeSpine.transform.localPosition = spineOffset;
+        else
+            activeSpine.transform.localPosition = sitingOffset;
         // 같은 상태라도 앞 뒤 변경시에 애니메이션이 없으면 재생
         if (currentState == newState)
         {
