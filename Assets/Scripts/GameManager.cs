@@ -228,6 +228,7 @@ public class GameManager : MonoBehaviour
             resultClosed = false;
             isPlaying = false;
             Managers.UI.PopupInit(); // 팝업스택 0으로 초기화
+            Managers.Slot.ClearAllSlots();
 
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             StartCoroutine(RestartRoutine());

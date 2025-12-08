@@ -68,19 +68,34 @@ public class NewCraftingManager
             return false;
         }
 
-        // 재료 확인
+        // 레시피 재료 개수 집계
+        Dictionary<int, int> requiredCounts = new();
+
         foreach (int ingredientId in recipe.ingredients)
         {
             if (ingredientId == 0)
-                continue; // 빈칸은 무시
+                continue;
 
-            if (!_inventory.HasItem(ingredientId))
+            if (!requiredCounts.ContainsKey(ingredientId))
+                requiredCounts[ingredientId] = 0;
+
+            requiredCounts[ingredientId]++;
+        }
+
+        // 2) 인벤토리에서 필요한 개수만큼 있는지 확인
+        foreach (var kvp in requiredCounts)
+        {
+            int id = kvp.Key;
+            int requiredCount = kvp.Value;
+
+            int inventoryCount = _inventory.GetItemCount(id);
+
+            if (inventoryCount < requiredCount)
             {
-                Debug.LogWarning($"[CraftingManager] 재료 부족 (ID:{ingredientId})");
+                Debug.LogWarning($"[CraftingManager] 재료 부족 (ID:{id}) 필요:{requiredCount} / 보유:{inventoryCount}");
                 return false;
             }
         }
-
         return true;
     }
 

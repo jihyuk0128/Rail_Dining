@@ -224,4 +224,20 @@ public class NewSlotManager
         return true;
     }
 
+    public void ClearAllSlots()
+    {
+        // 인벤토리 비우기
+        foreach (var slot in InventorySlots)
+            slot.Clear();
+
+        // 창고 비우기
+        foreach (var slot in ChestSlots)
+            slot.Clear();
+
+
+        RefreshAll(SLOTTYPE.Inventory);
+        RefreshAll(SLOTTYPE.Chest);
+        Debug.Log("[NewSlotManager] 전체 슬롯 (Inventory + Chest) 초기화 완료");
+    }
+
 }

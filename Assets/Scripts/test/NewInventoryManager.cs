@@ -80,4 +80,17 @@ public class NewInventoryManager
             Debug.Log($"[{i}] {itemName} x{slot.Amount}");
         }
     }
+
+    public int GetItemCount(int itemId)
+    {
+        int count = 0;
+
+        foreach (var slot in Slots)
+        {
+            if (slot.Item != null && slot.Item.id == itemId)
+                count += slot.Amount; // 아이템 수량 누적
+        }
+
+        return count;
+    }
 }
