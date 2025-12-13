@@ -496,7 +496,7 @@ MonoBehaviour:
   brushSize: 48
   brushTexture: {fileID: 0}
   moveSmooth: 20
-  fillThreshold: 0.85
+  fillThreshold: 0.73
   leftX: 100
   rightX: 200
   speed: 150
