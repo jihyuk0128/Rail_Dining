@@ -18,6 +18,7 @@ public class UI_TitleScene : UI_Scene
         Init();
         SoundManager.Instance.StopAllBGM();
         SoundManager.Instance?.PlayBGM("BackGround_BGM"); // bgm 재생
+        Managers.UI.ShowPopupUI<UI_NoticePanel>(); // 알림창
     }
     public override void Init()
     {
