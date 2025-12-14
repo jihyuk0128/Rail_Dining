@@ -88,7 +88,7 @@ public class UI_Network : UI_Popup
         }
 
         _roomnumber = Managers.Network.roomData.RoomId;
-        GetTextMeshProUGUI((int)TextMeshProUGUIS.RoomCode).text = _roomnumber.ToString();
+        GetTextMeshProUGUI((int)TextMeshProUGUIS.RoomCode).text = "서버코드: " + _roomnumber.ToString();
     }
 
     private void ApplyNames(string player1name, string player2name, bool player1Ready)
