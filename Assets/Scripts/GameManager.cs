@@ -66,9 +66,9 @@ public class GameManager : MonoBehaviour
     // 영업 시작
     private IEnumerator StartDay()
     {
+        Managers.Slot.ClearAllSlots();
         SoundManager.Instance?.StopAllBGM();
         var popup = Managers.UI.ShowPopupUI<UI_CountDown>();
-
         // 3, 2, 1, 0 (START)
         for (int i = 3; i >= 0; i--)
         {
